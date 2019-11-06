@@ -1,0 +1,542 @@
+#openapi: "3.0.2"
+swagger: '2.0'
+info:
+  title: "APIGatewayClient (SEAL Service Microservice Specification)"
+  version: 0.0.1
+  description: "This document contains the formal specification of all standard module interfaces in SEAL Service.
+  
+  **Take into account that parameters marked as cookie type, will instead be passed through the session object**
+  "
+ 
+#servers:
+#    - url: https://domain/basepath
+#      description: Production server
+#    - url: https://domain/basepath
+#      description: Pre-production server
+#    - url: https://domain/basepath
+#      description: Development server
+  
+
+tags:
+    - name: "APIGatewayClient"
+      description: ""
+    
+paths:
+
+####### APIGatewayClient #######
+
+  /cl/list/{collection}:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Get a collection of elements to be displayed on the selector widget.
+      description: _
+      produces:
+      - "application/json"
+      
+      parameters:
+      - name: "collection"  
+        in: "path"
+        required: true
+        type: string
+      responses:
+        200:
+          description: "Incoming list"
+          #type: array
+          #items:
+          #  type: object #Generic object, collections will be from a
+          #            #base common "displayable" class, but I think this does not
+          #            #support inheritance
+          
+          # TO DEFINE
+          #schema:
+          #  $ref: "#/definitions/TBDcollection
+        404:
+          description: "Collection not found"
+          
+          
+  /cl/session/start:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Start a session on the server, receive the session token for later reference.
+      description: _
+      produces:
+        - "text/plain"
+      parameters:
+        - name: "sessionID" #To retake a session in case it already exists
+          in: "query"
+          required: false
+          type: string
+      responses:
+        200:
+          description: "Session started"
+          #type: string
+        404:
+          description: "Session start error"
+
+          
+  /cl/session/end:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: End a session on the server, receive the session token for later reference.
+      description: _
+      parameters:
+        - name: "sessionID"
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Session ended"
+        404:
+          description: "Session end error"
+
+          
+  /cl/auth/{moduleID}/login:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Login through a specifc auth method module.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger" #TODO define object. Will include :
+                                #response payload data
+                                # response status
+                                #the access mechanism (HTTP-POST-REDIRECT,
+                                # HTTP-GET-REDIRECT, HTTP-GET,
+                                # HTTP-POST,  HTTP-GET-SIG, HTTP-POST-SIG)
+                                #the url to access
+                                #body type
+                                #body content
+        404:
+          description: "Error accessing module"
+          
+
+  /cl/auth/{moduleID}/logout:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Logout through a specifc auth method module.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/persistence/{moduleID}/load:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Load store with a specific persistence method module.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/persistence/{moduleID}/store:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Save user data on a store with a specific auth method module.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/source/{moduleID}/retrieve:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Fetch user identity data on the session store with a specific identity method module.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/derivation/{moduleID}/generate:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Generate a derived identity through a specific method module.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/mgr/{datasetID}/refresh:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Update a retrieved or derived identity already on the session store through the specific method module used to obtain it.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "datasetID"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/mgr/{datasetID}/delete:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Delete a retrieved or derived identity already on the session store through the specific method module used to obtain it.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "datasetID"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/mgr/{datasetID}/revoke:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Revoke a retrieved or derived identity already on the session store through the specific method module used to obtain it.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "datasetID"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/linking/{moduleID}/request:
+    post:
+      tags:
+        - APIGatewayClient
+      summary: Request two data sets to be reconciled through a specific method module.
+      description: _
+      produces:
+        - "application/json"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+        - name: "datasetIDa"  
+          in: "formData"
+          required: true
+          type: string
+        - name: "datasetIDb"  
+          in: "formData"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/linking/{moduleID}/{requestId}/status:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Request the status of a reconciliation request to a specific method module.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+        - name: "requestId"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/linking/{moduleID}/{requestId}/cancel:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Request to cancel a reconciliation request on a specific method module.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+        - name: "requestId"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/linking/{moduleID}/{requestId}/result:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Fetch the result of a reconciliation request to a specific method module.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+        - name: "requestId"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/linking/{moduleID}/{requestId}/files/upload:
+    post:
+      tags:
+        - APIGatewayClient
+      summary: Upload a supporting file to a specific method module.
+      description: _
+      produces:
+        - "application/json"
+      consumes:
+        - "multipart/form-data"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+        - name: "requestId"  
+          in: "path"
+          required: true
+          type: string
+        - name: "file"  
+          in: "formData"
+          required: true
+          type: file
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/linking/{moduleID}/{requestId}/messages/send:
+    post:
+      tags:
+        - APIGatewayClient
+      summary: Send a message to a validation officer on a specific method module.
+      description: _
+      produces:
+        - "application/json"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+        - name: "requestId"  
+          in: "path"
+          required: true
+          type: string
+        - name: "message"  
+          in: "formData"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/ident/linking/{moduleID}/{requestId}/messages/receive:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Receive messages from a validation officer on a specific method module (on the response payload as a messageListObject).  #TODO implement this object
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+        - name: "requestId"  
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+          
+  /cl/vc/issuing/{moduleID}/generate:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Generate a verifiable claim through a specific method module.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "moduleID"
+          in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+
+definitions:
+
+# TO BE DEFINED
+  TBDcollection:
+    type: object
+    
+  moduleTrigger:
+    type: object
+    #TODO define object. Will include :
+        #response payload data
+        # response status
+        #the access mechanism (HTTP-POST-REDIRECT,
+        # HTTP-GET-REDIRECT, HTTP-GET,
+        # HTTP-POST,  HTTP-GET-SIG, HTTP-POST-SIG)
+        #the url to access
+        #body type
+        #body content
+        

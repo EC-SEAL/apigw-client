@@ -1,22 +1,12 @@
-#openapi: "3.0.2"
 swagger: '2.0'
 info:
   title: "APIGatewayClient (SEAL Service Microservice Specification)"
   version: 0.0.1
-  description: "This document contains the formal specification of all standard module interfaces in SEAL Service.
+  description: "This document contains the formal specification of the API Gateway Client interface in SEAL Service.
   
   **Take into account that parameters marked as cookie type, will instead be passed through the session object**
   "
  
-#servers:
-#    - url: https://domain/basepath
-#      description: Production server
-#    - url: https://domain/basepath
-#      description: Pre-production server
-#    - url: https://domain/basepath
-#      description: Development server
-  
-
 tags:
     - name: "APIGatewayClient"
       description: ""
@@ -32,25 +22,17 @@ paths:
       summary: Get a collection of elements to be displayed on the selector widget.
       description: _
       produces:
-      - "application/json"
-      
+        - "application/json"
       parameters:
-      - name: "collection"  
-        in: "path"
-        required: true
-        type: string
+        - name: "collection"  
+          in: "path"
+          required: true
+          type: string
       responses:
         200:
           description: "Incoming list"
-          #type: array
-          #items:
-          #  type: object #Generic object, collections will be from a
-          #            #base common "displayable" class, but I think this does not
-          #            #support inheritance
-          
-          # TO DEFINE
-          #schema:
-          #  $ref: "#/definitions/TBDcollection
+          schema:
+            $ref: "#/definitions/displayableList"
         404:
           description: "Collection not found"
           
@@ -59,10 +41,10 @@ paths:
     get:
       tags:
         - APIGatewayClient
-      summary: Start a session on the server, receive the session token for later reference.
+      summary: Start a session on the server, receive the session token for later reference. SessionId to be returned on the payload
       description: _
       produces:
-        - "text/plain"
+        - "application/json"
       parameters:
         - name: "sessionID" #To retake a session in case it already exists
           in: "query"
@@ -71,7 +53,8 @@ paths:
       responses:
         200:
           description: "Session started"
-          #type: string
+          schema:
+            $ref: "#/definitions/moduleTrigger"
         404:
           description: "Session start error"
 
@@ -84,7 +67,7 @@ paths:
       description: _
       parameters:
         - name: "sessionID"
-          in: "path"
+          in: "query"
           required: true
           type: string
       responses:
@@ -103,6 +86,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -111,15 +98,7 @@ paths:
         200:
           description: "Module access trigger"
           schema:
-            $ref: "#/definitions/moduleTrigger" #TODO define object. Will include :
-                                #response payload data
-                                # response status
-                                #the access mechanism (HTTP-POST-REDIRECT,
-                                # HTTP-GET-REDIRECT, HTTP-GET,
-                                # HTTP-POST,  HTTP-GET-SIG, HTTP-POST-SIG)
-                                #the url to access
-                                #body type
-                                #body content
+            $ref: "#/definitions/moduleTrigger"
         404:
           description: "Error accessing module"
           
@@ -133,8 +112,34 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
+
+
+  /cl/auth/logout:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Logout from all logged-in modules (chain logout calls for all modules).
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "sessionID"
+          in: "query"
           required: true
           type: string
       responses:
@@ -155,6 +160,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -177,6 +186,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -199,6 +212,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -221,6 +238,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -233,6 +254,28 @@ paths:
         404:
           description: "Error accessing module"
 
+
+  /cl/ident/mgr/list:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Get the list of user identity data sets currently    loaded or fetched in session.
+      description: _
+      produces:
+        - "application/json"
+      parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Incoming list"
+          schema:
+            $ref: "#/definitions/dataStore"
+        404:
+          description: "Collection not found"
+                    
           
   /cl/ident/mgr/{datasetID}/refresh:
     get:
@@ -243,6 +286,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "datasetID"  
           in: "path"
           required: true
@@ -265,6 +312,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "datasetID"  
           in: "path"
           required: true
@@ -287,6 +338,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "datasetID"  
           in: "path"
           required: true
@@ -311,6 +366,10 @@ paths:
       consumes:
         - "application/x-www-form-urlencoded"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -341,6 +400,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -367,6 +430,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -393,6 +460,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -421,6 +492,10 @@ paths:
       consumes:
         - "multipart/form-data"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -453,6 +528,10 @@ paths:
       consumes:
         - "application/x-www-form-urlencoded"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -478,11 +557,15 @@ paths:
     get:
       tags:
         - APIGatewayClient
-      summary: Receive messages from a validation officer on a specific method module (on the response payload as a messageListObject).  #TODO implement this object
+      summary: Receive messages from a validation officer on a specific method module (on the response payload as a conversation object).
       description: _
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"  
           in: "path"
           required: true
@@ -509,6 +592,10 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
         - name: "moduleID"
           in: "path"
           required: true
@@ -521,22 +608,187 @@ paths:
         404:
           description: "Error accessing module"
 
+          
+  /cl/callback:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Return page. All specific modules must call this URL when done. This URL will signal the client to retake control of the flow
+      description: _
+      parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Returning to client"
+        404:
+          description: "Error returning to client"
+
+
+
+####### APIGateway #######
 
 definitions:
 
-# TO BE DEFINED
-  TBDcollection:
-    type: object
-    
   moduleTrigger:
+    description: Response object of the API GW. Returns data, status and commands how to deal the loading of a specific module
     type: object
-    #TODO define object. Will include :
-        #response payload data
-        # response status
-        #the access mechanism (HTTP-POST-REDIRECT,
-        # HTTP-GET-REDIRECT, HTTP-GET,
-        # HTTP-POST,  HTTP-GET-SIG, HTTP-POST-SIG)
-        #the url to access
-        #body type
-        #body content
-        
+    properties:
+      payload:
+        type: object
+        description: Response data. Any object format
+      status:
+        type: object
+        description: Status of the response
+        properties:
+          message:
+            type: string
+          mainCode:
+            type: string
+          secondaryCode:
+            type: string
+      access:
+        type: object
+        description: If the response commands the client to access elsewhere, this field will tell where and how
+        properties:
+          binding:
+            type: string
+            description: Mechanism to access the delegated resource
+            enum:
+              - HTTP-POST-REDIRECT
+              - HTTP-GET-REDIRECT
+              - HTTP-GET
+              - HTTP-POST
+              - HTTP-GET-SIG
+              - HTTP-POST-SIG
+          address:
+            type: string
+            description: the URL of the resource
+          contentType:
+            type: string
+            description: the MIME type of the body, if any
+          bodyContent:
+            type: string
+            description: If the access method requires to transfer data on the body of the request, it will be written here
+            
+####### Revocation #######
+
+  displayableList:
+    type: array
+    items:
+      type: object #Generic object, collections will be from a
+                   #base common "displayable" class, but I think this does not
+                   #support inheritance
+                   
+
+####### Persistence #######
+
+  dataSet:
+    description: Object representing a generic identity data set, retrieved from some source and stored on a user store.
+    type: object
+    properties:
+      id:
+        description: Unique identifier of the set
+        type: string
+        example: "6c0f70a8-f32b-4535-b5f6-0d596c52813a"
+      type:
+        description: To define different kinds of datasets, to establish classifications
+        type: string
+      issuerId:
+        description: Name of the attribute that is the ID of the entity that issued the data set, a kind of pointer to the property ID.
+        type: string
+      subjectId:
+        description: Name of the attribute that is the ID of the data owner, a kind of pointer to the attribute ID.
+        type: string
+      loa:
+        description: Level of assurance of the authenticity of the data/authentication
+        type: string
+      issued:
+        description: Date when the data set was retrieved from its source
+        type: string
+        example: "2018-12-06T19:40:16Z"
+      expiration:
+        description: Maximum validity date of the set (empty means permanent)
+        type: string
+        example: "2018-12-06T19:45:16Z"
+      attributes:
+        description: The list of the identity attributes or claims contained on the set
+        type: array
+        items:
+            $ref: '#/definitions/attributeType'
+      properties:
+        description: Dictionary of additional fields of data related to the attributes in the set(strings only) for any specific purpose.
+        type: object
+        #Indicates free-form object
+        additionalProperties:
+            type: string       
+
+ 
+
+  dataStore:
+  # NOTE: Commented required fields to avoid syntax errors.
+    type: object
+    description: Represents a clear, encrypted and/or signed data set.
+    properties:
+      clearData:
+        type: array
+        description: If the data store is in cleartext, this will be set
+        #required: false
+        items: 
+          $ref: '#/definitions/dataSet'
+      encryptedData:
+        type: string
+        description: If the data store is encrypted, this will be set. B64 string
+        #required: false
+      signature:
+        type: string
+        description: If the data store is signed, signature goes here. B64 string. Sign always the decrypted dataset.
+        #required: false
+      signatureAlgorithm:
+        type: string
+        description: Descriptor of the signature algorithm used.
+        #required: false
+      encryptionAlgorithm:
+        type: string
+        description: Descriptor of the encryption algorithm used.
+        #required: false
+
+
+  attributeType:
+    description: Contents of an attribute item.
+    type: object
+    properties:
+      name:
+        description: Unique class identifier of the attribute
+        type: string
+        example: "http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName"
+      friendlyName:
+        description: Class identifier of the attribute (short version, might have collisions)
+        type: string
+        example: "CurrentGivenName"
+      encoding:
+        description: String identifying the encoding method:"UTF-8" , "BASE64", etc.
+        type: string
+        example: "plain"
+      language:
+        description: String identifying the language code of the value contents
+        type: string
+        example: "ES_es"
+      isMandatory:
+        description: To mark the mandatoriness of the attribute.
+        type: boolean
+        example: true
+      values:
+        description: List of values for the attribute
+        type: array
+        items:
+          type: string
+        example: ["JOHN"]
+
+
+  attributeTypeList:
+      type: array
+      items: 
+        $ref: '#/definitions/attributeType'

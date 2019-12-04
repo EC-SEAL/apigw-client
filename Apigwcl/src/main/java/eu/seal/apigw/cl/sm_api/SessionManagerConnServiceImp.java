@@ -87,6 +87,9 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 		hostURL = this.paramServ.getParam("SESSION_MANAGER_URL");
 		
 		//TODO
+		// The receiver will be different: Persistence, Identity, IDderivation, ...
+		// ******************************
+		/*
 		MsMetadataList myACMs = this.confMngrService.getMicroservicesByApiClass("ACM");
 		if (myACMs != null)
 			this.receiver = myACMs.get(0).getMsId();	// The first one found
@@ -94,13 +97,14 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 			receiver = "ACMms001";
 			log.error("HARDCODED receiver! "+ receiver);
 		}
+		*/
      
 		//TODO
-        EntityMetadata myLGW = this.confMngrService.getConfiguration("LGW");
+        EntityMetadata myLGW = this.confMngrService.getConfiguration("LGW"); // APIGWCL or reading from an environment variable. TOASK
         if (myLGW != null)
         	sender = myLGW.getMicroservice().get(0);
         else {
-        	sender = "GW2GWms001";
+        	sender = "APIGWCLms001";
         	log.error("HARDCODED sender! "+ sender);
 		}
         

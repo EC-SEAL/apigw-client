@@ -15,12 +15,15 @@ See README file for the full disclaimer information and LICENSE file for full li
 
 package eu.seal.apigw.cl.rest_api.controller.misc;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
+import eu.seal.apigw.cl.rest_api.services.lists.ClListCollectionGetService;
+import eu.seal.apigw.cl.configuration.Constants;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -243,15 +246,23 @@ public class MiscApiController implements MiscApi {
         return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @Autowired
+	private ClListCollectionGetService clListCollectionGetService;
+    
     public ResponseEntity<DisplayableList> clListCollectionGet(@ApiParam(value = "",required=true) @PathVariable("collection") String collection) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
+        	
+        	DisplayableList displayableList = new DisplayableList();
             try {
-                return new ResponseEntity<DisplayableList>(objectMapper.readValue("\"\"", DisplayableList.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<DisplayableList>(HttpStatus.INTERNAL_SERVER_ERROR);
+            	displayableList = clListCollectionGetService.clListCollectionGet (collection);
+                return new ResponseEntity<DisplayableList>(displayableList, HttpStatus.OK);
             }
+            catch (Exception e) {
+	        	log.error(Constants.COLLECTION_NOT_FOUND, e);
+	    		return new ResponseEntity<DisplayableList>(HttpStatus.NOT_FOUND);
+            }
+            
         }
 
         return new ResponseEntity<DisplayableList>(HttpStatus.NOT_IMPLEMENTED);

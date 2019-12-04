@@ -29,9 +29,5 @@ The following environment variables are to be set:
             
  
 
-Start your server as an simple java application  
+For testing, try https://localhost:8053/swagger-ui.html  
 
-You can view the api documentation in swagger-ui by pointing to  
-http://localhost:8080/  
-
-Change default port value in application.properties

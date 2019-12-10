@@ -2,13 +2,8 @@ package eu.seal.apigw.cl.domain;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import eu.seal.apigw.cl.domain.AttributeType;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +17,6 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Object representing a generic identity data set, retrieved from some source and stored on a user store.")
 @Validated
-@javax.annotation.Generated(value = "eu.seal.apigw.cl.codegen.languages.SpringCodegen", date = "2019-11-29T11:06:02.261Z")
 
 public class DataSet   {
   @JsonProperty("id")
@@ -30,6 +24,10 @@ public class DataSet   {
 
   @JsonProperty("type")
   private String type = null;
+
+  @JsonProperty("categories")
+  @Valid
+  private List<String> categories = null;
 
   @JsonProperty("issuerId")
   private String issuerId = null;
@@ -92,6 +90,34 @@ public class DataSet   {
 
   public void setType(String type) {
     this.type = type;
+  }
+
+  public DataSet categories(List<String> categories) {
+    this.categories = categories;
+    return this;
+  }
+
+  public DataSet addCategoriesItem(String categoriesItem) {
+    if (this.categories == null) {
+      this.categories = new ArrayList<String>();
+    }
+    this.categories.add(categoriesItem);
+    return this;
+  }
+
+  /**
+   * To define multiple classes where the data set can be grouped.
+   * @return categories
+  **/
+  @ApiModelProperty(value = "To define multiple classes where the data set can be grouped.")
+
+
+  public List<String> getCategories() {
+    return categories;
+  }
+
+  public void setCategories(List<String> categories) {
+    this.categories = categories;
   }
 
   public DataSet issuerId(String issuerId) {
@@ -263,6 +289,7 @@ public class DataSet   {
     DataSet dataSet = (DataSet) o;
     return Objects.equals(this.id, dataSet.id) &&
         Objects.equals(this.type, dataSet.type) &&
+        Objects.equals(this.categories, dataSet.categories) &&
         Objects.equals(this.issuerId, dataSet.issuerId) &&
         Objects.equals(this.subjectId, dataSet.subjectId) &&
         Objects.equals(this.loa, dataSet.loa) &&
@@ -274,7 +301,7 @@ public class DataSet   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, type, issuerId, subjectId, loa, issued, expiration, attributes, properties);
+    return Objects.hash(id, type, categories, issuerId, subjectId, loa, issued, expiration, attributes, properties);
   }
 
   @Override
@@ -284,6 +311,7 @@ public class DataSet   {
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
+    sb.append("    categories: ").append(toIndentedString(categories)).append("\n");
     sb.append("    issuerId: ").append(toIndentedString(issuerId)).append("\n");
     sb.append("    subjectId: ").append(toIndentedString(subjectId)).append("\n");
     sb.append("    loa: ").append(toIndentedString(loa)).append("\n");

@@ -696,6 +696,11 @@ definitions:
       type:
         description: To define different kinds of datasets, to establish classifications
         type: string
+      categories:
+        description: To define multiple classes where the data set can be grouped.
+        type: array
+        items:
+          type: string
       issuerId:
         description: Name of the attribute that is the ID of the entity that issued the data set, a kind of pointer to the property ID.
         type: string
@@ -724,36 +729,32 @@ definitions:
         #Indicates free-form object
         additionalProperties:
             type: string       
-
- 
-
+            
   dataStore:
-  # NOTE: Commented required fields to avoid syntax errors.
     type: object
     description: Represents a clear, encrypted and/or signed data set.
     properties:
-      clearData:
-        type: array
-        description: If the data store is in cleartext, this will be set
-        #required: false
-        items: 
-          $ref: '#/definitions/dataSet'
+      id:
+        description: Unique identifier of the set
+        type: string
+        example: "6c0f70a8-f32b-4535-b5f6-0d596c52813a"
       encryptedData:
         type: string
         description: If the data store is encrypted, this will be set. B64 string
-        #required: false
       signature:
         type: string
         description: If the data store is signed, signature goes here. B64 string. Sign always the decrypted dataset.
-        #required: false
       signatureAlgorithm:
         type: string
         description: Descriptor of the signature algorithm used.
-        #required: false
       encryptionAlgorithm:
-        type: string
         description: Descriptor of the encryption algorithm used.
-        #required: false
+        type: string
+      clearData:
+        description: If the data store is in cleartext, this will be set
+        type: array
+        items: 
+          $ref: '#/definitions/dataSet'
 
 
   attributeType:

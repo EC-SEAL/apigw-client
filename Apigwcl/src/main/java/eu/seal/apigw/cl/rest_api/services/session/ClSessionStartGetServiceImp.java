@@ -16,8 +16,13 @@ package eu.seal.apigw.cl.rest_api.services.session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
+import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
@@ -29,6 +34,8 @@ public class ClSessionStartGetServiceImp implements ClSessionStartGetService{
 	
 	private static final Logger log = LoggerFactory.getLogger(ClSessionStartGetServiceImp.class);
 
+	@Autowired
+	private SessionManagerConnService smConn;
 	
 	@Override
 	public ModuleTrigger clSessionStartGet (String sessionID) throws Exception {
@@ -44,16 +51,26 @@ public class ClSessionStartGetServiceImp implements ClSessionStartGetService{
 				theSessionID = sessionID;
 			}
 			else { //TODO	
-			// Start session invoking SM
-				;
+			// Start Session: POST /sm/startSession
+				theSessionID = smConn.startSession();
 				
 			}
 			
-			// Creating the datastore object
+			// Creating an empty datastore object
 			//TODO
+			DataStore datastore = new DataStore();
+			datastore.setId("APIGWCL_"+"UUID");
+			datastore.setEncryptedData(null);
+			datastore.setEncryptionAlgorithm(null);
+			datastore.setSignature(null);
+			datastore.setSignatureAlgorithm(null);	
+			
+			datastore.setClearData(null);
 			
 			// Saving the datastore object in the session
-			//TODO
+			ObjectMapper objDatastore = new ObjectMapper();
+			smConn.updateVariable(theSessionID,"datastore",objDatastore.writeValueAsString(datastore));
+			
 			
 			// Building the return moduleTrigger: OK, the sessionID. 
 			

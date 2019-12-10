@@ -36,7 +36,7 @@ public class ClCallbackGetServiceImp implements ClCallbackGetService{
 			
 			// Get sessionData from SM
 			
-			// Show the blob/DataObject (eIDAS/ eduGain data) in a Web Screen
+			// Show the datastore (eIDAS/eduGain/passport data) in a Web Screen
 			;
 		}
 		catch (Exception e) {

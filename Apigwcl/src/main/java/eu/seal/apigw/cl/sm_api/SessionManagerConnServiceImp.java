@@ -108,9 +108,10 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
         	log.error("HARDCODED sender! "+ sender);
 		}
         
-//        System.out.println("hostURL: " + hostURL);
-//        System.out.println("sender: "+ sender);
-//        System.out.println("receiver: "+ receiver);
+        //TODO: to comment them after testing
+        System.out.println("hostURL: " + hostURL);
+        System.out.println("sender: "+ sender);
+        System.out.println("receiver: "+ receiver);
         
         
         

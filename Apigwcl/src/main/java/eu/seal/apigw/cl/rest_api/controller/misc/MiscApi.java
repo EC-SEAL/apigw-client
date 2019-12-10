@@ -182,6 +182,8 @@ public interface MiscApi {
         method = RequestMethod.GET)
     ResponseEntity<ModuleTrigger> clIdentSourceModuleIDRetrieveGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID);
 
+    //TODO:
+    // Waiting for the spec: /cl/ident/source/{moduleID}/retrieve
 
     @ApiOperation(value = "Get a collection of elements to be displayed on the selector widget.", nickname = "clListCollectionGet", notes = "_", response = DisplayableList.class, tags={ "APIGatewayClient", })
     @ApiResponses(value = { 

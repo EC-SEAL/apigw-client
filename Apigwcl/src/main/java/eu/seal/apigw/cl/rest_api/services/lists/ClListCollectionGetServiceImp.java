@@ -47,7 +47,9 @@ public class ClListCollectionGetServiceImp implements ClListCollectionGetService
 			MsMetadataList myXXX = confMngrConnService.getMicroservicesByApiClass(collection);
 			for (MsMetadata xxx : myXXX) {
 				// Add the necessary fields to the node to be added to the displayable list.
-				//TODO: which fields?
+				//TODO: which fields for authenticationIDPs
+				
+					// moduleIDP, method, url
 				;
 			}
 			

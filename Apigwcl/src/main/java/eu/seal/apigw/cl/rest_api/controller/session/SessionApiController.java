@@ -15,12 +15,13 @@ See README file for the full disclaimer information and LICENSE file for full li
 
 package eu.seal.apigw.cl.rest_api.controller.session;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eu.seal.apigw.cl.domain.DataStore;
-import eu.seal.apigw.cl.domain.DisplayableList;
+import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
+import eu.seal.apigw.cl.rest_api.services.session.ClSessionStartGetService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,14 +63,20 @@ public class SessionApiController implements SessionApi {
         return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @Autowired
+	private ClSessionStartGetService clSessionStartGetService;
+    
     public ResponseEntity<ModuleTrigger> clSessionStartGet(@ApiParam(value = "") @Valid @RequestParam(value = "sessionID", required = false) String sessionID) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
+        	ModuleTrigger session = new ModuleTrigger();
             try {
-                return new ResponseEntity<ModuleTrigger>(objectMapper.readValue("{  \"access\" : {    \"address\" : \"address\",    \"binding\" : \"HTTP-POST-REDIRECT\",    \"bodyContent\" : \"bodyContent\",    \"contentType\" : \"contentType\"  },  \"payload\" : \"{}\",  \"status\" : {    \"mainCode\" : \"mainCode\",    \"secondaryCode\" : \"secondaryCode\",    \"message\" : \"message\"  }}", ModuleTrigger.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ModuleTrigger>(HttpStatus.INTERNAL_SERVER_ERROR);
+            	session = clSessionStartGetService.clSessionStartGet(sessionID);
+            	return new ResponseEntity<ModuleTrigger>(session, HttpStatus.OK);
+            }
+            catch (Exception e) {
+	        	log.error(Constants.COLLECTION_NOT_FOUND, e);
+	    		return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);
             }
         }
 

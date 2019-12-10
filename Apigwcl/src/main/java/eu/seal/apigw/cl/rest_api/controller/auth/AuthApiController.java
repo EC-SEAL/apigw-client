@@ -15,12 +15,15 @@ See README file for the full disclaimer information and LICENSE file for full li
 
 package eu.seal.apigw.cl.rest_api.controller.auth;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
+import eu.seal.apigw.cl.rest_api.services.auth.ClModuleIDLoginGetService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,14 +72,22 @@ public class AuthApiController implements AuthApi {
         return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    
+    @Autowired
+	private ClModuleIDLoginGetService clModuleIDLoginGetService;
+    
     public ResponseEntity<ModuleTrigger> clAuthModuleIDLoginGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
+        	
+        	ModuleTrigger authorization = new ModuleTrigger();
             try {
-                return new ResponseEntity<ModuleTrigger>(objectMapper.readValue("{  \"access\" : {    \"address\" : \"address\",    \"binding\" : \"HTTP-POST-REDIRECT\",    \"bodyContent\" : \"bodyContent\",    \"contentType\" : \"contentType\"  },  \"payload\" : \"{}\",  \"status\" : {    \"mainCode\" : \"mainCode\",    \"secondaryCode\" : \"secondaryCode\",    \"message\" : \"message\"  }}", ModuleTrigger.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ModuleTrigger>(HttpStatus.INTERNAL_SERVER_ERROR);
+            	authorization = clModuleIDLoginGetService.clModuleIDLoginGet(sessionID, moduleID);
+            	return new ResponseEntity<ModuleTrigger>(authorization, HttpStatus.OK);
+            }
+            catch (Exception e) {
+	        	log.error(Constants.COLLECTION_NOT_FOUND, e);
+	    		return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);
             }
         }
 

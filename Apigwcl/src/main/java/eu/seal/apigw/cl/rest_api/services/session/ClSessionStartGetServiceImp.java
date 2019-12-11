@@ -14,6 +14,8 @@ See README file for the full disclaimer information and LICENSE file for full li
 */
 package eu.seal.apigw.cl.rest_api.services.session;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +24,9 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
+import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
-import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
-import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
 import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
 
 @Service
@@ -41,56 +42,81 @@ public class ClSessionStartGetServiceImp implements ClSessionStartGetService{
 	public ModuleTrigger clSessionStartGet (String sessionID) throws Exception {
 		
 		try {
+			DataStore datastore = new DataStore(); // This is the very first data stored in the Session.
 			ModuleTrigger moduleTrigger = new ModuleTrigger();
 			
-			// TODO
-			// TO CONFIRM: sessionID is not required.			
 			String theSessionID = "";
+			String statusMessage = "";
+			String mainCode = "";
+			String secondaryCode = "";
+			
 			if (sessionID != null) {
-				// WHAT TO DO??
+				// To retake a session in case it already exists
 				theSessionID = sessionID;
+				
+				// Checking whether this sessionID exists.
+				Object objDatastore = smConn.readVariable(theSessionID, "datastore");
+				if (objDatastore != null) {
+				
+					log.info("Existing Datastore: " + objDatastore.toString());
+					mainCode = Constants.SUCESS_CODE;
+					statusMessage = Constants.RETAKE_SESSION_MSG;				
+					secondaryCode = Constants.RETAKE_SESSION_CODE;
+				}
+				else { // Not a valid sessionID
+					
+					log.info("Invalid sessionID: " + theSessionID);
+					mainCode = Constants.FAIL_CODE;
+					statusMessage = Constants.INVALID_SESSION_MSG;				
+					secondaryCode = Constants.INVALID_SESSION_CODE;
+				}
 			}
-			else { //TODO	
+			else { 
 			// Start Session: POST /sm/startSession
 				theSessionID = smConn.startSession();
 				
+				if (theSessionID != null) {
+			
+					// Creating an empty datastore object
+					
+					datastore.setId(UUID.randomUUID().toString());
+					datastore.setEncryptedData(null);
+					datastore.setEncryptionAlgorithm(null);
+					datastore.setSignature(null);
+					datastore.setSignatureAlgorithm(null);	
+					
+					datastore.setClearData(null);
+					
+					// Saving the datastore object in the session
+					ObjectMapper objDatastore = new ObjectMapper();
+					smConn.updateVariable(theSessionID,"datastore",objDatastore.writeValueAsString(datastore));
+					
+					mainCode = Constants.SUCESS_CODE;
+					statusMessage = Constants.NEW_SESSION_MSG;				
+					secondaryCode = Constants.NEW_SESSION_CODE;
+				}
 			}
-			
-			// Creating an empty datastore object
-			//TODO
-			DataStore datastore = new DataStore();
-			datastore.setId("APIGWCL_"+"UUID");
-			datastore.setEncryptedData(null);
-			datastore.setEncryptionAlgorithm(null);
-			datastore.setSignature(null);
-			datastore.setSignatureAlgorithm(null);	
-			
-			datastore.setClearData(null);
-			
-			// Saving the datastore object in the session
-			ObjectMapper objDatastore = new ObjectMapper();
-			smConn.updateVariable(theSessionID,"datastore",objDatastore.writeValueAsString(datastore));
 			
 			
 			// Building the return moduleTrigger: OK, the sessionID. 
 			
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
-			ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
-			//TODO
-			theStatus.setMessage(theSessionID); // TO ASK: Here in theStatus or in theAccess?? I'd say HERE...
-			theStatus.setMainCode("mainCode?"); //OK or KO. TO ASK: perhaps it is saying a sessionID is being returned...
-			theStatus.setSecondaryCode("secondaryCode?"); // The exception if KO?
+			
+			theStatus.setMessage(statusMessage);
+			theStatus.setMainCode(mainCode); 
+			theStatus.setSecondaryCode(secondaryCode); 
 			moduleTrigger.setStatus (theStatus);
 			
-			// TO ASK:
-			// It doesn't make sense to fill anything
-			theAccess.setAddress("theUrl");
-			theAccess.setBinding(BindingEnum.POST); // Any
-			theAccess.setBodyContent("bodyContent");
-			theAccess.setContentType("contentType");
-			moduleTrigger.setAccess (theAccess);
+			// It doesn't make sense to fill any Access
+//			ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
+//			theAccess.setAddress("theUrl");
+//			theAccess.setBinding(BindingEnum.POST); // Any
+//			theAccess.setBodyContent("bodyContent");
+//			theAccess.setContentType("contentType");
+//			moduleTrigger.setAccess (theAccess);
 			
-			moduleTrigger.setPayload(null); // TO ASK
+			moduleTrigger.setAccess (null);
+			moduleTrigger.setPayload(theSessionID); // The object to be returned.
 		
 			return (moduleTrigger);
 		}

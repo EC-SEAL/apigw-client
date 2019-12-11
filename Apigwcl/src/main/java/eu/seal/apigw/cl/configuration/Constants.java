@@ -12,10 +12,27 @@ See README file for the full disclaimer information and LICENSE file for full li
 */
 package eu.seal.apigw.cl.configuration;
 
+
 public class Constants {
 	private Constants() {}
 	
 	public final static String COLLECTION_NOT_FOUND= "Collection not found";
+	
+	public final static String NEW_SESSION_MSG = "New session just created";
+	public final static String NEW_SESSION_CODE = "new_session_code";
+	public final static String RETAKE_SESSION_MSG = "Retaken the session";
+	public final static String RETAKE_SESSION_CODE = "retake_session_code";
+	public final static String INVALID_SESSION_MSG = "Invalid session";
+	public final static String INVALID_SESSION_CODE = "invalid_session_code";
+	
+	public final static String AVAILABLE_IDPS_MSG = "Available IdPs";
+	public final static String AVAILABLE_IDPS_CODE = "available_idps_code";
+	public final static String NO_IDPS_MSG = "No IdPs";
+	public final static String NO_IDPS_CODE = "no_idps_code";
+	
+	public final static String SUCESS_CODE = "OK";
+	public final static String FAIL_CODE = "KO";
+	
 	
 //	public final static String MS_NOT_FOUND = "Microservices not found";
 //	public final static String PROFILES_NOT_FOUND = "Profile files not found.";

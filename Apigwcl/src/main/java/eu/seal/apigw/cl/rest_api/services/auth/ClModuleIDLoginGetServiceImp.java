@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
 import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
@@ -35,42 +36,61 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 		
 		try {
 			
-			
-			//****REVISAR CON EL DIBUJO DE ROSS: ACM
-			//
-			
-			// Validating session
-			
-			// Generate token for the update of the session.
-			
-			// idpMetadata is created with the eIDAS/eduGain info from the ConfMngr. Saving in the session.
-			
-			// idpRequest is created. Saving in the session too.
-			
-			// Building the return moduleTrigger: access type, the endpoint of the IdPms, the token. 
-			
-			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
-			ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
+			
+			// Validating session
 			//TODO
-			theStatus.setMessage(sessionID); // TO ASK: if not, what to set here?
-			theStatus.setMainCode("mainCode?"); //OK or KO. TO ASK
-			theStatus.setSecondaryCode("secondaryCode?"); // The exception if KO?
+			if (true) {
+				
+				
+				
+				// Selecting the ID source data from the ConfManager
+				//TODO
+				
+				// idpMetadata is created with the eIDAS/eduGain info from the ConfMngr. Saving in the session.
+				//TODO
+				// idpRequest is created. Saving in the session too.
+				//TODO
+				
+				// Building the moduleTrigger to be returned: access: binding, the url of the IdPms, and the msToken. 
+				
+				theStatus.setMessage(Constants.AVAILABLE_IDPS_MSG); 
+				theStatus.setMainCode(Constants.SUCESS_CODE); 
+				theStatus.setSecondaryCode(Constants.AVAILABLE_IDPS_CODE);
+								
+				ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
+				theAccess.setAddress("theUrl");
+				theAccess.setBinding(BindingEnum.POST); // The related one
+				theAccess.setBodyContent(null); // If the access method requires to transfer data on the body of the request, it will be written here
+				theAccess.setContentType(null); // MIME type of the body, if any
+				moduleTrigger.setAccess (theAccess);
+				
+				
+				// Generate token for returning the session.
+				//TODO
+				moduleTrigger.setPayload("msToken");
+		
+			}
+			else {
+				
+				if (true) {
+					theStatus.setMessage(Constants.INVALID_SESSION_MSG); 
+					theStatus.setMainCode(Constants.FAIL_CODE); 
+					theStatus.setSecondaryCode(Constants.INVALID_SESSION_CODE);
+				}
+				else {
+					theStatus.setMessage(Constants.NO_IDPS_MSG); 
+					theStatus.setMainCode(Constants.FAIL_CODE); 
+					theStatus.setSecondaryCode(Constants.NO_IDPS_CODE);
+				}
+				
+				moduleTrigger.setAccess (null);
+				moduleTrigger.setPayload (null);
+				
+			}
 			moduleTrigger.setStatus (theStatus);
 			
-			// TO ASK:
-			theAccess.setAddress("theUrl"); //TODO
-			theAccess.setBinding(BindingEnum.POST); // TO ASK: from the idpMetadata?
-			theAccess.setBodyContent("bodyContent?");
-			theAccess.setContentType("contentType?");
-			moduleTrigger.setAccess (theAccess);
-			
-			moduleTrigger.setPayload("theToken?"); // TO ASK
-			
-			
-			
-		
 			return (moduleTrigger);
 		}
 		catch (Exception e) {

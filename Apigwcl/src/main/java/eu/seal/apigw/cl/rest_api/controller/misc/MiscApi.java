@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import eu.seal.apigw.cl.domain.DataSet;
 import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
@@ -182,9 +183,17 @@ public interface MiscApi {
         method = RequestMethod.GET)
     ResponseEntity<ModuleTrigger> clIdentSourceModuleIDRetrieveGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID);
 
-    //TODO:
-    // Waiting for the spec: /cl/ident/source/{moduleID}/retrieve
+    @ApiOperation(value = "Load an identity dataset retrieved on a client-side module. Notice that in this case the client must be trusted, so be careful when integrating sources with this api.", nickname = "clIdentSourceModuleIDLoadPost", notes = "_", response = ModuleTrigger.class, tags={ "APIGatewayClient", })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Module access trigger", response = ModuleTrigger.class),
+        @ApiResponse(code = 404, message = "Error accessing module") })
+    @RequestMapping(value = "/cl/ident/source/{moduleID}/load",
+        produces = { "application/json" }, 
+        consumes = { "application/json" },
+        method = RequestMethod.POST)
+    ResponseEntity<ModuleTrigger> clIdentSourceModuleIDLoadPost(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID,@ApiParam(value = "The data set to add" ,required=true )  @Valid @RequestBody DataSet dataset);
 
+    
     @ApiOperation(value = "Get a collection of elements to be displayed on the selector widget.", nickname = "clListCollectionGet", notes = "_", response = DisplayableList.class, tags={ "APIGatewayClient", })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "Incoming list", response = DisplayableList.class),

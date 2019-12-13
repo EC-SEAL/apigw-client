@@ -228,6 +228,38 @@ paths:
         404:
           description: "Error accessing module"
 
+  /cl/ident/source/{moduleID}/load:
+    post:
+      tags:
+        - APIGatewayClient
+      summary: Load an identity dataset retrieved on a client-side module. Notice that in this case the client must be trusted, so be careful when integrating sources with this api.
+      description: _
+      produces:
+        - "application/json"
+      consumes:
+        - "application/json"
+      parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
+        - name: "moduleID"  
+          in: "path"
+          required: true
+          type: string
+        - name: dataset
+          in: body
+          description: The data set to add
+          required: true
+          schema:
+            $ref: '#/definitions/dataSet'
+      responses:
+        200:
+          description: "Module access trigger"
+          schema:
+            $ref: "#/definitions/moduleTrigger"
+        404:
+          description: "Error accessing module"
           
   /cl/ident/derivation/{moduleID}/generate:
     get:

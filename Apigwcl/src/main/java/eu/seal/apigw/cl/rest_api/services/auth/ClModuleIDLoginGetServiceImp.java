@@ -16,13 +16,19 @@ package eu.seal.apigw.cl.rest_api.services.auth;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import eu.seal.apigw.cl.configuration.Constants;
+import eu.seal.apigw.cl.domain.AttributeSet;
+import eu.seal.apigw.cl.domain.EntityMetadata;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
 import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
+import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 
 @Service
 public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
@@ -30,9 +36,17 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 	
 	private static final Logger log = LoggerFactory.getLogger(ClModuleIDLoginGetServiceImp.class);
 
+	@Autowired
+	private SessionManagerConnService smConn;
+	
+	private AttributeSet idpRequest;
+	private EntityMetadata idpMetadata;
+	
 	
 	@Override
 	public ModuleTrigger clModuleIDLoginGet (String sessionID, String moduleID) throws Exception {
+		
+		String msToken = null;
 		
 		try {
 			
@@ -40,55 +54,77 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
 			
 			// Validating session
-			//TODO
-			if (true) {
-				
-				
+			// Checking whether this sessionID exists.
+			Object objDatastore = smConn.readVariable(sessionID, "datastore");
+			if (objDatastore != null) {
+			
+				log.info("Existing Datastore: " + objDatastore.toString());
 				
 				// Selecting the ID source data from the ConfManager
 				//TODO
 				
-				// idpMetadata is created with the eIDAS/eduGain info from the ConfMngr. Saving in the session.
-				//TODO
-				// idpRequest is created. Saving in the session too.
-				//TODO
+				if (true) {
 				
-				// Building the moduleTrigger to be returned: access: binding, the url of the IdPms, and the msToken. 
-				
-				theStatus.setMessage(Constants.AVAILABLE_IDPS_MSG); 
-				theStatus.setMainCode(Constants.SUCESS_CODE); 
-				theStatus.setSecondaryCode(Constants.AVAILABLE_IDPS_CODE);
-								
-				ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
-				theAccess.setAddress("theUrl");
-				theAccess.setBinding(BindingEnum.POST); // The related one
-				theAccess.setBodyContent(null); // If the access method requires to transfer data on the body of the request, it will be written here
-				theAccess.setContentType(null); // MIME type of the body, if any
-				moduleTrigger.setAccess (theAccess);
-				
-				
-				// Generate token for returning the session.
-				//TODO
-				moduleTrigger.setPayload("msToken");
+					// idpMetadata is creating with the eIDAS/eduGain info from the ConfMngr. Saving in the session.
+					idpMetadata = new EntityMetadata();
+					// TODO
+					//...
+					
+					ObjectMapper objIdpMetadata = new ObjectMapper();
+					smConn.updateVariable(sessionID,"idpMetadata",objIdpMetadata.writeValueAsString(idpMetadata));
+					
+					// idpRequest is creating. Saving in the session too.
+					idpRequest = new AttributeSet();
+					//TODO
+					//...
+					
+					ObjectMapper objIdpRequest = new ObjectMapper();
+					smConn.updateVariable(sessionID,"idpRequest",objIdpRequest.writeValueAsString(idpRequest));
+					
+					// Building the moduleTrigger to be returned: access: binding, the url of the IdPms, and the msToken. 
+					
+					theStatus.setMessage(Constants.AVAILABLE_IDPS_MSG); 
+					theStatus.setMainCode(Constants.SUCESS_CODE); 
+					theStatus.setSecondaryCode(Constants.AVAILABLE_IDPS_CODE);
+									
+					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
+					theAccess.setAddress("theUrl"); //TODO: setTarget, instead.
+					theAccess.setBinding(BindingEnum.POST); // The related one
+					theAccess.setBodyContent(null); // If the access method requires to transfer data on the body of the request, it will be written here
+					theAccess.setContentType(null); // MIME type of the body, if any
+					moduleTrigger.setAccess (theAccess);
+					
+					
+					// Generate token for returning the session.
+					msToken = smConn.generateToken(sessionID); // Create msToken: GET /sm/generateToken
+					moduleTrigger.setPayload(msToken);
+				}
+				else {
+				// Not a valid moduleID
+					
+					theStatus.setMessage(Constants.NO_IDPS_MSG); 
+					theStatus.setMainCode(Constants.FAIL_CODE); 
+					theStatus.setSecondaryCode(Constants.NO_IDPS_CODE);
+					moduleTrigger.setAccess (null);
+					moduleTrigger.setPayload (null);
+				}
+					
 		
 			}
 			else {
 				
-				if (true) {
-					theStatus.setMessage(Constants.INVALID_SESSION_MSG); 
-					theStatus.setMainCode(Constants.FAIL_CODE); 
-					theStatus.setSecondaryCode(Constants.INVALID_SESSION_CODE);
-				}
-				else {
-					theStatus.setMessage(Constants.NO_IDPS_MSG); 
-					theStatus.setMainCode(Constants.FAIL_CODE); 
-					theStatus.setSecondaryCode(Constants.NO_IDPS_CODE);
-				}
+			// Not a valid sessionID
+				
+				log.info("Invalid sessionID: " + sessionID);
+				theStatus.setMessage(Constants.INVALID_SESSION_MSG); 
+				theStatus.setMainCode(Constants.FAIL_CODE); 
+				theStatus.setSecondaryCode(Constants.INVALID_SESSION_CODE);
 				
 				moduleTrigger.setAccess (null);
 				moduleTrigger.setPayload (null);
-				
 			}
+				
+			
 			moduleTrigger.setStatus (theStatus);
 			
 			return (moduleTrigger);

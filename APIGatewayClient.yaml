@@ -825,3 +825,86 @@ definitions:
       type: array
       items: 
         $ref: '#/definitions/attributeType'
+        
+  ####### RequestManager #######
+
+ # Descriptor Object for an Attribute Set (a data request or response)
+  attributeSet:
+    description: Object representing a generic request/response. Used for in-application transference of the security assertions or claims containing trusted user information (attribute values); also to set the list of attributes to be requested.
+    type: object
+    properties:
+      id:
+        description: Unique identifier of the set
+        type: string
+        example: "6c0f70a8-f32b-4535-b5f6-0d596c52813a"
+      type:
+        description: Kind of set
+        type: string
+        enum:
+            - Request
+            - Response
+            - AuthResponse
+        example: "Response"
+      issuer:
+        description: ID of the External Entity which issued the set
+        type: string
+        example: "https://esmo.uji.es/gw/saml/idp/metadata.xml"
+      recipient:
+        description: ID of the External Entity which the set is addressed to
+        type: string
+        example: "https://esmo.uji.es/gw/saml/sp/metadata.xml"
+      inResponseTo:
+        description: In response objects, the ID of the request which the set is responding to
+        type: string
+        example: "aaaa70a8-f32b-4535-b5f6-0d596cbbbbb"
+      loa:
+        description: Level of trust of the authentication related to the set, if it is a response for an eIDAS authentication request
+        type: string
+        example: "http://eidas.europa.eu/LoA/substantial"
+      notBefore:
+        description: Minimum validity date of the set
+        type: string
+        example: "2018-12-06T19:40:16Z"
+      notAfter:
+        description: Maximum validity date of the set
+        type: string
+        example: "2018-12-06T19:45:16Z"
+      status:
+        description: "To represent the tatus of the set (ok, error, etc.)."
+        $ref: '#/definitions/attributeSetStatus'
+      attributes:
+        description: The list of the attributes or claims related to the user, contained on the set
+        type: array
+        items:
+            $ref: '#/definitions/attributeType'
+      properties:
+        description: Dictionary of additional fields of data related to the attributes in the set(strings only), specific for a certain entity type or protocol. List of useful metadata related to the attributes and any specific information that came with the remote SP/RP request (or was filled in with metadata stored presets for said SP/RP) and might be of need for some implementation of the local SP to issue the authentication request.
+        type: object
+        #Indicates free-form object
+        additionalProperties:
+            type: string       
+
+            
+  attributeSetStatus:
+    type: object
+    properties:
+      code:
+        description: main standard status code from a closed list.
+        type: string
+        enum:
+            - OK
+            - ERROR
+      subcode:
+        description: free text field to represent status codes, open for specific applications or fluxes.
+        type: string
+      message:
+        description: a free text string to provide human-readable status-error information
+        type: string
+
+            
+            
+  attributeSetList:
+      type: array
+      items: 
+        $ref: '#/definitions/attributeSet'
+  

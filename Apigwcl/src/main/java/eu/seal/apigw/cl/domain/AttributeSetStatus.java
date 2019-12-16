@@ -16,32 +16,26 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 
-
 /**
- * Descriptor of a key or certificate.
+ * AttributeSetStatus
  */
-@ApiModel(description = "Descriptor of a key or certificate.")
 @Validated
 
-public class SecurityKeyType   {
-  @JsonProperty("keyType")
-  private String keyType = null;
-
+public class AttributeSetStatus   {
   /**
-   * To which use is this key intended.
+   * main standard status code from a closed list.
    */
-  public enum UsageEnum {
-    signing("signing"),
+  public enum CodeEnum {
+    OK("OK"),
     
-    encryption("encryption");
+    ERROR("ERROR");
 
     private String value;
 
-    UsageEnum(String value) {
+    CodeEnum(String value) {
       this.value = value;
     }
 
@@ -52,8 +46,8 @@ public class SecurityKeyType   {
     }
 
     @JsonCreator
-    public static UsageEnum fromValue(String text) {
-      for (UsageEnum b : UsageEnum.values()) {
+    public static CodeEnum fromValue(String text) {
+      for (CodeEnum b : CodeEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
           return b;
         }
@@ -62,70 +56,73 @@ public class SecurityKeyType   {
     }
   }
 
-  @JsonProperty("usage")
-  private UsageEnum usage = null;
+  @JsonProperty("code")
+  private CodeEnum code = null;
 
-  @JsonProperty("key")
-  private String key = null;
+  @JsonProperty("subcode")
+  private String subcode = null;
 
-  public SecurityKeyType keyType(String keyType) {
-    this.keyType = keyType;
+  @JsonProperty("message")
+  private String message = null;
+
+  public AttributeSetStatus code(CodeEnum code) {
+    this.code = code;
     return this;
   }
 
   /**
-   * String identifying the kind of key
-   * @return keyType
+   * main standard status code from a closed list.
+   * @return code
   **/
-  @ApiModelProperty(example = "RSAPublicKey", value = "String identifying the kind of key")
+  @ApiModelProperty(value = "main standard status code from a closed list.")
 
 
-  public String getKeyType() {
-    return keyType;
+  public CodeEnum getCode() {
+    return code;
   }
 
-  public void setKeyType(String keyType) {
-    this.keyType = keyType;
+  public void setCode(CodeEnum code) {
+    this.code = code;
   }
 
-  public SecurityKeyType usage(UsageEnum usage) {
-    this.usage = usage;
+  public AttributeSetStatus subcode(String subcode) {
+    this.subcode = subcode;
     return this;
   }
 
   /**
-   * To which use is this key intended.
-   * @return usage
+   * free text field to represent status codes, open for specific applications or fluxes.
+   * @return subcode
   **/
-  @ApiModelProperty(example = "signing", value = "To which use is this key intended.")
+  @ApiModelProperty(value = "free text field to represent status codes, open for specific applications or fluxes.")
 
 
-  public UsageEnum getUsage() {
-    return usage;
+  public String getSubcode() {
+    return subcode;
   }
 
-  public void setUsage(UsageEnum usage) {
-    this.usage = usage;
+  public void setSubcode(String subcode) {
+    this.subcode = subcode;
   }
 
-  public SecurityKeyType key(String key) {
-    this.key = key;
+  public AttributeSetStatus message(String message) {
+    this.message = message;
     return this;
   }
 
   /**
-   * B64 string representing the key binary
-   * @return key
+   * a free text string to provide human-readable status-error information
+   * @return message
   **/
-  @ApiModelProperty(example = "MDAACaFgw...xFgy=", value = "B64 string representing the key binary")
+  @ApiModelProperty(value = "a free text string to provide human-readable status-error information")
 
 
-  public String getKey() {
-    return key;
+  public String getMessage() {
+    return message;
   }
 
-  public void setKey(String key) {
-    this.key = key;
+  public void setMessage(String message) {
+    this.message = message;
   }
 
 
@@ -137,25 +134,25 @@ public class SecurityKeyType   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SecurityKeyType securityKeyType = (SecurityKeyType) o;
-    return Objects.equals(this.keyType, securityKeyType.keyType) &&
-        Objects.equals(this.usage, securityKeyType.usage) &&
-        Objects.equals(this.key, securityKeyType.key);
+    AttributeSetStatus attributeSetStatus = (AttributeSetStatus) o;
+    return Objects.equals(this.code, attributeSetStatus.code) &&
+        Objects.equals(this.subcode, attributeSetStatus.subcode) &&
+        Objects.equals(this.message, attributeSetStatus.message);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(keyType, usage, key);
+    return Objects.hash(code, subcode, message);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SecurityKeyType {\n");
+    sb.append("class AttributeSetStatus {\n");
     
-    sb.append("    keyType: ").append(toIndentedString(keyType)).append("\n");
-    sb.append("    usage: ").append(toIndentedString(usage)).append("\n");
-    sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    code: ").append(toIndentedString(code)).append("\n");
+    sb.append("    subcode: ").append(toIndentedString(subcode)).append("\n");
+    sb.append("    message: ").append(toIndentedString(message)).append("\n");
     sb.append("}");
     return sb.toString();
   }

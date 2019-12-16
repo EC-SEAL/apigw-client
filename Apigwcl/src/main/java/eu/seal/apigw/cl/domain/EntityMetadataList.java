@@ -26,7 +26,6 @@ import eu.seal.apigw.cl.domain.EntityMetadata;
  * EntityMetadataList
  */
 @Validated
-@javax.annotation.Generated(value = "eu.seal.cm.codegen.languages.SpringCodegen", date = "2018-12-10T12:53:06.421Z")
 
 public class EntityMetadataList extends ArrayList<EntityMetadata>  {
 

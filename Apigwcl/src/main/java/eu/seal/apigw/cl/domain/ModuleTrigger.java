@@ -19,7 +19,6 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Response object of the API GW. Returns data, status and commands how to deal the loading of a specific module")
 @Validated
-@javax.annotation.Generated(value = "eu.seal.apigw.cl.codegen.languages.SpringCodegen", date = "2019-11-29T11:06:02.261Z")
 
 public class ModuleTrigger   {
   @JsonProperty("payload")

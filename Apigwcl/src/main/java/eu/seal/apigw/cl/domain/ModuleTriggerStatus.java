@@ -14,7 +14,6 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Status of the response")
 @Validated
-@javax.annotation.Generated(value = "eu.seal.apigw.cl.codegen.languages.SpringCodegen", date = "2019-11-29T11:06:02.261Z")
 
 public class ModuleTriggerStatus   {
   @JsonProperty("message")

@@ -15,7 +15,6 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "If the response commands the client to access elsewhere, this field will tell where and how")
 @Validated
-@javax.annotation.Generated(value = "eu.seal.apigw.cl.codegen.languages.SpringCodegen", date = "2019-11-29T11:06:02.261Z")
 
 public class ModuleTriggerAccess   {
   /**

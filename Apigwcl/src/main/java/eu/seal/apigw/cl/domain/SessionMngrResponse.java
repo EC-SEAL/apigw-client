@@ -28,7 +28,6 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "The response object for all APIs of the SM microservice.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-12-17T14:37:43.426Z")
 
 public class SessionMngrResponse   {
   /**

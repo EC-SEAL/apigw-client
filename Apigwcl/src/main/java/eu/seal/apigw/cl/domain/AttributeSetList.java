@@ -14,18 +14,17 @@ package eu.seal.apigw.cl.domain;
 
 import java.util.Objects;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * AttributeMapList
+ * AttributeSetList
  */
 @Validated
 
-public class AttributeMapList extends ArrayList<AttributeMap>  {
+public class AttributeSetList extends ArrayList<AttributeSet>  {
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -46,7 +45,7 @@ public class AttributeMapList extends ArrayList<AttributeMap>  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AttributeMapList {\n");
+    sb.append("class AttributeSetList {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("}");
     return sb.toString();
@@ -62,24 +61,5 @@ public class AttributeMapList extends ArrayList<AttributeMap>  {
     }
     return o.toString().replace("\n", "\n    ");
   }
-  
-  
-//Get the list of ms with a given apiClass
- public AttributeMapList getMapList (String profile) {
-	  
-	 AttributeMapList attrMap = new AttributeMapList();
-	  
-	 AttributeMap mapping;
-	 Iterator<AttributeMap> attrMapIterator = this.iterator();
-	 while (attrMapIterator.hasNext()) {
-		  mapping = attrMapIterator.next();
-		  if (mapping != null) {
-			  if (mapping.getKeyProfile().equals(profile))
-				  attrMap.add (mapping);
-		  }	  
-	 }
-	 
-	 return attrMap;
- }
 }
 

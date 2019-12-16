@@ -29,7 +29,6 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Represent relatioonships between attributes in two attribute profiles. i.e. eduPerson.givenName <-> eIDAS")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2019-11-28T12:17:08.653Z")
 
 public class AttributeMap   {
   @JsonProperty("keyProfile")

@@ -14,6 +14,8 @@ See README file for the full disclaimer information and LICENSE file for full li
 */
 package eu.seal.apigw.cl.rest_api.services.auth;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +23,11 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.AttributeSet;
 import eu.seal.apigw.cl.domain.EntityMetadata;
+import eu.seal.apigw.cl.domain.EntityMetadataList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
 import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
@@ -39,6 +43,9 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 	@Autowired
 	private SessionManagerConnService smConn;
 	
+	@Autowired
+	private ConfMngrConnService confMngrConnService;
+	
 	private AttributeSet idpRequest;
 	private EntityMetadata idpMetadata;
 	
@@ -48,6 +55,7 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 		
 		String msToken = null;
 		
+		//moduleID is eIDAS or eduGAIN, from AUTHSOURCE
 		try {
 			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();
@@ -60,23 +68,61 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 			
 				log.info("Existing Datastore: " + objDatastore.toString());
 				
+				//...eduGAINmetadata or eIDASmetadata (selected the ms randomly from the AUTHSOURCE.)
+				// in the msList select according the apiclass ('AUTHSOURCE' or 'AS') ;the APICALL es siemrpre authenticate aquí
+				// para rellenar el idpRequest
+				
+				
+				// If eduGAIN, depending on the claims of the edugainmetadata.json eduPerson and schac
+				
+				
+				
 				// Selecting the ID source data from the ConfManager
 				//TODO
+				EntityMetadata authMetadata0 = confMngrConnService.getEntityMetadata("AUTHSOURCE", moduleID); // Reading the AUTHSOURCEmetadata.json
+				// TODO: if not null 
+				//Select the ms (it could be several) for the moduleID. Choose one randomly.
+				String authMsName = authMetadata0.getMicroservice().get(0); //TODO: randomly
+				
+				EntityMetadataList authMetadataList0 = confMngrConnService.getEntityMetadataSet (moduleID); // Reading the EDUGAINmetadata.json or eIDASmetadata.json
+				// TODO: if not null
+				EntityMetadataList authMetadataList = authMetadataList0.getMsEntities(authMsName);
+				// TODO: if not null
+				idpMetadata = authMetadataList.get(0); //TODO: randomly
+	
+				
+				
+				
+				
+				confMngrConnService.getAttributeSetByProfile(profileId) //eIDAS or eduGAIN (missing file??!! Search on shac or eduPerson.)
+				// For fulfilling the claims
+				
+				confMngrConnService.getMicroservicesByApiClass("AUTHSOURCE");
+				// Select the previous one.
+				// Check the apicall is "authenticate"
+				
+				
+				// TOASK
+				idpRequest.setId( UUID.randomUUID().toString());
+				idpRequest.setType(AttributeSet.TypeEnum.REQUEST);
+				idpRequest.setInResponseTo("inResponseTo");
+				idpRequest.setIssuer( "spRequest.getIssuer()");
+				idpRequest.setRecipient( idpMetadata.getEntityId());
+				idpRequest.setProperties( "spRequest.getProperties()");
+				idpRequest.setLoa( "spRequest.getLoa()");
+				idpRequest.setAttributes(attributes);
+				idpRequest.setStatus("status");
+				idpRequest.setNotAfter("notAfter");
 				
 				if (true) {
 				
 					// idpMetadata is creating with the eIDAS/eduGain info from the ConfMngr. Saving in the session.
-					idpMetadata = new EntityMetadata();
-					// TODO
-					//...
 					
 					ObjectMapper objIdpMetadata = new ObjectMapper();
 					smConn.updateVariable(sessionID,"idpMetadata",objIdpMetadata.writeValueAsString(idpMetadata));
 					
 					// idpRequest is creating. Saving in the session too.
-					idpRequest = new AttributeSet();
-					//TODO
-					//...
+					
 					
 					ObjectMapper objIdpRequest = new ObjectMapper();
 					smConn.updateVariable(sessionID,"idpRequest",objIdpRequest.writeValueAsString(idpRequest));

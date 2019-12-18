@@ -82,5 +82,23 @@ public class EntityMetadataList extends ArrayList<EntityMetadata>  {
 	 
 	  return theEntity;
  }
+ 
+//Get the list of entities with a given ms
+public EntityMetadataList getMsEntities (String ms) {
+	  
+	EntityMetadataList msEntities = new EntityMetadataList();
+	  
+	  EntityMetadata em;
+	  Iterator<EntityMetadata> msMetadataIterator = this.iterator();
+	  while (msMetadataIterator.hasNext()) {
+		  em = msMetadataIterator.next();
+		  if (!em.getMicroservice().isEmpty()) {
+			  if (em.getMicroservice().contains(ms))
+				  msEntities.add (em);
+		  }	  
+	  }
+	 
+	  return msEntities;
+	}
 }
 

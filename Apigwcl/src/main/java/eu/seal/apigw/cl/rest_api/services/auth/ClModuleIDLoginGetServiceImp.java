@@ -14,6 +14,9 @@ See README file for the full disclaimer information and LICENSE file for full li
 */
 package eu.seal.apigw.cl.rest_api.services.auth;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -26,11 +29,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.AttributeSet;
+import eu.seal.apigw.cl.domain.AttributeType;
+import eu.seal.apigw.cl.domain.AttributeTypeList;
 import eu.seal.apigw.cl.domain.EntityMetadata;
 import eu.seal.apigw.cl.domain.EntityMetadataList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
 import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
+import eu.seal.apigw.cl.domain.MsMetadata;
+import eu.seal.apigw.cl.domain.MsMetadataList;
+import eu.seal.apigw.cl.domain.PublishedApiType;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 
@@ -93,26 +101,78 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 				
 				
 				
-				
-				confMngrConnService.getAttributeSetByProfile(profileId) //eIDAS or eduGAIN (missing file??!! Search on shac or eduPerson.)
+				List<String> theClaims = idpMetadata.getClaims();
+				AttributeTypeList attributes = new AttributeTypeList();
+				AttributeTypeList attTypeList = null;
 				// For fulfilling the claims
+				//TODO
+				// Select the friendly names from the XXXmetadata.json: theClaims
+				// Complete the attribute from the attribute profiles.
+				switch (moduleID) {
 				
-				confMngrConnService.getMicroservicesByApiClass("AUTHSOURCE");
-				// Select the previous one.
+					case "eIDAS":
+						// read the friendly names from the EIDASmetadata.json
+						attTypeList = confMngrConnService.getAttributeSetByProfile("eIDAS");
+						for ( String aClaim : theClaims)
+						{
+							
+								Optional<AttributeType> foundAtt=null;
+								foundAtt = attTypeList.stream().filter(a ->a.getFriendlyName().equals(aClaim) ).findAny();
+							
+										
+							if (foundAtt !=null && foundAtt.isPresent())
+							{
+								attributes.add( foundAtt.get());
+								System.out.println("FoundAtt:"+foundAtt.get());
+								
+							}
+							else
+							{
+								System.out.println("### NOT found");
+							}
+						}
+						break;
+					case "eduGAIN":
+						// read the friendly names from the EDUGAINmetadata.json
+						//confMngrConnService.getAttributeSetByProfile(profileId) //eIDAS or eduGAIN (missing file??!! Search on shac or eduPerson.)
+						break;
+					default:
+						;
+			
+					
+				}
+				
+				
+				MsMetadataList authMs = confMngrConnService.getMicroservicesByApiClass("AS").getApicallMs("authenticate");  // Reading the msMetadataList.json
 				// Check the apicall is "authenticate"
+				// Select the previous one.
+				MsMetadata theAuthMs = authMs.getMs(authMsName);
+				//TODO: if not null
+				//For fulfilling theAccess (see bellow)
+				List<PublishedApiType> thePublishedApiList = theAuthMs.getPublishedAPI();
+				PublishedApiType thePublishedApi = null;
+				Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
+				while (paIterator.hasNext()) {
+					
+					thePublishedApi = paIterator.next();
+					  
+					if (thePublishedApi.getApiClass().equals("AS") &&
+						thePublishedApi.getApiCall().equals("authenticate")	)
+						  break; 
+					  	  
+				}
 				
-				
-				// TOASK
+				// TODO: ASK!!
 				idpRequest.setId( UUID.randomUUID().toString());
 				idpRequest.setType(AttributeSet.TypeEnum.REQUEST);
-				idpRequest.setInResponseTo("inResponseTo");
-				idpRequest.setIssuer( "spRequest.getIssuer()");
+				idpRequest.setInResponseTo("inResponseTo"); //?
+				idpRequest.setIssuer( "spRequest.getIssuer()");//?
 				idpRequest.setRecipient( idpMetadata.getEntityId());
-				idpRequest.setProperties( "spRequest.getProperties()");
-				idpRequest.setLoa( "spRequest.getLoa()");
+				//idpRequest.setProperties( "spRequest.getProperties()"); //?
+				idpRequest.setLoa( "spRequest.getLoa()"); //?
 				idpRequest.setAttributes(attributes);
-				idpRequest.setStatus("status");
-				idpRequest.setNotAfter("notAfter");
+				//idpRequest.setStatus("status"); //?
+				idpRequest.setNotAfter("notAfter"); //?
 				
 				if (true) {
 				
@@ -134,8 +194,9 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 					theStatus.setSecondaryCode(Constants.AVAILABLE_IDPS_CODE);
 									
 					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
-					theAccess.setAddress("theUrl"); //TODO: setTarget, instead.
-					theAccess.setBinding(BindingEnum.POST); // The related one
+					theAccess.setAddress(thePublishedApi.getApiEndpoint()); 
+					// TODO: how to translate ApiConnectionType into BindingEnum
+					//theAccess.setBinding(thePublishedApi.getApiConnectionType()); // ?
 					theAccess.setBodyContent(null); // If the access method requires to transfer data on the body of the request, it will be written here
 					theAccess.setContentType(null); // MIME type of the body, if any
 					moduleTrigger.setAccess (theAccess);

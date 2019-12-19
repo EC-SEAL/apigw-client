@@ -99,6 +99,41 @@ public class MsMetadataList extends ArrayList<MsMetadata>  {
 	  return classMs;
   }
   
+//Get the list of ms with a given apiClass
+ public MsMetadataList getApicallMs (String apiCall) {
+	  
+	  MsMetadataList callMs = new MsMetadataList();
+	  
+	  MsMetadata ms;
+	  Iterator<MsMetadata> msMetadataIterator = this.iterator();
+	  while (msMetadataIterator.hasNext()) {
+		  ms = msMetadataIterator.next();
+		  if (!ms.getPublishedAPI().isEmpty()) {
+			  if (ms.isCallProvided(apiCall))
+				  callMs.add (ms);
+		  }	  
+	  }
+	 
+	  return callMs;
+ }
+ 
+//Get the ms with a given name
+public MsMetadata getMs (String msId) {
+	  
+	  MsMetadata ms = null;
+	  Iterator<MsMetadata> msMetadataIterator = this.iterator();
+	  while (msMetadataIterator.hasNext()) {
+		  ms = msMetadataIterator.next();
+		  
+		  if (ms.getMsId().equals(msId))
+			  break; 
+		  	  
+	  }
+	 
+	  return ms;
+}
+ 
+  
   
   
   // Nikos's 

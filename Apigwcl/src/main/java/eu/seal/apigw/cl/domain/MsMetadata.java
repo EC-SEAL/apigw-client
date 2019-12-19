@@ -201,5 +201,17 @@ public class MsMetadata   {
 	  
 	  return false;
   }
+  
+  // Whether the apiCall is within the publishedAPI.
+  public Boolean isCallProvided (String apiCall) {
+	  
+	  Iterator<PublishedApiType> publishedApiTypeIterator = this.getPublishedAPI().iterator();
+	  while (publishedApiTypeIterator.hasNext() ) {
+		  if (publishedApiTypeIterator.next().getApiCall().toString().equals(apiCall))
+			  return true;
+	  }
+	  
+	  return false;
+  }
 }
 

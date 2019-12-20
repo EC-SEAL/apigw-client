@@ -71,9 +71,9 @@ public class KeyStoreServiceImpl implements KeyStoreService {
         
         httpSigAttempts = this.paramServ.getParam("HTTPSIG_ATTEMPTS") == null ? "2": this.paramServ.getParam("HTTPSIG_ATTEMPTS");
         
-//        LOG.info ("certPath: " + certPath);
+        LOG.info ("certPath: " + certPath);
 //        LOG.info ("jwtKeyAlias: " + jwtKeyAlias);
-//        LOG.info ("httpSigKeyAlias: " + httpSigKeyAlias);
+        LOG.info ("httpSigKeyAlias: " + httpSigKeyAlias);
 //        LOG.info ("jweKeyAlias: " + jweKeyAlias);
 
         keystore = KeyStore.getInstance(KeyStore.getDefaultType());

@@ -18,7 +18,6 @@ The following environment variables are to be set:
 			- STORE_PASS= password for the keystore containing the certificate
 			- HTTPSIG_CERT_ALIAS= for the httpsig protocol
 			- SIGNING_SECRET= HS256 secret used for symmetric signing of jwts, e.g. QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=
-			- RSA_CIPHERED_ESMOTOKEN= boolean, if true then the ESMOToken is encrypted, otherwise it is signed only.
 			- CONFIGURATION_MANAGER_URL= location of the configuration manager
 			- SESSION_MANAGER_URL= location of the session manager
 			- SSL_* = information related to your ssl certificate

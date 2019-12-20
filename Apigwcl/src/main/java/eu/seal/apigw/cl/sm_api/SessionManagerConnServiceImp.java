@@ -104,7 +104,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
         if (myLGW != null)
         	sender = myLGW.getMicroservice().get(0);
         else {
-        	sender = "APIGWCLms001";
+        	sender = "CLms001";
         	log.error("HARDCODED sender! "+ sender);
 		}
         

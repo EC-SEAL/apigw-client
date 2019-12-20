@@ -71,110 +71,154 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 			
 			// Validating session
 			// Checking whether this sessionID exists.
-			Object objDatastore = smConn.readVariable(sessionID, "datastore");
-			if (objDatastore != null) {
 			
-				log.info("Existing Datastore: " + objDatastore.toString());
-				
-				//...eduGAINmetadata or eIDASmetadata (selected the ms randomly from the AUTHSOURCE.)
-				// in the msList select according the apiclass ('AUTHSOURCE' or 'AS') ;the APICALL es siemrpre authenticate aquí
-				// para rellenar el idpRequest
-				
-				
-				// If eduGAIN, depending on the claims of the edugainmetadata.json eduPerson and schac
-				
-				
+			//***Object objDatastore = smConn.readVariable(sessionID, "datastore");
+			//***if (objDatastore != null) {
+			
+			if (true) { // testing
+			
+				//***log.info("Existing Datastore: " + objDatastore.toString());				
 				
 				// Selecting the ID source data from the ConfManager
-				//TODO
 				EntityMetadata authMetadata0 = confMngrConnService.getEntityMetadata("AUTHSOURCE", moduleID); // Reading the AUTHSOURCEmetadata.json
-				// TODO: if not null 
-				//Select the ms (it could be several) for the moduleID. Choose one randomly.
-				String authMsName = authMetadata0.getMicroservice().get(0); //TODO: randomly
-				
-				EntityMetadataList authMetadataList0 = confMngrConnService.getEntityMetadataSet (moduleID); // Reading the EDUGAINmetadata.json or eIDASmetadata.json
-				// TODO: if not null
-				EntityMetadataList authMetadataList = authMetadataList0.getMsEntities(authMsName);
-				// TODO: if not null
-				idpMetadata = authMetadataList.get(0); //TODO: randomly
-	
-				
-				
-				
-				List<String> theClaims = idpMetadata.getClaims();
-				AttributeTypeList attributes = new AttributeTypeList();
-				AttributeTypeList attTypeList = null;
-				// For fulfilling the claims
-				//TODO
-				// Select the friendly names from the XXXmetadata.json: theClaims
-				// Complete the attribute from the attribute profiles.
-				switch (moduleID) {
-				
-					case "eIDAS":
-						// read the friendly names from the EIDASmetadata.json
-						attTypeList = confMngrConnService.getAttributeSetByProfile("eIDAS");
-						for ( String aClaim : theClaims)
-						{
-							
-								Optional<AttributeType> foundAtt=null;
-								foundAtt = attTypeList.stream().filter(a ->a.getFriendlyName().equals(aClaim) ).findAny();
-							
-										
-							if (foundAtt !=null && foundAtt.isPresent())
-							{
-								attributes.add( foundAtt.get());
-								System.out.println("FoundAtt:"+foundAtt.get());
-								
-							}
-							else
-							{
-								System.out.println("### NOT found");
-							}
-						}
-						break;
-					case "eduGAIN":
-						// read the friendly names from the EDUGAINmetadata.json
-						//confMngrConnService.getAttributeSetByProfile(profileId) //eIDAS or eduGAIN (missing file??!! Search on shac or eduPerson.)
-						break;
-					default:
-						;
-			
-					
-				}
-				
-				
-				MsMetadataList authMs = confMngrConnService.getMicroservicesByApiClass("AS").getApicallMs("authenticate");  // Reading the msMetadataList.json
-				// Check the apicall is "authenticate"
-				// Select the previous one.
-				MsMetadata theAuthMs = authMs.getMs(authMsName);
-				//TODO: if not null
-				//For fulfilling theAccess (see bellow)
-				List<PublishedApiType> thePublishedApiList = theAuthMs.getPublishedAPI();
+				 
 				PublishedApiType thePublishedApi = null;
-				Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
-				while (paIterator.hasNext()) {
+				boolean found = false;
+				if (authMetadata0 != null) {
+					found = true;
+					//Select the ms (it could be several) for the moduleID. Choose one randomly.
+					String authMsName = authMetadata0.getMicroservice().get(0); //TODO: randomly
 					
-					thePublishedApi = paIterator.next();
-					  
-					if (thePublishedApi.getApiClass().equals("AS") &&
-						thePublishedApi.getApiCall().equals("authenticate")	)
-						  break; 
-					  	  
+					EntityMetadataList authMetadataList0 = confMngrConnService.getEntityMetadataSet (moduleID); // Reading the EDUGAINmetadata.json or eIDASmetadata.json
+					if (authMetadataList0 != null ) {
+						
+						EntityMetadataList authMetadataList = authMetadataList0.getMsEntities(authMsName);
+						
+						if (authMetadataList != null) {
+							idpMetadata = authMetadataList.get(0); //TODO: randomly
+				
+							
+							List<String> theClaims = idpMetadata.getClaims();
+							AttributeTypeList attributes = new AttributeTypeList();
+							AttributeTypeList attTypeList = null;
+							// For fulfilling the claims
+							// Select the friendly names from the XXXmetadata.json: theClaims
+							// Complete the attribute from the attribute profiles.
+							switch (moduleID) {
+							
+								case "eIDAS":
+									// read the friendly names from the EIDASmetadata.json
+									attTypeList = confMngrConnService.getAttributeSetByProfile("eIDAS");
+									for ( String aClaim : theClaims)
+									{
+										
+										Optional<AttributeType> foundAtt=null;
+										foundAtt = attTypeList.stream().filter(a ->a.getFriendlyName().equals(aClaim) ).findAny();						
+													
+										if (foundAtt !=null && foundAtt.isPresent())
+										{
+											attributes.add( foundAtt.get());
+											log.info ("FoundAtt:" + foundAtt.get());
+											
+										}
+										else
+										{
+											log.info ("### NOT found: " + aClaim);
+										}
+									}
+									break;
+								case "eduGAIN":
+									// read the friendly names from the EDUGAINmetadata.json
+									//Search on shac or eduPerson.)
+									attTypeList = confMngrConnService.getAttributeSetByProfile("eduPerson");
+									AttributeTypeList attTypeList2 = confMngrConnService.getAttributeSetByProfile("shac");
+									for ( String aClaim : theClaims)
+									{
+										
+										Optional<AttributeType> foundAtt=null;
+										foundAtt = attTypeList.stream().filter(a ->a.getFriendlyName().equals(aClaim) ).findAny();
+																			
+										if (foundAtt !=null && foundAtt.isPresent())
+										{
+											attributes.add( foundAtt.get());
+											log.info ("FoundAtt in EDUPERSON:" + foundAtt.get());
+											
+										}
+										else
+										{ // Searching in SCHAC
+											Optional<AttributeType> foundAtt2=null;
+											foundAtt2 = attTypeList2.stream().filter(a ->a.getFriendlyName().equals(aClaim) ).findAny();
+																					
+											if (foundAtt2 !=null && foundAtt2.isPresent())
+											{
+												attributes.add( foundAtt2.get());
+												log.info ("FoundAtt in SHAC:" + foundAtt2.get());
+												
+											}
+											else
+											{ // Searching in SCHAC
+												log.info ("### NOT found: " + aClaim);
+											}
+										}
+									}
+									break;
+								default:
+									;
+							
+								} 
+							
+							
+							
+							MsMetadataList authMs = confMngrConnService.getMicroservicesByApiClass("AS").getApicallMs("authenticate");  // Reading the msMetadataList.json
+							// Check the apicall is "authenticate"
+							// Select the previous one.
+							MsMetadata theAuthMs = authMs.getMs(authMsName);
+							if (theAuthMs == null) {
+								log.error("Not found in msMetadataList.json: " + theAuthMs.getMsId());
+								throw new Exception ("ERROR: check the msMetadataList.json");
+							}
+							//For fulfilling theAccess (see bellow)
+							List<PublishedApiType> thePublishedApiList = theAuthMs.getPublishedAPI();
+							
+							Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
+							while (paIterator.hasNext()) {
+								
+								thePublishedApi = paIterator.next();
+								  
+								if (thePublishedApi.getApiClass().equals("AS") &&
+									thePublishedApi.getApiCall().equals("authenticate")	)
+									  break; 
+								  	  
+							}
+							
+							// TODO: ASK!!
+							idpRequest.setId( UUID.randomUUID().toString());
+							idpRequest.setType(AttributeSet.TypeEnum.REQUEST);
+							idpRequest.setInResponseTo("inResponseTo"); //?
+							idpRequest.setIssuer( "spRequest.getIssuer()");//?
+							idpRequest.setRecipient( idpMetadata.getEntityId());
+							//idpRequest.setProperties( "spRequest.getProperties()"); //?
+							idpRequest.setLoa( "spRequest.getLoa()"); //?
+							idpRequest.setAttributes(attributes);
+							//idpRequest.setStatus("status"); //?
+							idpRequest.setNotAfter("notAfter"); //?
+						
+						} else {
+							found = false;
+							log.info("Not found in AUTHSOURCEmetadata.json: " + authMsName);
+						}
+					
+					} else {
+						found = false;
+						log.info("Not found in EDUGAINmetadata.json/eIDASmetadata.json: " + moduleID);
+					
+					}
+				
 				}
+				else log.info("Not found in AUTHSOURCEmetadata.json: " + moduleID);
 				
-				// TODO: ASK!!
-				idpRequest.setId( UUID.randomUUID().toString());
-				idpRequest.setType(AttributeSet.TypeEnum.REQUEST);
-				idpRequest.setInResponseTo("inResponseTo"); //?
-				idpRequest.setIssuer( "spRequest.getIssuer()");//?
-				idpRequest.setRecipient( idpMetadata.getEntityId());
-				//idpRequest.setProperties( "spRequest.getProperties()"); //?
-				idpRequest.setLoa( "spRequest.getLoa()"); //?
-				idpRequest.setAttributes(attributes);
-				//idpRequest.setStatus("status"); //?
-				idpRequest.setNotAfter("notAfter"); //?
 				
-				if (true) {
+				if (found) {
 				
 					// idpMetadata is creating with the eIDAS/eduGain info from the ConfMngr. Saving in the session.
 					

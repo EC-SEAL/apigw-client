@@ -69,6 +69,14 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
 	@Value("${apigwcl.cm.getConfigurationPath}")
 	private String[] getConfigurationPath;
 	
+	@Value("${apigwcl.cm.getAttributeSetByProfilePath}")
+	private String[] getAttributeSetByProfilePath;
+	
+	@Value("${apigwcl.cm.getAttributeProfilesPath}")
+	private String getAttributeProfilesPath;
+	
+	
+	
 
 	
 	@Autowired
@@ -140,7 +148,7 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
 			}
 			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 			
-			urlParameters.add(new NameValuePair("collectionId", collectionId));
+			urlParameters.add(new NameValuePair(getEntityMetadataSetPath[1], collectionId));
 			String jsonResult = network.sendGetURIParams (cmUrl, 
 					getEntityMetadataSetPath[0] + "{" + getEntityMetadataSetPath[1] + "}", 
 					urlParameters, 1);
@@ -188,8 +196,8 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
 			}
 			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 			
-			urlParameters.add(new NameValuePair("collectionId", collectionId));
-			urlParameters.add(new NameValuePair("entityId", entityId));
+			urlParameters.add(new NameValuePair(getEntityMetadataPath[1], collectionId));
+			urlParameters.add(new NameValuePair(getEntityMetadataPath[2], entityId));
 			String jsonResult = network.sendGetURIParams (cmUrl, 
 					getEntityMetadataPath[0] + "{" + getEntityMetadataPath[1] + "}" + "/{" + getEntityMetadataPath[2] + "}", 
 					urlParameters, 1);
@@ -284,7 +292,7 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
 			}
 			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 			
-			urlParameters.add(new NameValuePair("apiClass", apiClasses));
+			urlParameters.add(new NameValuePair(getMicroservicesByApiClassPath[1], apiClasses));
 			String jsonResult = network.sendGetURIParams (cmUrl, 
 					getMicroservicesByApiClassPath[0] + "{" + getMicroservicesByApiClassPath[1] + "}", 
 					urlParameters, 1);
@@ -378,7 +386,7 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
 			}
 			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 			
-			urlParameters.add(new NameValuePair("confId", confId));
+			urlParameters.add(new NameValuePair(getConfigurationPath[1], confId));
 			String jsonResult = network.sendGetURIParams (cmUrl, 
 					getConfigurationPath[0] + "{" + getConfigurationPath[1] + "}", 
 					urlParameters, 1);
@@ -415,20 +423,76 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
 
 
 
-
+	// /metadata/attributes/
 	@Override
 	public List<String> getAttributeProfiles() {
-		// TODO Auto-generated method stub
-		return null;
+		// returns available **attribute profiles**
+		
+				List<String> result = null;
+				
+				try {
+					if (network == null)
+					{
+							network = new NetworkServiceImpl(keyStoreService);
+					}
+					List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+					
+					String jsonResult = network.sendGet (cmUrl, 
+							getAttributeProfilesPath, 
+							urlParameters, 1);
+					
+					if (jsonResult != null) {
+						//log.info("Result: "+ jsonResult);
+				        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+				        result = mapper.readValue(jsonResult, List.class);
+				        log.info("Result: "+ result);
+					}
+					
+				}
+
+				catch (Exception e) {
+					log.error("CM exception", e);
+					return null;
+				}
+				
+				return result;
 	}
 
 
 
-
+	// /metadata/attributes/{attrProfileId}
 	@Override
 	public AttributeTypeList getAttributeSetByProfile(String profileId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		AttributeTypeList result = null;
+		
+		try {
+			if (network == null)
+			{
+					network = new NetworkServiceImpl(keyStoreService);
+			}
+			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+			
+			urlParameters.add(new NameValuePair(getAttributeSetByProfilePath[1], profileId));
+			String jsonResult = network.sendGetURIParams (cmUrl, 
+					getAttributeSetByProfilePath[0] + "{" + getAttributeSetByProfilePath[1] + "}", 
+					urlParameters, 1);
+			
+			if (jsonResult != null) {
+				//log.info("jsonResult: "+ jsonResult);
+		        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		        result = mapper.readValue(jsonResult, AttributeTypeList.class);
+		        log.info("Result: "+ result);
+			}
+			
+		}
+		
+		catch (Exception e) {
+			log.error("CM exception", e);
+			return null;
+		}
+		
+		return result;
 	}
 	
 	

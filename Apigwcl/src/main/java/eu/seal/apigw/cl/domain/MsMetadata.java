@@ -207,7 +207,7 @@ public class MsMetadata   {
 	  
 	  Iterator<PublishedApiType> publishedApiTypeIterator = this.getPublishedAPI().iterator();
 	  while (publishedApiTypeIterator.hasNext() ) {
-		  if (publishedApiTypeIterator.next().getApiCall().toString().equals(apiCall))
+		  if (publishedApiTypeIterator.next().getApiCall().equals(apiCall))
 			  return true;
 	  }
 	  

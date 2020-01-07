@@ -52,7 +52,6 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 	
 	//TODO
 	private String sender = null;
-	private String receiver = null;
 	
 	private static final Logger log = LoggerFactory.getLogger(SessionManagerConnServiceImp.class);
 	
@@ -86,22 +85,14 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 		
 		hostURL = this.paramServ.getParam("SESSION_MANAGER_URL");
 		
-		//TODO
 		// The receiver will be different: Persistence, Identity, IDderivation, ...
 		// ******************************
-		/*
-		MsMetadataList myACMs = this.confMngrService.getMicroservicesByApiClass("ACM");
-		if (myACMs != null)
-			this.receiver = myACMs.get(0).getMsId();	// The first one found
-		else {
-			receiver = "ACMms001";
-			log.error("HARDCODED receiver! "+ receiver);
-		}
-		*/
+		
      
 		//TODO
-        EntityMetadata myLGW = this.confMngrService.getConfiguration("LGW"); // APIGWCL or reading from an environment variable. TOASK
-        if (myLGW != null)
+        //EntityMetadata myLGW = this.confMngrService.getConfiguration("LGW"); // APIGWCL or reading from an environment variable. TOASK
+		EntityMetadata myLGW = null;
+		if (myLGW != null)
         	sender = myLGW.getMicroservice().get(0);
         else {
         	sender = "CLms001";
@@ -111,7 +102,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
         //TODO: to comment them after testing
         System.out.println("hostURL: " + hostURL);
         System.out.println("sender: "+ sender);
-        System.out.println("receiver: "+ receiver);
+        System.out.println("receiver wont be constant");
         
         
         
@@ -149,7 +140,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 	}
 	
 	@Override
-	public String generateToken(String sessionId)
+	public String generateToken(String sessionId, String receiver)
 			throws UnrecoverableKeyException, KeyStoreException, FileNotFoundException, NoSuchAlgorithmException,
 			CertificateException, InvalidKeySpecException, IOException
 	{
@@ -171,7 +162,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         urlParameters.add(new NameValuePair("sessionId",sessionId));
         urlParameters.add(new NameValuePair("sender", this.sender));   
-        urlParameters.add(new NameValuePair("receiver", this.receiver)); 
+        urlParameters.add(new NameValuePair("receiver", receiver)); 
         
         urlParameters.add(new NameValuePair("data", "extraData"));
         

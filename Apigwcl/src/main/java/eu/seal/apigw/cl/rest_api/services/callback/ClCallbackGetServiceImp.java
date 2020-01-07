@@ -16,15 +16,23 @@ package eu.seal.apigw.cl.rest_api.services.callback;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.seal.apigw.cl.domain.ModuleTrigger;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import eu.seal.apigw.cl.domain.AttributeSet.TypeEnum;
+import eu.seal.apigw.cl.domain.DataStore;
+import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 
 @Service
 public class ClCallbackGetServiceImp implements ClCallbackGetService{
 
 	
 	private static final Logger log = LoggerFactory.getLogger(ClCallbackGetServiceImp.class);
+	
+	@Autowired
+	private SessionManagerConnService smConn;
 
 	
 	@Override
@@ -32,12 +40,23 @@ public class ClCallbackGetServiceImp implements ClCallbackGetService{
 		
 		try {
 			
-			// TODO
-			
 			// Get sessionData from SM
+			Object objDatastore = smConn.readVariable(sessionID, "datastore");
+			if (objDatastore != null) {
+				
+				DataStore datastore = (new ObjectMapper()).readValue(objDatastore.toString(),DataStore.class);
+				log.info("Reading datastore...");
+				log.info("## datastore: " + datastore.toString() );
 			
 			// Show the datastore (eIDAS/eduGain/passport data) in a Web Screen
-			;
+			//TODO
+				
+			}
+			else {
+				log.info("Invalid sessionID: " + sessionID);
+				throw new Exception ("Invalid sessionID");
+				
+			}
 		}
 		catch (Exception e) {
 			log.error("Exception: ", e);

@@ -86,7 +86,7 @@ public class AuthApiController implements AuthApi {
             	return new ResponseEntity<ModuleTrigger>(authorization, HttpStatus.OK);
             }
             catch (Exception e) {
-	        	log.error(Constants.COLLECTION_NOT_FOUND, e);
+	        	log.error(Constants.ERROR_ACCESSING_MODULE, e);
 	    		return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);
             }
         }

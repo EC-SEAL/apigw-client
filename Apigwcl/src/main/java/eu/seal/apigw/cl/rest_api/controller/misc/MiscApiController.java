@@ -23,6 +23,7 @@ import eu.seal.apigw.cl.domain.DataSet;
 import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
+import eu.seal.apigw.cl.rest_api.services.callback.ClCallbackGetService;
 import eu.seal.apigw.cl.rest_api.services.lists.ClListCollectionGetService;
 import eu.seal.apigw.cl.configuration.Constants;
 import io.swagger.annotations.*;
@@ -60,8 +61,24 @@ public class MiscApiController implements MiscApi {
     }
 
 
+    @Autowired
+	private ClCallbackGetService clCallbackGetService;
+    
     public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID) {
         String accept = request.getHeader("Accept");
+        
+        if (accept != null && accept.contains("application/json")) {
+        	
+        	try {
+            	clCallbackGetService.clCallbackGet (sessionID);
+                return new ResponseEntity<Void>(HttpStatus.OK);
+            }
+            catch (Exception e) {
+	        	log.error(Constants.ERROR_RETURNING, e);
+	    		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+            }
+            
+        }
         return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
 

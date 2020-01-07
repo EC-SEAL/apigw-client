@@ -16,7 +16,16 @@ package eu.seal.apigw.cl.configuration;
 public class Constants {
 	private Constants() {}
 	
-	public final static String COLLECTION_NOT_FOUND= "Collection not found";
+	// 404 in misc controllers
+	public final static String COLLECTION_NOT_FOUND= "Collection not found"; 	// cl/list
+	public final static String ERROR_RETURNING = "Error returning to client"; 	// cl/callback
+	
+	// 404 in auth controllers
+	public final static String ERROR_ACCESSING_MODULE= "Error accessing module";
+	
+	// 404 in session controllers
+	public final static String SESSION_START_ERROR = "Session start error";
+		
 	
 	public final static String NEW_SESSION_MSG = "New session just created";
 	public final static String NEW_SESSION_CODE = "new_session_code";
@@ -32,6 +41,8 @@ public class Constants {
 	
 	public final static String SUCESS_CODE = "OK";
 	public final static String FAIL_CODE = "KO";
+	
+	
 	
 	
 //	public final static String MS_NOT_FOUND = "Microservices not found";

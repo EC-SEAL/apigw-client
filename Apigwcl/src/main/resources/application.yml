@@ -24,7 +24,7 @@ spring.jackson:
 ## SEAL Apigwcl microservice. 
 ##
 server:
-  contextPath: /
+  #contextPath: /
   port: 8053
   port.http: 8050
   #key-store: ${KEYSTORE_PATH}
@@ -45,8 +45,8 @@ server:
 ## SEAL configuration manager. To be read from environment variables (dockerization)
 ##
 apigwcl.cm:
-   #getAttributeProfilesPath: /cm/metadata/attributes/
-   #getAttributeSetByProfilePath: /cm/metadata/attributes/, attrProfileId
+   getAttributeProfilesPath: /cm/metadata/attributes/
+   getAttributeSetByProfilePath: /cm/metadata/attributes/, attrProfileId
    getExternalEntitiesPath: /cm/metadata/externalEntities/
    getEntityMetadataSetPath: /cm/metadata/externalEntities/, collectionId
    getEntityMetadataPath: /cm/metadata/externalEntities/, collectionId, entityId

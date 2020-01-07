@@ -75,7 +75,7 @@ public class SessionApiController implements SessionApi {
             	return new ResponseEntity<ModuleTrigger>(session, HttpStatus.OK);
             }
             catch (Exception e) {
-	        	log.error(Constants.COLLECTION_NOT_FOUND, e);
+	        	log.error(Constants.SESSION_START_ERROR, e);
 	    		return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);
             }
         }

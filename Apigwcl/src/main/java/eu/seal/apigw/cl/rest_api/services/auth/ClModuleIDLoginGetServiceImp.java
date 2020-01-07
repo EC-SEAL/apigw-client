@@ -76,6 +76,8 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 			//***if (objDatastore != null) {
 			
 			if (true) { // testing
+				
+				MsMetadata theAuthMs = null;
 			
 				//***log.info("Existing Datastore: " + objDatastore.toString());				
 				
@@ -89,12 +91,13 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 					//Select the ms (it could be several) for the moduleID. Choose one randomly.
 					String authMsName = authMetadata0.getMicroservice().get(0); //TODO: randomly
 					
-					EntityMetadataList authMetadataList0 = confMngrConnService.getEntityMetadataSet (moduleID); // Reading the EDUGAINmetadata.json or eIDASmetadata.json
-					if (authMetadataList0 != null ) {
+					// Note the upper-case name of the metadata.json
+					EntityMetadataList authMetadataList0 = confMngrConnService.getEntityMetadataSet (moduleID.toUpperCase()); // Reading the EDUGAINmetadata.json or eIDASmetadata.json
+					if ((authMetadataList0 != null) && !authMetadataList0.isEmpty()) {
 						
 						EntityMetadataList authMetadataList = authMetadataList0.getMsEntities(authMsName);
 						
-						if (authMetadataList != null) {
+						if ((authMetadataList != null) && !authMetadataList.isEmpty()) {
 							idpMetadata = authMetadataList.get(0); //TODO: randomly
 				
 							
@@ -129,9 +132,9 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 									break;
 								case "eduGAIN":
 									// read the friendly names from the EDUGAINmetadata.json
-									//Search on shac or eduPerson.)
+									//Search on schac or eduPerson.)
 									attTypeList = confMngrConnService.getAttributeSetByProfile("eduPerson");
-									AttributeTypeList attTypeList2 = confMngrConnService.getAttributeSetByProfile("shac");
+									AttributeTypeList attTypeList2 = confMngrConnService.getAttributeSetByProfile("schac");
 									for ( String aClaim : theClaims)
 									{
 										
@@ -169,10 +172,11 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 							
 							
 							
-							MsMetadataList authMs = confMngrConnService.getMicroservicesByApiClass("AS").getApicallMs("authenticate");  // Reading the msMetadataList.json
+							MsMetadataList authMs0 = confMngrConnService.getMicroservicesByApiClass("AS"); // Reading the msMetadataList.json
+							MsMetadataList authMs = authMs0.getApicallMs("authenticate");  // Reading the msMetadataList.json
 							// Check the apicall is "authenticate"
 							// Select the previous one.
-							MsMetadata theAuthMs = authMs.getMs(authMsName);
+							theAuthMs = authMs.getMs(authMsName);
 							if (theAuthMs == null) {
 								log.error("Not found in msMetadataList.json: " + theAuthMs.getMsId());
 								throw new Exception ("ERROR: check the msMetadataList.json");
@@ -192,6 +196,7 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 							}
 							
 							// TODO: ASK!!
+							idpRequest = new AttributeSet();
 							idpRequest.setId( UUID.randomUUID().toString());
 							idpRequest.setType(AttributeSet.TypeEnum.REQUEST);
 							idpRequest.setInResponseTo("inResponseTo"); //?
@@ -205,12 +210,12 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 						
 						} else {
 							found = false;
-							log.info("Not found in AUTHSOURCEmetadata.json: " + authMsName);
+							log.info("Not found in " + moduleID.toUpperCase() + "metadata.json: " + authMsName);
 						}
 					
 					} else {
 						found = false;
-						log.info("Not found in EDUGAINmetadata.json/eIDASmetadata.json: " + moduleID);
+						log.info("Not found the " + moduleID.toUpperCase() + "metadata.json" );
 					
 					}
 				
@@ -219,15 +224,14 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 				
 				
 				if (found) {
-				
-					// idpMetadata is creating with the eIDAS/eduGain info from the ConfMngr. Saving in the session.
 					
+					log.info("Saving the session.");
+				
+					// idpMetadata is creating with the eIDAS/eduGain info from the ConfMngr. Saving in the session.				
 					ObjectMapper objIdpMetadata = new ObjectMapper();
 					smConn.updateVariable(sessionID,"idpMetadata",objIdpMetadata.writeValueAsString(idpMetadata));
 					
-					// idpRequest is creating. Saving in the session too.
-					
-					
+					// idpRequest is creating. Saving in the session too.				
 					ObjectMapper objIdpRequest = new ObjectMapper();
 					smConn.updateVariable(sessionID,"idpRequest",objIdpRequest.writeValueAsString(idpRequest));
 					
@@ -247,11 +251,13 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 					
 					
 					// Generate token for returning the session.
-					msToken = smConn.generateToken(sessionID); // Create msToken: GET /sm/generateToken
+					msToken = smConn.generateToken(sessionID, theAuthMs.getMsId()); // Create msToken: GET /sm/generateToken
 					moduleTrigger.setPayload(msToken);
 				}
 				else {
 				// Not a valid moduleID
+					
+					log.info("Invalid moduleID: " + moduleID);
 					
 					theStatus.setMessage(Constants.NO_IDPS_MSG); 
 					theStatus.setMainCode(Constants.FAIL_CODE); 

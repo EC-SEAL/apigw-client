@@ -20,9 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
+import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.DisplayableList;
-import eu.seal.apigw.cl.domain.MsMetadata;
-import eu.seal.apigw.cl.domain.MsMetadataList;
+import eu.seal.apigw.cl.domain.EntityMetadata;
+import eu.seal.apigw.cl.domain.EntityMetadataList;
 
 @Service
 public class ClListCollectionGetServiceImp implements ClListCollectionGetService{
@@ -42,15 +43,25 @@ public class ClListCollectionGetServiceImp implements ClListCollectionGetService
 			// the class of the list to be returned will be one or another.
 			// TODO: to define those classes inheriting from the DisplayableList class. Are you sure, PACO??
 			
-			DisplayableList displayableList = new DisplayableList();
+			DisplayableList displayableList = null;
 			
-			MsMetadataList myXXX = confMngrConnService.getMicroservicesByApiClass(collection);
-			for (MsMetadata xxx : myXXX) {
-				// Add the necessary fields to the node to be added to the displayable list.
-				//TODO: which fields for authenticationIDPs
-				
+			//MsMetadataList myXXX = confMngrConnService.getMicroservicesByApiClass(collection);
+			EntityMetadataList myList = confMngrConnService.getEntityMetadataSet(collection);
+			if (myList != null) {
+				displayableList = new DisplayableList();
+			
+				for (EntityMetadata em: myList) {
+					// Add the necessary fields to the node to be added to the displayable list.
+					//TODO: which fields for authenticationIDPs
 					// moduleIDP, method, url
-				;
+					
+					displayableList.add(em.getEntityId());
+					//em.getEndpoints();
+				}
+			}
+			else {
+				log.error("Exception: ", Constants.COLLECTION_NOT_FOUND);
+				throw new Exception (Constants.COLLECTION_NOT_FOUND);
 			}
 			
 		

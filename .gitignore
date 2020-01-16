@@ -1,11 +1,10 @@
-/Apigwcl/.settings/
-/Apigwcl/.swagger-codegen/
-/Apigwcl/target/
-/Apigwcl/.classpath
-/Apigwcl/.project
-/Apigwcl/.springBeans
-/Apigwcl/.swagger-codegen-ignore
+
+.classpath
+.project
+.springBeans
 
 /.metadata/
 /.recommenders/
+/.settings/
 /RemoteSystemsTempFiles/
+/target/

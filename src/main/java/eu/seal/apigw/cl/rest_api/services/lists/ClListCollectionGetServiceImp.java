@@ -24,6 +24,7 @@ import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.EntityMetadata;
 import eu.seal.apigw.cl.domain.EntityMetadataList;
+import javafx.util.Pair;
 
 @Service
 public class ClListCollectionGetServiceImp implements ClListCollectionGetService{
@@ -36,12 +37,11 @@ public class ClListCollectionGetServiceImp implements ClListCollectionGetService
 	
 	@Override
 	public DisplayableList clListCollectionGet (String collection) throws Exception {
-		// TO BE AWARE of the fileName expected!!
+		
 		try {
 			
 			// Depending on the kind of the collection, 
 			// the class of the list to be returned will be one or another.
-			// TODO: to define those classes inheriting from the DisplayableList class. Are you sure, PACO??
 			
 			DisplayableList displayableList = null;
 			
@@ -52,11 +52,12 @@ public class ClListCollectionGetServiceImp implements ClListCollectionGetService
 			
 				for (EntityMetadata em: myList) {
 					// Add the necessary fields to the node to be added to the displayable list.
-					//TODO: which fields for authenticationIDPs
-					// moduleIDP, method, url
 					
-					displayableList.add(em.getEntityId());
-					//em.getEndpoints();
+					// Select one of the list of the msInstances. The first one by the moment (TODO)
+					
+					Pair<String, String> myPair = new Pair <String, String>(em.getEntityId(), em.getMicroservice().get(0));
+					
+					displayableList.add(myPair);
 				}
 			}
 			else {

@@ -18,6 +18,7 @@ package eu.seal.apigw.cl.rest_api.controller.misc;
 import org.springframework.core.io.Resource;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,8 +48,9 @@ public interface MiscApi {
         @ApiResponse(code = 200, message = "Returning to client"),
         @ApiResponse(code = 404, message = "Error returning to client") })
     @RequestMapping(value = "/cl/callback",
+    	//? consumes = { "application/json","application/x-www-form-urlencoded"},
         method = RequestMethod.GET)
-    ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID);
+    ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID, Model model);
 
 
     @ApiOperation(value = "Generate a derived identity through a specific method module.", nickname = "clIdentDerivationModuleIDGenerateGet", notes = "_", response = ModuleTrigger.class, tags={ "APIGatewayClient", })

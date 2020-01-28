@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -64,13 +65,13 @@ public class MiscApiController implements MiscApi {
     @Autowired
 	private ClCallbackGetService clCallbackGetService;
     
-    public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID) {
+    public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID, Model model) {
         String accept = request.getHeader("Accept");
         
         if (accept != null && accept.contains("application/json")) {
         	
         	try {
-            	clCallbackGetService.clCallbackGet (sessionID);
+            	clCallbackGetService.clCallbackGet (sessionID, model);
                 return new ResponseEntity<Void>(HttpStatus.OK);
             }
             catch (Exception e) {

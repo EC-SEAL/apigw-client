@@ -1,0 +1,28 @@
+language: java
+
+stages:
+  - Test
+  - VM
+
+jobs:
+  include:
+    - stage : Test
+      
+      script:
+        - mvn clean install
+
+    - stage: VM
+      if: type != pull_request AND (branch = master OR branch = development OR branch = interface)
+      language: java
+      before_script:
+      - if [ $TRAVIS_BRANCH == "development" ]; then
+            export CONTAINER_TAG="0.0.1";
+        elif [ $TRAVIS_BRANCH == "master" ]; then
+            export CONTAINER_TAG=latest;
+        elif [ $TRAVIS_BRANCH == "interface" ]; then
+            export CONTAINER_TAG=test;
+        fi
+      script:
+        - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+        - docker build -t mvjatos/seal-apigwcl:${CONTAINER_TAG} .
+        - docker push mvjatos/seal-apigwcl:${CONTAINER_TAG}

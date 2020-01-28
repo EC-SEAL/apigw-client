@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Insert title here</title>
+</head>
+<!-- <body onload="document.redirect.submit()">  -->
+<!-- <form action="${UrlToRedirect}" id="redirect" name="redirect" method="POST"> -->
+<!-- <input id="authResponse" type="hidden" value="${msToken}" name="msToken"/> -->
+<!-- </form> -->
+<body>
+
+<!-- <h1>ESMO acm-ms</h1> -->
+<!--  <div class="header"> -->
+<!--  </div> -->
+ 	<form name="myRedirectForm" action="" th:action="${UrlToRedirect}" method="post">
+ 		<input name="msToken" type="hidden" value="" th:value="${msToken}" />
+ 		<noscript>
+            <input type="submit" value="Click here to continue" />
+        </noscript>
+        <script type="text/javascript">
+
+            (function () {
+                document.myRedirectForm.submit();
+            })();
+
+        </script>
+ 	</form>
+</body>
+</html>

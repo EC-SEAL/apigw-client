@@ -1,0 +1,151 @@
+body {
+    font: 14px arial, sans-serif;
+}
+
+#aps {
+    width: 100%;
+}
+
+#ap-selector {
+    border: 1px solid;
+    overflow: auto;
+    max-height: 200px;
+}
+
+#ap-selector div {
+    padding: 3px;
+}
+
+#ap-selector div.odd {
+    background-color: lightcyan;
+}
+
+#ap-selector div:hover {
+    background-color: lightblue;
+}
+
+#ap-selector div.onclick {
+    background-color: lightblue;
+}
+
+#ap-selected {
+    padding-top: 10px;
+    font-weight: bold;
+}
+
+input[type=button] {
+    background-color: lightblue;
+    border: 1px solid black;
+    font-size: 12px;
+    padding: 2px 6px;
+}
+
+input[type=button]:hover {
+    background-color: lightcyan;
+}
+
+#attributes-selector {
+    float: right;
+    width: 45%;
+}
+
+#attributes-request-selection ul {
+    list-style-type: none;
+    overflow: auto;
+    max-height: 200px;
+}
+
+#selected-attributes-request {
+    overflow: auto;
+    max-height: 200px;
+    list-style-type: none;
+    font-weight: bold;
+}
+
+.edit-img {
+    width: 20px;
+}
+
+.edit-img:hover {
+    width: 20px;
+    background-image: url('../images/pencil_hover.png');
+}
+
+.bold {
+    font-weight: bold;
+}
+
+#ap-form {
+    padding-top: 20px;
+}
+
+#selected-attributes-send, #attributes-send-selection ul, #attributes-consent ul {
+    list-style-type: none;
+}
+
+.form-buttons {
+    margin-top: 10px;
+}
+
+.logo {
+    display: inline-block;
+    height: 15px;
+    width: 40px;
+}
+
+.logo img {
+    max-height: 15px;
+    max-width: 40px;
+}
+
+#finish-form {
+    margin-top: 20px;
+}
+
+#finish-form input {
+    background-color: lightblue;
+    border: 1px solid black;
+    font-size: 16px;
+    padding: 2px 6px;
+}
+
+#finish-form input:hover {
+    background-color: lightcyan;
+}
+
+#left-part {
+    float: left;
+    width: 50%;
+}
+
+#messages {
+    font-weight: bold;
+}
+
+#messages .info {
+    color: green;
+}
+
+#messages .error {
+    color: red;
+}
+
+#attributes-consent {
+    overflow: auto;
+    max-height: 300px;
+}
+
+#attributes-send-selection ul, #selected-attributes-send {
+    overflow: auto;
+    max-height: 200px;
+}
+
+#collected-attributes-div {
+    border: 1px solid black;
+    padding: 10px;
+    margin-top: 30px;
+}
+
+#collected-attributes-div h3 {
+    margin-top: 0;
+}

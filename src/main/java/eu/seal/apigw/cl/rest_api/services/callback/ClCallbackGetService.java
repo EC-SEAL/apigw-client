@@ -14,9 +14,10 @@ See README file for the full disclaimer information and LICENSE file for full li
 */
 package eu.seal.apigw.cl.rest_api.services.callback;
 
+import org.springframework.ui.Model;
 
 public interface ClCallbackGetService {
 	
-	void clCallbackGet (String sessionID) throws Exception;
+	void clCallbackGet (String sessionID, Model model) throws Exception;
 
 }

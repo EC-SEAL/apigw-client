@@ -43,14 +43,13 @@ public interface MiscApi {
 
 
 
-    @ApiOperation(value = "Return page. All specific modules must call this URL when done. This URL will signal the client to retake control of the flow", nickname = "clCallbackGet", notes = "_", tags={ "APIGatewayClient", })
+    @ApiOperation(value = "Set in Session the Return page in the client when invoking modules. This URL under the control of the client will allow it to retake control of the flow. ** Client must expect a msToken on the callback url **", nickname = "clCallbackGet", notes = "_", tags={ "APIGatewayClient", })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Returning to client"),
-        @ApiResponse(code = 404, message = "Error returning to client") })
+        @ApiResponse(code = 200, message = "Callback registered"),
+        @ApiResponse(code = 404, message = "Error registering callback") })
     @RequestMapping(value = "/cl/callback",
-    	//? consumes = { "application/json","application/x-www-form-urlencoded"},
         method = RequestMethod.GET)
-    ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID, Model model);
+    ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@NotNull @ApiParam(value = "the actual callback url the modules will call when returning control to the client", required = true) @Valid @RequestParam(value = "ClientCallbackAddr", required = true) String clientCallbackAddr);
 
 
     @ApiOperation(value = "Generate a derived identity through a specific method module.", nickname = "clIdentDerivationModuleIDGenerateGet", notes = "_", response = ModuleTrigger.class, tags={ "APIGatewayClient", })

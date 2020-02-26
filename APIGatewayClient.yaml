@@ -640,23 +640,29 @@ paths:
         404:
           description: "Error accessing module"
 
-          
   /cl/callback:
     get:
       tags:
         - APIGatewayClient
-      summary: Return page. All specific modules must call this URL when done. This URL will signal the client to retake control of the flow
+      summary: Set in Session the Return page in the client when invoking modules. This URL under the control of the client will allow it to retake control of the flow. ** Client must expect a msToken on the callback url **
       description: _
       parameters:
         - name: "sessionID"
           in: "query"
           required: true
           type: string
+        - name: "ClientCallbackAddr"
+          in: "query"
+          required: true
+          description: the actual callback url the modules will call when returning control to the client
+          type: string            
       responses:
         200:
-          description: "Returning to client"
+          description: "Callback registered"
         404:
-          description: "Error returning to client"
+          description: "Error registering callback"
+  
+          
 
 
 
@@ -809,7 +815,7 @@ definitions:
         description: String identifying the language code of the value contents
         type: string
         example: "ES_es"
-      isMandatory:
+      mandatory:
         description: To mark the mandatoriness of the attribute.
         type: boolean
         example: true

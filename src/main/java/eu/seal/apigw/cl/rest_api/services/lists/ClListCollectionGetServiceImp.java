@@ -55,7 +55,7 @@ public class ClListCollectionGetServiceImp implements ClListCollectionGetService
 					
 					// Select one of the list of the msInstances. The first one by the moment (TODO)
 					
-					Pair<String, String> myPair = new Pair <String, String>(em.getEntityId(), em.getMicroservice().get(0));
+					Pair<String, String> myPair = new Pair <String, String>(em.getEntityId(), em.getMicroservice() != null ? em.getMicroservice().get(0) : null);
 					
 					displayableList.add(myPair);
 				}

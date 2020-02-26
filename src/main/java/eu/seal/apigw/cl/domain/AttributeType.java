@@ -1,15 +1,26 @@
+/**
+Copyright © 2020  Atos Spain SA. All rights reserved.
+This file is part of SEAL API Gateway client (SEAL APIGW client).
+SEAL APIGW client is free software: you can redistribute it and/or modify it under the terms of EUPL 1.2.
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT ANY WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT, 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+DAMAGES OR OTHER LIABILITY, WHETHER IN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+See README file for the full disclaimer information and LICENSE file for full license information in the project root.
+*/
 package eu.seal.apigw.cl.domain;
+
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
 
 /**
  * Contents of an attribute item.
@@ -30,8 +41,8 @@ public class AttributeType   {
   @JsonProperty("language")
   private String language = null;
 
-  @JsonProperty("isMandatory")
-  private Boolean isMandatory = null;
+  @JsonProperty("mandatory")
+  private Boolean mandatory = null;
 
   @JsonProperty("values")
   @Valid
@@ -117,24 +128,24 @@ public class AttributeType   {
     this.language = language;
   }
 
-  public AttributeType isMandatory(Boolean isMandatory) {
-    this.isMandatory = isMandatory;
+  public AttributeType mandatory(Boolean mandatory) {
+    this.mandatory = mandatory;
     return this;
   }
 
   /**
    * To mark the mandatoriness of the attribute.
-   * @return isMandatory
+   * @return mandatory
   **/
   @ApiModelProperty(example = "true", value = "To mark the mandatoriness of the attribute.")
 
 
-  public Boolean isIsMandatory() {
-    return isMandatory;
+  public Boolean isMandatory() {
+    return mandatory;
   }
 
-  public void setIsMandatory(Boolean isMandatory) {
-    this.isMandatory = isMandatory;
+  public void setMandatory(Boolean mandatory) {
+    this.mandatory = mandatory;
   }
 
   public AttributeType values(List<String> values) {
@@ -179,13 +190,13 @@ public class AttributeType   {
         Objects.equals(this.friendlyName, attributeType.friendlyName) &&
         Objects.equals(this.encoding, attributeType.encoding) &&
         Objects.equals(this.language, attributeType.language) &&
-        Objects.equals(this.isMandatory, attributeType.isMandatory) &&
+        Objects.equals(this.mandatory, attributeType.mandatory) &&
         Objects.equals(this.values, attributeType.values);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, friendlyName, encoding, language, isMandatory, values);
+    return Objects.hash(name, friendlyName, encoding, language, mandatory, values);
   }
 
   @Override
@@ -197,7 +208,7 @@ public class AttributeType   {
     sb.append("    friendlyName: ").append(toIndentedString(friendlyName)).append("\n");
     sb.append("    encoding: ").append(toIndentedString(encoding)).append("\n");
     sb.append("    language: ").append(toIndentedString(language)).append("\n");
-    sb.append("    isMandatory: ").append(toIndentedString(isMandatory)).append("\n");
+    sb.append("    mandatory: ").append(toIndentedString(mandatory)).append("\n");
     sb.append("    values: ").append(toIndentedString(values)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -214,4 +225,5 @@ public class AttributeType   {
     return o.toString().replace("\n", "\n    ");
   }
 }
+
 

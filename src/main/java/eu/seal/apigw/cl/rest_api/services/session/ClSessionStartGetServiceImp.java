@@ -55,7 +55,7 @@ public class ClSessionStartGetServiceImp implements ClSessionStartGetService{
 				theSessionID = sessionID;
 				
 				// Checking whether this sessionID exists.
-				Object objDatastore = smConn.readVariable(theSessionID, "datastore");
+				Object objDatastore = smConn.readVariable(theSessionID, "dataStore");
 				if (objDatastore != null) {
 				
 					log.info("Existing Datastore: " + objDatastore.toString());
@@ -79,17 +79,18 @@ public class ClSessionStartGetServiceImp implements ClSessionStartGetService{
 			
 					// Creating an empty datastore object
 					
+					// TODO
 					datastore.setId(UUID.randomUUID().toString());
 					datastore.setEncryptedData(null);
-					datastore.setEncryptionAlgorithm(null);
-					datastore.setSignature(null);
-					datastore.setSignatureAlgorithm(null);	
+					datastore.setEncryptionAlgorithm("this is the encryption algorithm");
+					datastore.setSignature("this is the signature");
+					datastore.setSignatureAlgorithm("this is the signature algorithm");	
 					
 					datastore.setClearData(null);
 					
 					// Saving the datastore object in the session
 					ObjectMapper objDatastore = new ObjectMapper();
-					smConn.updateVariable(theSessionID,"datastore",objDatastore.writeValueAsString(datastore));
+					smConn.updateVariable(theSessionID,"dataStore",objDatastore.writeValueAsString(datastore));
 					
 					mainCode = Constants.SUCESS_CODE;
 					statusMessage = Constants.NEW_SESSION_MSG;				

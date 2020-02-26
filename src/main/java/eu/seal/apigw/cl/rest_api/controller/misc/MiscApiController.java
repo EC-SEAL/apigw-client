@@ -65,13 +65,15 @@ public class MiscApiController implements MiscApi {
     @Autowired
 	private ClCallbackGetService clCallbackGetService;
     
-    public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID, Model model) {
+    public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@NotNull @ApiParam(value = "the actual callback url the modules will call when returning control to the client", required = true) @Valid @RequestParam(value = "ClientCallbackAddr", required = true) String clientCallbackAddr) {
+        
+   // public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID, Model model) {
         String accept = request.getHeader("Accept");
         
         if (accept != null && accept.contains("application/json")) {
         	
         	try {
-            	clCallbackGetService.clCallbackGet (sessionID, model);
+            	clCallbackGetService.clCallbackGet (sessionID, clientCallbackAddr);
                 return new ResponseEntity<Void>(HttpStatus.OK);
             }
             catch (Exception e) {

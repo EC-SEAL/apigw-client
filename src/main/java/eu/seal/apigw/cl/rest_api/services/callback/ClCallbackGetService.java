@@ -18,6 +18,6 @@ import org.springframework.ui.Model;
 
 public interface ClCallbackGetService {
 	
-	void clCallbackGet (String sessionID, Model model) throws Exception;
+	void clCallbackGet (String sessionID, String clientCallbackAddr) throws Exception;
 
 }

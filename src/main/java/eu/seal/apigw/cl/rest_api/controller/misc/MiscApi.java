@@ -174,26 +174,6 @@ public interface MiscApi {
         method = RequestMethod.GET)
     ResponseEntity<DataStore> clIdentMgrListGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID);
 
-
-    @ApiOperation(value = "Fetch user identity data on the session store with a specific identity method module.", nickname = "clIdentSourceModuleIDRetrieveGet", notes = "_", response = ModuleTrigger.class, tags={ "APIGatewayClient", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Module access trigger", response = ModuleTrigger.class),
-        @ApiResponse(code = 404, message = "Error accessing module") })
-    @RequestMapping(value = "/cl/ident/source/{moduleID}/retrieve",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<ModuleTrigger> clIdentSourceModuleIDRetrieveGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID);
-
-    @ApiOperation(value = "Load an identity dataset retrieved on a client-side module. Notice that in this case the client must be trusted, so be careful when integrating sources with this api.", nickname = "clIdentSourceModuleIDLoadPost", notes = "_", response = ModuleTrigger.class, tags={ "APIGatewayClient", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Module access trigger", response = ModuleTrigger.class),
-        @ApiResponse(code = 404, message = "Error accessing module") })
-    @RequestMapping(value = "/cl/ident/source/{moduleID}/load",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
-        method = RequestMethod.POST)
-    ResponseEntity<ModuleTrigger> clIdentSourceModuleIDLoadPost(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID,@ApiParam(value = "The data set to add" ,required=true )  @Valid @RequestBody DataSet dataset);
-
     
     @ApiOperation(value = "Get a collection of elements to be displayed on the selector widget.", nickname = "clListCollectionGet", notes = "_", response = DisplayableList.class, tags={ "APIGatewayClient", })
     @ApiResponses(value = { 

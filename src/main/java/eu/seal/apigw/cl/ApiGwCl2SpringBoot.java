@@ -23,10 +23,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
-//import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-//import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
+//import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+//import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -34,7 +34,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
-@ComponentScan(basePackages = { "eu.seal.apigw.cl", "eu.seal.apigw.cl.rest_api" , "eu.seal.apigw.cl.configuration"})
+//@ComponentScan(basePackages = { "eu.seal.apigw.cl", "eu.seal.apigw.cl.rest_api" , "eu.seal.apigw.cl.configuration"})
+@ComponentScan(basePackages = { "eu.seal.apigw.cl" })
 public class ApiGwCl2SpringBoot implements CommandLineRunner {
 
     @Override
@@ -57,9 +58,7 @@ public class ApiGwCl2SpringBoot implements CommandLineRunner {
         }
 
     }
-    
-    
-    /*
+     
     @Bean
     public ServletWebServerFactory servletContainer() {
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
@@ -94,52 +93,6 @@ public class ApiGwCl2SpringBoot implements CommandLineRunner {
         return connector;
     }
     
-    */
     
-    @Bean
-    public EmbeddedServletContainerFactory  servletContainer()
-    {
-    	TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory() {
-    		 @Override
-    	        protected void postProcessContext(Context context) {
-    	          SecurityConstraint securityConstraint = new SecurityConstraint();
-    	          securityConstraint.setUserConstraint("CONFIDENTIAL");
-    	          SecurityCollection collection = new SecurityCollection();
-    	          collection.addPattern("/*");
-    	          securityConstraint.addCollection(collection);
-    	          context.addConstraint(securityConstraint);
-    	        }
-    	      };
-    	tomcat.addAdditionalTomcatConnectors(redirectConnector());
-        return tomcat;
-    }
-//    public ServletWebServerFactorymcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
-//            @Override
-//            protected void postProcessContext(Context context) {
-//                SecurityConstraint securityConstraint = new SecurityConstraint();
-//                securityConstraint.setUserConstraint("CONFIDENTIAL");
-//                SecurityCollection collection = new SecurityCollection();
-//                collection.addPattern("/*");
-//                securityConstraint.addCollection(collection);
-//                context.addConstraint(securityConstraint);
-//            }
-//        };
-//        tomcat.addAdditionalTomcatConnectors(redirectConnector());
-//        return tomcat;
-//    }
 
-    @Value("${server.port.http}") //Defined in application.properties file
-    int httpPort;
-
-    @Value("${server.port}") //Defined in application.properties file
-    int httpsPort;
-
-    private Connector redirectConnector() {
-        Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
-        connector.setScheme("http");
-        connector.setPort(httpPort);
-        connector.setSecure(false);
-        connector.setRedirectPort(httpsPort);
-        return connector;
-    }
 }

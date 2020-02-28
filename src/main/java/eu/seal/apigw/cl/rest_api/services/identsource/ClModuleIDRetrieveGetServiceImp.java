@@ -44,12 +44,15 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 	
 	@Override
 	public ModuleTrigger clModuleIDRetrieveGet (String sessionID, String moduleID) throws Exception {
+		
+		log.info("moduleID: " + moduleID);
 			
 		try {
 			// Generate token: issuer CL (got from the msMetadataList ConfMngr); receiver Uport (got from the ACCESS metadata)			
 			String theModuleID = confMngrConnService.getEntityMetadata("SSI", moduleID).getMicroservice().get(0);	// The first one.
 			
 			MsMetadata theMs = confMngrConnService.getMicroservicesByApiClass("IS").getMs(theModuleID); // This is the Identity Source microservice
+			log.info("theMS: " + theMs.getMsId());
 			
 			String msToken =  null;
 			msToken = smConn.generateToken (sessionID, theModuleID);

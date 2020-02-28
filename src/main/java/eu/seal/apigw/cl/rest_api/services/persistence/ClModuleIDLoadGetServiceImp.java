@@ -25,6 +25,7 @@ import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
+import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
 import eu.seal.apigw.cl.domain.MsMetadata;
 
@@ -37,16 +38,49 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 	
 	@Autowired
 	private ConfMngrConnService confMngrConnService;
-
+	
+	@Autowired
+	private SessionManagerConnService smConn;
 	
 	@Override
 	public ModuleTrigger clModuleIDLoadGet (String sessionID, String moduleID) throws Exception {
-			
+		
+		log.info("moduleID: " + moduleID);
 		try {
-			//moduleID was previously stored in settings as "localMobile"
+			//moduleID was previously stored in settings as "localMobile", "googleDrive"
+			
 			String theModuleID = confMngrConnService.getEntityMetadata("PERSISTENCE", moduleID).getMicroservice().get(0); // The first one.
 			
 			MsMetadata theMs = confMngrConnService.getMicroservicesByApiClass("PER").getMs(theModuleID); // This is the Identity Source microservice
+			log.info("theMS: " + theMs.getMsId());
+			
+			String thePayload = null;
+			BindingEnum theBinding = null;
+			switch (moduleID) {
+			
+			case "localMobile":
+				thePayload = sessionID;
+				
+				theBinding = BindingEnum.GET;
+				break;
+				
+			case "googleDrive":
+				String msToken =  null;
+				
+				msToken = smConn.generateToken (sessionID, theModuleID);
+				thePayload = msToken;
+				
+				log.info ("token generated");
+				
+				theBinding = BindingEnum.POST;
+				
+				// Update sessionData: PDS = googleDrive
+				smConn.updateVariable(sessionID,"PDS", moduleID);
+				break;
+			
+			default:
+				log.info ("BE AWARE: unknown persistence module: " + moduleID);
+			}
 			
 			// Returns moduleTrigger to client
 			// it returns the address of the API to call .... /per/load
@@ -65,13 +99,13 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 			
 			ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
 			theAccess.setAddress(theMs.getPublishedAPI().get(0).getApiEndpoint()); // "theUrl"
-			theAccess.setBinding(BindingEnum.GET); // theMs.getPublishedAPI().get(0).getApiConnectionType()
+			theAccess.setBinding(theBinding); // theMs.getPublishedAPI().get(0).getApiConnectionType()
 			theAccess.setBodyContent("TO ASK: bodyContent");
 			theAccess.setContentType("TO ASK: contentType");
 			moduleTrigger.setAccess (theAccess);
 			
 			moduleTrigger.setAccess (theAccess);
-			moduleTrigger.setPayload(sessionID);
+			moduleTrigger.setPayload(thePayload);
 			
 			
 			return moduleTrigger;

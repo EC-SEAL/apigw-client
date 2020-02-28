@@ -56,30 +56,36 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 			
 			String thePayload = null;
 			BindingEnum theBinding = null;
-			switch (moduleID) {
+			switch (moduleID.toLowerCase()) {
 			
-			case "localMobile":
-				thePayload = sessionID;
+				case "localmobile":
+					thePayload = sessionID;
+					
+					theBinding = BindingEnum.GET;
+					break;
+					
+				case "googledrive":
+					String msToken =  null;
+					
+					msToken = smConn.generateToken (sessionID, theModuleID);
+					thePayload = msToken;
+					
+					log.info ("token generated");
+					
+					theBinding = BindingEnum.POST;
+					
+					// Update sessionData: PDS = googleDrive
+					smConn.updateVariable(sessionID,"PDS", moduleID);
+					break;
+					
+				case "onedrive":
+				case "remotemobile":
+				case "browser":
+					log.info ("BE AWARE: undefined persistence module: " + moduleID);
+					break;
 				
-				theBinding = BindingEnum.GET;
-				break;
-				
-			case "googleDrive":
-				String msToken =  null;
-				
-				msToken = smConn.generateToken (sessionID, theModuleID);
-				thePayload = msToken;
-				
-				log.info ("token generated");
-				
-				theBinding = BindingEnum.POST;
-				
-				// Update sessionData: PDS = googleDrive
-				smConn.updateVariable(sessionID,"PDS", moduleID);
-				break;
-			
-			default:
-				log.info ("BE AWARE: unknown persistence module: " + moduleID);
+				default:
+					log.info ("BE AWARE: unknown persistence module: " + moduleID);
 			}
 			
 			// Returns moduleTrigger to client

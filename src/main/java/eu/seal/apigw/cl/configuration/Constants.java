@@ -42,6 +42,9 @@ public class Constants {
 	public final static String ID_RETRIEVED_MSG = "Identity just retrieved";
 	public final static String ID_RETRIEVED_CODE = "id_retrieved_code";
 	
+	public final static String PERSISTENCE_LOADED_MSG = "Persistence module loaded";
+	public final static String PERSISTENCE_LOADED_CODE = "persistence_loaded_code";
+	
 	public final static String SUCESS_CODE = "OK";
 	public final static String FAIL_CODE = "KO";
 	

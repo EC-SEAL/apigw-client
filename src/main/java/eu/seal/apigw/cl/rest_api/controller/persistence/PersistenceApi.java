@@ -1,5 +1,5 @@
 /**
-Copyright © 2019  Atos Spain SA. All rights reserved.
+Copyright © 2020  Atos Spain SA. All rights reserved.
 This file is part of SEAL API Gateway Client (SEAL Apigwcl).
 SEAL Apigwcl is free software: you can redistribute it and/or modify it under the terms of EUPL 1.2.
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT ANY WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
@@ -28,13 +28,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-import eu.seal.apigw.cl.domain.DataStore;
-import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.util.List;
+
 
 @Api(value = "cl", description = "the cl API")
 public interface PersistenceApi {

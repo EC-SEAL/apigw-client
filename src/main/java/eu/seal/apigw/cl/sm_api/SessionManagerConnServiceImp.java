@@ -92,8 +92,9 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 		//TODO
         //EntityMetadata myLGW = this.confMngrService.getConfiguration("LGW"); // APIGWCL or reading from an environment variable. TOASK
 		EntityMetadata myLGW = null;
-		if (myLGW != null)
-        	sender = myLGW.getMicroservice().get(0);
+		String thisCL = confMngrService.getMicroservicesByApiClass("CL").get(0).getMsId(); // The unique client
+		if (thisCL != null)
+        	sender = thisCL;
         else {
         	sender = "CLms001";
         	log.error("HARDCODED sender! "+ sender);

@@ -96,13 +96,18 @@ public class IdentSourceApiController implements IdentSourceApi {
 	private ClModuleIDRetrieveGetService clModuleIDRetrieveGetService;
     
     public ResponseEntity<ModuleTrigger> clIdentSourceModuleIDRetrieveGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID) {
-        String accept = request.getHeader("Accept");
+        
+    	String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
+        	
+        	ModuleTrigger idRetrieved = new ModuleTrigger();
+    	
             try {
-                return new ResponseEntity<ModuleTrigger>(objectMapper.readValue("{  \"access\" : {    \"address\" : \"address\",    \"binding\" : \"HTTP-POST-REDIRECT\",    \"bodyContent\" : \"bodyContent\",    \"contentType\" : \"contentType\"  },  \"payload\" : \"{}\",  \"status\" : {    \"mainCode\" : \"mainCode\",    \"secondaryCode\" : \"secondaryCode\",    \"message\" : \"message\"  }}", ModuleTrigger.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ModuleTrigger>(HttpStatus.INTERNAL_SERVER_ERROR);
+            	idRetrieved = clModuleIDRetrieveGetService.clModuleIDRetrieveGet(sessionID, moduleID);
+                return new ResponseEntity<ModuleTrigger>(idRetrieved, HttpStatus.NOT_IMPLEMENTED);
+            } catch (Exception e) {
+            	log.error(Constants.ERROR_ACCESSING_MODULE, e);
+                return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);
             }
         }
 

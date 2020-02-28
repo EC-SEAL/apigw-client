@@ -20,7 +20,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
+import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
+import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
+import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
+import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
+import eu.seal.apigw.cl.domain.MsMetadata;
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 
 @Service
@@ -31,21 +37,54 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 	
 	@Autowired
 	private SessionManagerConnService smConn;
+	
+	@Autowired
+	private ConfMngrConnService confMngrConnService;
 
 	
 	@Override
 	public ModuleTrigger clModuleIDRetrieveGet (String sessionID, String moduleID) throws Exception {
-	// TODO		
+			
 		try {
+			// Generate token: issuer CL (got from the msMetadataList ConfMngr); receiver Uport (got from the ACCESS metadata)			
+			String theModuleID = confMngrConnService.getEntityMetadata("SSI", moduleID).getMicroservice().get(0);	// The first one.
 			
-			// Generate token: issuer CL (got from the msMetadataList ConfMngr); receiver Uport (got from the ACCESS metadata)
+			MsMetadata theMs = confMngrConnService.getMicroservicesByApiClass("IS").getMs(theModuleID); // This is the Identity Source microservice
 			
-			// Update sessionData: which variable?? ssiWallet = uPort
+			String msToken =  null;
+			msToken = smConn.generateToken (sessionID, theModuleID);
+			
+			log.info ("token generated");
+			
+			// Update sessionData: ssiWallet = uPort
+			smConn.updateVariable(sessionID,"ssiWallet", moduleID);
 			
 			// Returns msToken and moduleTrigger to client
 			// with details to connect to the VC module to do DID Auth.
+			ModuleTrigger moduleTrigger = new ModuleTrigger();
+
+			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
+			String statusMessage = Constants.ID_RETRIEVED_MSG;
+			String mainCode = Constants.SUCESS_CODE;;
+			String secondaryCode = Constants.ID_RETRIEVED_CODE;
 			
-			return null;
+			theStatus.setMessage(statusMessage);
+			theStatus.setMainCode(mainCode); 
+			theStatus.setSecondaryCode(secondaryCode); 
+			moduleTrigger.setStatus (theStatus);		
+			
+			ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
+			theAccess.setAddress(theMs.getPublishedAPI().get(0).getApiEndpoint()); // "theUrl"
+			theAccess.setBinding(BindingEnum.POST); // theMs.getPublishedAPI().get(0).getApiConnectionType()
+			theAccess.setBodyContent("TO ASK: bodyContent");
+			theAccess.setContentType("TO ASK: contentType");
+			moduleTrigger.setAccess (theAccess);
+			
+			moduleTrigger.setAccess (theAccess);
+			moduleTrigger.setPayload(msToken); // The object to be returned.
+			
+			
+			return moduleTrigger;
 			
 		}
 		catch (Exception e) {

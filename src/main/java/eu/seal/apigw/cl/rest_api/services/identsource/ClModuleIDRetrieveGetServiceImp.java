@@ -17,14 +17,19 @@ package eu.seal.apigw.cl.rest_api.services.identsource;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
+import eu.seal.apigw.cl.domain.AttributeSet;
+import eu.seal.apigw.cl.domain.EntityMetadata;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
@@ -70,7 +75,7 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 					smConn.updateVariable(sessionID,"ssiWallet", moduleID);
 					
 					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
-					theModuleID = confMngrConnService.getEntityMetadata("SSI", moduleID).getMicroservice().get(0);	// The first one.
+					theModuleID = confMngrConnService.getEntityMetadata("SSIWALLET", moduleID).getMicroservice().get(0);	// The first one.
 					
 					theMs = confMngrConnService.getMicroservicesByApiClass("VC").getMs(theModuleID); // This is the VC microservice
 									
@@ -91,12 +96,38 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 				case "edugain":
 				case "emrtd":
 					
-					// TODO		
-					// *********ASK!
-					// Update sessionData: apRequest, apMetadata, dataStore
-					smConn.updateVariable(sessionID,"apRequest", null);
-					smConn.updateVariable(sessionID,"apMetadata", null);
-					smConn.updateVariable(sessionID,"dataStore", null);
+					// Update sessionData: apRequest, apMetadata; dataStore exists in the session already.
+					
+					AttributeSet myApRequest = new AttributeSet();
+					myApRequest.setId( "AP_" + UUID.randomUUID().toString());
+					myApRequest.setType(AttributeSet.TypeEnum.REQUEST);
+					myApRequest.setIssuer(confMngrConnService.getMicroservicesByApiClass("CL").get(0).getMsId()); // The unique client
+					myApRequest.setRecipient(confMngrConnService.getEntityMetadata("AUTHSOURCE", moduleID).getMicroservice().get(0)); // the first one
+					myApRequest.setAttributes(null);
+					
+					ObjectMapper objMapper = new ObjectMapper();
+					smConn.updateVariable(sessionID, "apRequest", objMapper.writeValueAsString(myApRequest));
+					
+					EntityMetadata myApMetadata = new EntityMetadata();
+					myApMetadata.setEntityId("AP_" + UUID.randomUUID().toString());
+					//TODO
+					myApMetadata.setLocation(null);
+					myApMetadata.setDefaultDisplayName("TODOdefaultDisplayName");
+					myApMetadata.setDisplayNames(null);
+					myApMetadata.setClaims(null);
+					myApMetadata.setEncryptResponses(false);
+					myApMetadata.setEndpoints(null);
+					myApMetadata.setLogo(null);
+					myApMetadata.setMicroservice(null);
+					myApMetadata.setOtherData(null);
+					myApMetadata.setProtocol("TODOprotocol");
+					myApMetadata.setSecurityKeys(null);
+					myApMetadata.setSignResponses(false);
+					myApMetadata.setSupportedEncryptionAlg(null);
+					myApMetadata.setSupportedSigningAlg(null);
+					
+					ObjectMapper objMapper1 = new ObjectMapper();
+					smConn.updateVariable(sessionID, "apMetadata", objMapper1.writeValueAsString(myApMetadata));
 					
 					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
 					theModuleID = confMngrConnService.getEntityMetadata("ATTRSOURCE", moduleID).getMicroservice().get(0);	// The first one.

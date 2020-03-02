@@ -47,8 +47,7 @@ public class ClListCollectionGetServiceImp implements ClListCollectionGetService
 			
 			DisplayableList displayableList = null;
 			
-			//MsMetadataList myXXX = confMngrConnService.getMicroservicesByApiClass(collection);
-			EntityMetadataList myList = confMngrConnService.getEntityMetadataSet(collection);
+			EntityMetadataList myList = confMngrConnService.getEntityMetadataSet(collection.toUpperCase());
 			if (myList != null) {
 				displayableList = new DisplayableList();
 			

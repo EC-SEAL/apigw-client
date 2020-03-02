@@ -39,7 +39,6 @@ import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
 import eu.seal.apigw.cl.domain.MsMetadata;
 import eu.seal.apigw.cl.domain.MsMetadataList;
 import eu.seal.apigw.cl.domain.PublishedApiType;
-import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 
 @Service
@@ -84,7 +83,7 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 				//***log.info("Existing Datastore: " + objDatastore.toString());				
 				
 				// Selecting the ID source data from the ConfManager
-				EntityMetadata authMetadata0 = confMngrConnService.getEntityMetadata("AUTHSOURCE", moduleID); // Reading the AUTHSOURCEmetadata.json
+				EntityMetadata authMetadata0 = confMngrConnService.getEntityMetadata("AUTHSOURCE", moduleID.toUpperCase()); // Reading the AUTHSOURCEmetadata.json
 				 
 				PublishedApiType thePublishedApi = null;
 				boolean found = false;

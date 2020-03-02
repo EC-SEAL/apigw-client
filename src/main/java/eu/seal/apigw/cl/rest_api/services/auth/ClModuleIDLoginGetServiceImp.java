@@ -63,6 +63,8 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 		
 		String msToken = null;
 		
+		// UC1.01: DEPRECATED
+		
 		//moduleID is eIDAS or eduGAIN, from AUTHSOURCE
 		try {
 			

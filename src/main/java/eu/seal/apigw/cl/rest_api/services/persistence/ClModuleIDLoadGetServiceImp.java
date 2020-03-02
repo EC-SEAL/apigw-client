@@ -15,6 +15,9 @@ See README file for the full disclaimer information and LICENSE file for full li
 package eu.seal.apigw.cl.rest_api.services.persistence;
 
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,7 @@ import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
 import eu.seal.apigw.cl.domain.MsMetadata;
+import eu.seal.apigw.cl.domain.PublishedApiType;
 
 
 @Service
@@ -46,13 +50,30 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 	public ModuleTrigger clModuleIDLoadGet (String sessionID, String moduleID) throws Exception {
 		
 		log.info("moduleID: " + moduleID);
+		
+		// UC1.02, UC1.03, UC1.05
 		try {
 			//moduleID was previously stored in settings as "localMobile", "googleDrive"
 			
 			String theModuleID = confMngrConnService.getEntityMetadata("PERSISTENCE", moduleID).getMicroservice().get(0); // The first one.
 			
-			MsMetadata theMs = confMngrConnService.getMicroservicesByApiClass("PER").getMs(theModuleID); // This is the Identity Source microservice
+			MsMetadata theMs = confMngrConnService.getMicroservicesByApiClass("PER").getMs(theModuleID); // This is the Persistence microservice
 			log.info("theMS: " + theMs.getMsId());
+			
+			PublishedApiType thePublishedApi = null;
+			//For fulfilling theAccess (see bellow)
+			List<PublishedApiType> thePublishedApiList = theMs.getPublishedAPI();
+			
+			Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
+			while (paIterator.hasNext()) {
+				
+				thePublishedApi = paIterator.next();
+				  
+				if (thePublishedApi.getApiCall().equals("load")	) // per/load
+					  break; 
+				  	  
+			}
+			log.info("thePublishedApi: " + thePublishedApi.getApiCall());
 			
 			String thePayload = null;
 			BindingEnum theBinding = null;
@@ -104,8 +125,8 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 			moduleTrigger.setStatus (theStatus);		
 			
 			ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
-			theAccess.setAddress(theMs.getPublishedAPI().get(0).getApiEndpoint()); // "theUrl"
-			theAccess.setBinding(theBinding); // theMs.getPublishedAPI().get(0).getApiConnectionType()
+			theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
+			theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
 			theAccess.setBodyContent("TO ASK: bodyContent");
 			theAccess.setContentType("TO ASK: contentType");
 			moduleTrigger.setAccess (theAccess);

@@ -15,6 +15,9 @@ See README file for the full disclaimer information and LICENSE file for full li
 package eu.seal.apigw.cl.rest_api.services.identsource;
 
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,7 @@ import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
 import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
 import eu.seal.apigw.cl.domain.MsMetadata;
+import eu.seal.apigw.cl.domain.PublishedApiType;
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 
 @Service
@@ -47,23 +51,86 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 		
 		log.info("moduleID: " + moduleID);
 			
+		// UC1.04
+		// UC3.02
+		
 		try {
-			// Generate token: issuer CL (got from the msMetadataList ConfMngr); receiver Uport (got from the ACCESS metadata)			
-			String theModuleID = confMngrConnService.getEntityMetadata("SSI", moduleID).getMicroservice().get(0);	// The first one.
-			
-			MsMetadata theMs = confMngrConnService.getMicroservicesByApiClass("IS").getMs(theModuleID); // This is the Identity Source microservice
-			log.info("theMS: " + theMs.getMsId());
-			
+			String theModuleID = null;
+			MsMetadata theMs = null;
 			String msToken =  null;
-			msToken = smConn.generateToken (sessionID, theModuleID);
+			PublishedApiType thePublishedApi = null;
+			List<PublishedApiType> thePublishedApiList = null;
 			
-			log.info ("token generated");
 			
-			// Update sessionData: ssiWallet = uPort
-			smConn.updateVariable(sessionID,"ssiWallet", moduleID);
+			switch (moduleID.toLowerCase()) {
+			
+				case "uport":
+					
+					// Update sessionData: ssiWallet = uPort
+					smConn.updateVariable(sessionID,"ssiWallet", moduleID);
+					
+					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
+					theModuleID = confMngrConnService.getEntityMetadata("SSI", moduleID).getMicroservice().get(0);	// The first one.
+					
+					theMs = confMngrConnService.getMicroservicesByApiClass("VC").getMs(theModuleID); // This is the VC microservice
+									
+					//For fulfilling theAccess (see bellow)
+					thePublishedApiList = theMs.getPublishedAPI();
+					
+					Iterator<PublishedApiType> paIterator0 = thePublishedApiList.iterator();
+					while (paIterator0.hasNext()) {
+						
+						thePublishedApi = paIterator0.next();						  
+						if (thePublishedApi.getApiCall().equals("didAuth")	) // vc/didAuth
+							  break; 						  	  
+					}
+
+					break;
+					
+				case "eidas":
+				case "edugain":
+				case "emrtd":
+					
+					// TODO		
+					// *********ASK!
+					// Update sessionData: apRequest, apMetadata, dataStore
+					smConn.updateVariable(sessionID,"apRequest", null);
+					smConn.updateVariable(sessionID,"apMetadata", null);
+					smConn.updateVariable(sessionID,"dataStore", null);
+					
+					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
+					theModuleID = confMngrConnService.getEntityMetadata("ATTRSOURCE", moduleID).getMicroservice().get(0);	// The first one.
+					
+					theMs = confMngrConnService.getMicroservicesByApiClass("IS").getMs(theModuleID); // This is the Identity Source microservice
+									
+					//For fulfilling theAccess (see bellow)
+					thePublishedApiList = theMs.getPublishedAPI();
+					
+					Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
+					while (paIterator.hasNext()) {
+						
+						thePublishedApi = paIterator.next();						  
+						if (thePublishedApi.getApiCall().equals("query")	) // is/query
+							  break; 						  	  
+					}
+					
+					break;
+					
+				default:
+					log.info ("BE AWARE: unknown identity source module: " + moduleID);
+			}
+			
 			
 			// Returns msToken and moduleTrigger to client
-			// with details to connect to the VC module to do DID Auth.
+			// with details to connect to the VC module to do DID Auth, or to the IS modules to do eIDAS/eduGAIN/eMRTD Auth.
+			
+			msToken = smConn.generateToken (sessionID, theModuleID);		
+			log.info ("token generated");
+			
+			log.info("theMS: " + theMs.getMsId());
+			log.info("thePublishedApi: " + thePublishedApi.getApiCall());
+			
+			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();
 
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
@@ -77,8 +144,8 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 			moduleTrigger.setStatus (theStatus);		
 			
 			ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
-			theAccess.setAddress(theMs.getPublishedAPI().get(0).getApiEndpoint()); // "theUrl"
-			theAccess.setBinding(BindingEnum.POST); // theMs.getPublishedAPI().get(0).getApiConnectionType()
+			theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
+			theAccess.setBinding(BindingEnum.POST); // thePublishedApi.getApiConnectionType()
 			theAccess.setBodyContent("TO ASK: bodyContent");
 			theAccess.setContentType("TO ASK: contentType");
 			moduleTrigger.setAccess (theAccess);

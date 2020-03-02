@@ -34,8 +34,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
-//@ComponentScan(basePackages = { "eu.seal.apigw.cl", "eu.seal.apigw.cl.rest_api" , "eu.seal.apigw.cl.configuration"})
-@ComponentScan(basePackages = { "eu.seal.apigw.cl" })
+@ComponentScan(basePackages = { "eu.seal.apigw.cl", "eu.seal.apigw.cl.rest_api" , "eu.seal.apigw.cl.configuration"})
+//@ComponentScan(basePackages = { "eu.seal.apigw.cl" })
 public class ApiGwCl2SpringBoot implements CommandLineRunner {
 
     @Override

@@ -70,7 +70,7 @@ public class MiscApiController implements MiscApi {
    // public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID, Model model) {
         String accept = request.getHeader("Accept");
         
-        if (accept != null && accept.contains("application/json")) {
+        //if (accept != null && accept.contains("application/json")) {
         	
         	try {
             	clCallbackGetService.clCallbackGet (sessionID, clientCallbackAddr);
@@ -81,8 +81,8 @@ public class MiscApiController implements MiscApi {
 	    		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
             }
             
-        }
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        //}
+        //return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<ModuleTrigger> clIdentDerivationModuleIDGenerateGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID) {

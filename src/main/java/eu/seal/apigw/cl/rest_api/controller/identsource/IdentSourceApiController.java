@@ -54,29 +54,6 @@ public class IdentSourceApiController implements IdentSourceApi {
     }
 
 
-    @Autowired
-	private ClCallbackGetService clCallbackGetService;
-    
-    public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@NotNull @ApiParam(value = "the actual callback url the modules will call when returning control to the client", required = true) @Valid @RequestParam(value = "ClientCallbackAddr", required = true) String clientCallbackAddr) {
-
-    	String accept = request.getHeader("Accept");
-        
-        if (accept != null && accept.contains("application/json")) {
-        	
-        	try {
-            	clCallbackGetService.clCallbackGet (sessionID, clientCallbackAddr);
-                return new ResponseEntity<Void>(HttpStatus.OK);
-            }
-            catch (Exception e) {
-	        	log.error(Constants.ERROR_RETURNING, e);
-	    		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-            }
-            
-        }
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-  
     public ResponseEntity<ModuleTrigger> clIdentSourceModuleIDLoadPost(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID,@ApiParam(value = "The data set to add" ,required=true )  @Valid @RequestBody DataSet dataset) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
@@ -104,7 +81,7 @@ public class IdentSourceApiController implements IdentSourceApi {
     	
             try {
             	idRetrieved = clModuleIDRetrieveGetService.clModuleIDRetrieveGet(sessionID, moduleID);
-                return new ResponseEntity<ModuleTrigger>(idRetrieved, HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<ModuleTrigger>(idRetrieved, HttpStatus.OK);
             } catch (Exception e) {
             	log.error(Constants.ERROR_ACCESSING_MODULE, e);
                 return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);

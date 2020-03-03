@@ -48,7 +48,7 @@ public interface MiscApi {
         @ApiResponse(code = 200, message = "Callback registered"),
         @ApiResponse(code = 404, message = "Error registering callback") })
     @RequestMapping(value = "/cl/callback",
-        method = RequestMethod.GET)
+    	method = RequestMethod.GET)
     ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@NotNull @ApiParam(value = "the actual callback url the modules will call when returning control to the client", required = true) @Valid @RequestParam(value = "ClientCallbackAddr", required = true) String clientCallbackAddr);
 
 

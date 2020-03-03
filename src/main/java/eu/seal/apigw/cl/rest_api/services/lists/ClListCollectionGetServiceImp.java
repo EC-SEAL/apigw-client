@@ -25,7 +25,7 @@ import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.EntityMetadata;
 import eu.seal.apigw.cl.domain.EntityMetadataList;
 
-import javafx.util.Pair;
+import org.apache.commons.httpclient.NameValuePair;
 
 
 @Service
@@ -56,8 +56,7 @@ public class ClListCollectionGetServiceImp implements ClListCollectionGetService
 					
 					// Select one of the list of the msInstances. The first one by the moment (TODO)
 					
-					Pair<String, String> myPair = new Pair <String, String>(em.getEntityId(), em.getMicroservice() != null ? em.getMicroservice().get(0) : null);
-					//Pair myPair = new Pair (em.getEntityId(), em.getMicroservice() != null ? em.getMicroservice().get(0) : null);
+					NameValuePair myPair = new NameValuePair(em.getEntityId(), em.getMicroservice() != null ? em.getMicroservice().get(0) : null);
 					
 					displayableList.add(myPair);
 				}

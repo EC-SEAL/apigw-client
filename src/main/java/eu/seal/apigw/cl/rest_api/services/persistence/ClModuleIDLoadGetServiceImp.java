@@ -65,12 +65,16 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 			List<PublishedApiType> thePublishedApiList = theMs.getPublishedAPI();
 			
 			Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
+			PublishedApiType auxPublishedApi = null;
 			while (paIterator.hasNext()) {
 				
-				thePublishedApi = paIterator.next();
+				auxPublishedApi = paIterator.next();
 				  
-				if (thePublishedApi.getApiCall().equals("load")	) // per/load
-					  break; 
+				if (auxPublishedApi.getApiCall().equals("load")	) {// per/load
+					
+					thePublishedApi = auxPublishedApi;
+					break; 
+				}
 				  	  
 			}
 			log.info("thePublishedApi: " + thePublishedApi.getApiCall());

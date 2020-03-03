@@ -186,13 +186,17 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 							List<PublishedApiType> thePublishedApiList = theAuthMs.getPublishedAPI();
 							
 							Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
+							PublishedApiType auxPublishedApi = null;
 							while (paIterator.hasNext()) {
 								
-								thePublishedApi = paIterator.next();
+								auxPublishedApi = paIterator.next();
 								  
-								if (thePublishedApi.getApiClass().equals("AS") &&
-									thePublishedApi.getApiCall().equals("authenticate")	)
-									  break; 
+								if (auxPublishedApi.getApiClass().equals("AS") &&
+									auxPublishedApi.getApiCall().equals("authenticate")	) {
+									
+									thePublishedApi = auxPublishedApi;
+									break; 
+								}
 								  	  
 							}
 							

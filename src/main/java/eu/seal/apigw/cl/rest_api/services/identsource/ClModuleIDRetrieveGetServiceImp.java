@@ -83,11 +83,14 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 					thePublishedApiList = theMs.getPublishedAPI();
 					
 					Iterator<PublishedApiType> paIterator0 = thePublishedApiList.iterator();
+					PublishedApiType auxPublishedApi0 = null;
 					while (paIterator0.hasNext()) {
 						
-						thePublishedApi = paIterator0.next();						  
-						if (thePublishedApi.getApiCall().equals("didAuth")	) // vc/didAuth
-							  break; 						  	  
+						auxPublishedApi0 = paIterator0.next();						  
+						if (auxPublishedApi0.getApiCall().equals("didAuth")	) { // vc/didAuth
+							thePublishedApi = auxPublishedApi0;  
+							break; 
+						}
 					}
 
 					break;
@@ -138,11 +141,14 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 					thePublishedApiList = theMs.getPublishedAPI();
 					
 					Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
+					PublishedApiType auxPublishedApi = null;
 					while (paIterator.hasNext()) {
 						
-						thePublishedApi = paIterator.next();						  
-						if (thePublishedApi.getApiCall().equals("query")	) // is/query
-							  break; 						  	  
+						auxPublishedApi = paIterator.next();						  
+						if (auxPublishedApi.getApiCall().equals("query")) { // is/query
+							thePublishedApi = auxPublishedApi;
+							break; 
+						}
 					}
 					
 					break;
@@ -159,29 +165,36 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 			log.info ("token generated");
 			
 			log.info("theMS: " + theMs.getMsId());
-			log.info("thePublishedApi: " + thePublishedApi.getApiCall());
+			log.info("thePublishedApi: " + (thePublishedApi != null ? thePublishedApi.getApiCall() : thePublishedApi));
 			
 			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();
 
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
-			String statusMessage = Constants.ID_RETRIEVED_MSG;
-			String mainCode = Constants.SUCESS_CODE;;
-			String secondaryCode = Constants.ID_RETRIEVED_CODE;
 			
-			theStatus.setMessage(statusMessage);
-			theStatus.setMainCode(mainCode); 
-			theStatus.setSecondaryCode(secondaryCode); 
-			moduleTrigger.setStatus (theStatus);		
+			if (thePublishedApi != null ) {
+				String statusMessage = Constants.ID_RETRIEVED_MSG;
+				String mainCode = Constants.SUCESS_CODE;;
+				String secondaryCode = Constants.ID_RETRIEVED_CODE;
+				
+				theStatus.setMessage(statusMessage);
+				theStatus.setMainCode(mainCode); 
+				theStatus.setSecondaryCode(secondaryCode); 
+				moduleTrigger.setStatus (theStatus);		
+				
+				ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
+				theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
+				theAccess.setBinding(BindingEnum.POST); // thePublishedApi.getApiConnectionType()
+				theAccess.setBodyContent("TO ASK: bodyContent");
+				theAccess.setContentType("TO ASK: contentType");
+				moduleTrigger.setAccess (theAccess);
+				
+				moduleTrigger.setAccess (theAccess);
+			}
+			else {
+				// TODO
+			}
 			
-			ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
-			theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
-			theAccess.setBinding(BindingEnum.POST); // thePublishedApi.getApiConnectionType()
-			theAccess.setBodyContent("TO ASK: bodyContent");
-			theAccess.setContentType("TO ASK: contentType");
-			moduleTrigger.setAccess (theAccess);
-			
-			moduleTrigger.setAccess (theAccess);
 			moduleTrigger.setPayload(msToken); // The object to be returned.
 			
 			

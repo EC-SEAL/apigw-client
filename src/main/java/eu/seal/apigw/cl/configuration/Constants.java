@@ -20,7 +20,7 @@ public class Constants {
 	public final static String COLLECTION_NOT_FOUND= "Collection not found"; 	// cl/list
 	public final static String ERROR_RETURNING = "Error returning to client"; 	// cl/callback
 	
-	// 404 in auth, identsource/retrieve, persistence/load controllers
+	// 404 in auth, identsource/retrieve, identmngr/list, persistence/load controllers
 	public final static String ERROR_ACCESSING_MODULE= "Error accessing module";
 	
 	// 404 in session controllers

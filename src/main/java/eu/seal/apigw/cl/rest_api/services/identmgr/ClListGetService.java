@@ -12,12 +12,13 @@ See README file for the full disclaimer information and LICENSE file for full li
 
 @author Atos Research and Innovation, Atos SPAIN SA
 */
-package eu.seal.apigw.cl.rest_api.services.identsource;
+package eu.seal.apigw.cl.rest_api.services.identmgr;
 
-import eu.seal.apigw.cl.domain.ModuleTrigger;
+import eu.seal.apigw.cl.domain.DataStore;
 
-public interface ClModuleIDRetrieveGetService {
+
+public interface ClListGetService {
 	
-	ModuleTrigger clModuleIDRetrieveGet (String sessionID, String moduleID) throws Exception;
+	DataStore clListGet (String sessionID) throws Exception;
 
 }

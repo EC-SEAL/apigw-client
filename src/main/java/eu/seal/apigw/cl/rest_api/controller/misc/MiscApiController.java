@@ -197,61 +197,6 @@ public class MiscApiController implements MiscApi {
         return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<ModuleTrigger> clIdentMgrDatasetIDDeleteGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("datasetID") String datasetID) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ModuleTrigger>(objectMapper.readValue("{  \"access\" : {    \"address\" : \"address\",    \"binding\" : \"HTTP-POST-REDIRECT\",    \"bodyContent\" : \"bodyContent\",    \"contentType\" : \"contentType\"  },  \"payload\" : \"{}\",  \"status\" : {    \"mainCode\" : \"mainCode\",    \"secondaryCode\" : \"secondaryCode\",    \"message\" : \"message\"  }}", ModuleTrigger.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ModuleTrigger>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<ModuleTrigger> clIdentMgrDatasetIDRefreshGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("datasetID") String datasetID) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ModuleTrigger>(objectMapper.readValue("{  \"access\" : {    \"address\" : \"address\",    \"binding\" : \"HTTP-POST-REDIRECT\",    \"bodyContent\" : \"bodyContent\",    \"contentType\" : \"contentType\"  },  \"payload\" : \"{}\",  \"status\" : {    \"mainCode\" : \"mainCode\",    \"secondaryCode\" : \"secondaryCode\",    \"message\" : \"message\"  }}", ModuleTrigger.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ModuleTrigger>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<ModuleTrigger> clIdentMgrDatasetIDRevokeGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("datasetID") String datasetID) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ModuleTrigger>(objectMapper.readValue("{  \"access\" : {    \"address\" : \"address\",    \"binding\" : \"HTTP-POST-REDIRECT\",    \"bodyContent\" : \"bodyContent\",    \"contentType\" : \"contentType\"  },  \"payload\" : \"{}\",  \"status\" : {    \"mainCode\" : \"mainCode\",    \"secondaryCode\" : \"secondaryCode\",    \"message\" : \"message\"  }}", ModuleTrigger.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ModuleTrigger>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<DataStore> clIdentMgrListGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<DataStore>(objectMapper.readValue("{  \"signature\" : \"signature\",  \"encryptedData\" : \"encryptedData\",  \"encryptionAlgorithm\" : \"encryptionAlgorithm\",  \"signatureAlgorithm\" : \"signatureAlgorithm\",  \"clearData\" : [ {    \"issuerId\" : \"issuerId\",    \"expiration\" : \"2018-12-06T19:45:16Z\",    \"attributes\" : [ {      \"values\" : [ \"JOHN\" ],      \"name\" : \"http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName\",      \"language\" : \"ES_es\",      \"encoding\" : \"plain\",      \"friendlyName\" : \"CurrentGivenName\",      \"isMandatory\" : true    }, {      \"values\" : [ \"JOHN\" ],      \"name\" : \"http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName\",      \"language\" : \"ES_es\",      \"encoding\" : \"plain\",      \"friendlyName\" : \"CurrentGivenName\",      \"isMandatory\" : true    } ],    \"id\" : \"6c0f70a8-f32b-4535-b5f6-0d596c52813a\",    \"type\" : \"type\",    \"issued\" : \"2018-12-06T19:40:16Z\",    \"subjectId\" : \"subjectId\",    \"properties\" : {      \"key\" : \"properties\"    },    \"loa\" : \"loa\"  }, {    \"issuerId\" : \"issuerId\",    \"expiration\" : \"2018-12-06T19:45:16Z\",    \"attributes\" : [ {      \"values\" : [ \"JOHN\" ],      \"name\" : \"http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName\",      \"language\" : \"ES_es\",      \"encoding\" : \"plain\",      \"friendlyName\" : \"CurrentGivenName\",      \"isMandatory\" : true    }, {      \"values\" : [ \"JOHN\" ],      \"name\" : \"http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName\",      \"language\" : \"ES_es\",      \"encoding\" : \"plain\",      \"friendlyName\" : \"CurrentGivenName\",      \"isMandatory\" : true    } ],    \"id\" : \"6c0f70a8-f32b-4535-b5f6-0d596c52813a\",    \"type\" : \"type\",    \"issued\" : \"2018-12-06T19:40:16Z\",    \"subjectId\" : \"subjectId\",    \"properties\" : {      \"key\" : \"properties\"    },    \"loa\" : \"loa\"  } ]}", DataStore.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<DataStore>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<DataStore>(HttpStatus.NOT_IMPLEMENTED);
-    }
     
 
     @Autowired

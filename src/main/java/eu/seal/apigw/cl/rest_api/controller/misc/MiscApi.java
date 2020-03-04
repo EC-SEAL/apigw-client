@@ -134,46 +134,6 @@ public interface MiscApi {
         method = RequestMethod.POST)
     ResponseEntity<ModuleTrigger> clIdentLinkingModuleIDRequestPost(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID,@ApiParam(value = "", required=true) @RequestParam(value="datasetIDa", required=true)  String datasetIDa,@ApiParam(value = "", required=true) @RequestParam(value="datasetIDb", required=true)  String datasetIDb);
 
-
-    @ApiOperation(value = "Delete a retrieved or derived identity already on the session store through the specific method module used to obtain it.", nickname = "clIdentMgrDatasetIDDeleteGet", notes = "_", response = ModuleTrigger.class, tags={ "APIGatewayClient", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Module access trigger", response = ModuleTrigger.class),
-        @ApiResponse(code = 404, message = "Error accessing module") })
-    @RequestMapping(value = "/cl/ident/mgr/{datasetID}/delete",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<ModuleTrigger> clIdentMgrDatasetIDDeleteGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("datasetID") String datasetID);
-
-
-    @ApiOperation(value = "Update a retrieved or derived identity already on the session store through the specific method module used to obtain it.", nickname = "clIdentMgrDatasetIDRefreshGet", notes = "_", response = ModuleTrigger.class, tags={ "APIGatewayClient", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Module access trigger", response = ModuleTrigger.class),
-        @ApiResponse(code = 404, message = "Error accessing module") })
-    @RequestMapping(value = "/cl/ident/mgr/{datasetID}/refresh",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<ModuleTrigger> clIdentMgrDatasetIDRefreshGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("datasetID") String datasetID);
-
-
-    @ApiOperation(value = "Revoke a retrieved or derived identity already on the session store through the specific method module used to obtain it.", nickname = "clIdentMgrDatasetIDRevokeGet", notes = "_", response = ModuleTrigger.class, tags={ "APIGatewayClient", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Module access trigger", response = ModuleTrigger.class),
-        @ApiResponse(code = 404, message = "Error accessing module") })
-    @RequestMapping(value = "/cl/ident/mgr/{datasetID}/revoke",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<ModuleTrigger> clIdentMgrDatasetIDRevokeGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("datasetID") String datasetID);
-
-
-    @ApiOperation(value = "Get the list of user identity data sets currently    loaded or fetched in session.", nickname = "clIdentMgrListGet", notes = "_", response = DataStore.class, tags={ "APIGatewayClient", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Incoming list", response = DataStore.class),
-        @ApiResponse(code = 404, message = "Collection not found") })
-    @RequestMapping(value = "/cl/ident/mgr/list",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<DataStore> clIdentMgrListGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID);
-
     
     @ApiOperation(value = "Get a collection of elements to be displayed on the selector widget.", nickname = "clListCollectionGet", notes = "_", response = DisplayableList.class, tags={ "APIGatewayClient", })
     @ApiResponses(value = { 

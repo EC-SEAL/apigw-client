@@ -39,6 +39,7 @@ import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
 import eu.seal.apigw.cl.domain.MsMetadata;
 import eu.seal.apigw.cl.domain.MsMetadataList;
 import eu.seal.apigw.cl.domain.PublishedApiType;
+import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 
 @Service
@@ -240,23 +241,32 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 					ObjectMapper objIdpRequest = new ObjectMapper();
 					smConn.updateVariable(sessionID,"idpRequest",objIdpRequest.writeValueAsString(idpRequest));
 					
-					// Building the moduleTrigger to be returned: access: binding, the url of the IdPms, and the msToken. 
-					
-					theStatus.setMessage(Constants.AVAILABLE_IDPS_MSG); 
-					theStatus.setMainCode(Constants.SUCESS_CODE); 
-					theStatus.setSecondaryCode(Constants.AVAILABLE_IDPS_CODE);
-									
-					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
-					theAccess.setAddress(thePublishedApi.getApiEndpoint()); 
-					// TODO: how to translate ApiConnectionType into BindingEnum
-					//theAccess.setBinding(thePublishedApi.getApiConnectionType()); // ?
-					theAccess.setBodyContent(null); // If the access method requires to transfer data on the body of the request, it will be written here
-					theAccess.setContentType(null); // MIME type of the body, if any
-					moduleTrigger.setAccess (theAccess);
-					
-					
 					// Generate token for returning the session.
 					msToken = smConn.generateToken(sessionID, theAuthMs.getMsId()); // Create msToken: GET /sm/generateToken
+					
+					// Building the moduleTrigger to be returned: access: binding, the url of the IdPms, and the msToken. 
+					
+					if (thePublishedApi != null) {
+					
+						theStatus.setMessage(Constants.AVAILABLE_IDPS_MSG); 
+						theStatus.setMainCode(Constants.SUCESS_CODE); 
+						theStatus.setSecondaryCode(Constants.AVAILABLE_IDPS_CODE);
+										
+						ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
+						theAccess.setAddress(thePublishedApi.getApiEndpoint()); 
+						// TODO: how to translate ApiConnectionType into BindingEnum
+						theAccess.setBinding(BindingEnum.POST); // thePublishedApi.getApiConnectionType()
+						theAccess.setBodyContent(null); // If the access method requires to transfer data on the body of the request, it will be written here
+						theAccess.setContentType(null); // MIME type of the body, if any
+						moduleTrigger.setAccess (theAccess);
+						}
+					else {
+						theStatus.setMessage(Constants.NO_IDPS_MSG); 
+						theStatus.setMainCode(Constants.FAIL_CODE); 
+						theStatus.setSecondaryCode(Constants.NO_IDPS_CODE);
+						moduleTrigger.setAccess (null);
+					}
+					
 					moduleTrigger.setPayload(msToken);
 				}
 				else {
@@ -264,9 +274,9 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 					
 					log.info("Invalid moduleID: " + moduleID);
 					
-					theStatus.setMessage(Constants.NO_IDPS_MSG); 
+					theStatus.setMessage(Constants.INVALID_MODULE_ID_MSG); 
 					theStatus.setMainCode(Constants.FAIL_CODE); 
-					theStatus.setSecondaryCode(Constants.NO_IDPS_CODE);
+					theStatus.setSecondaryCode(Constants.INVALID_MODULE_ID_CODE);
 					moduleTrigger.setAccess (null);
 					moduleTrigger.setPayload (null);
 				}

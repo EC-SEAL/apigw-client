@@ -50,94 +50,118 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 	public ModuleTrigger clModuleIDLoadGet (String sessionID, String moduleID) throws Exception {
 		
 		log.info("moduleID: " + moduleID);
+		String theModuleID = null;
+		MsMetadata theMs = null;
+		
 		
 		// UC1.02, UC1.03, UC1.05
 		try {
 			//moduleID was previously stored in settings as "localMobile", "googleDrive"
 			
-			String theModuleID = confMngrConnService.getEntityMetadata("PERSISTENCE", moduleID).getMicroservice().get(0); // The first one.
-			
-			MsMetadata theMs = confMngrConnService.getMicroservicesByApiClass("PER").getMs(theModuleID); // This is the Persistence microservice
-			log.info("theMS: " + theMs.getMsId());
-			
-			PublishedApiType thePublishedApi = null;
-			//For fulfilling theAccess (see bellow)
-			List<PublishedApiType> thePublishedApiList = theMs.getPublishedAPI();
-			
-			Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
-			PublishedApiType auxPublishedApi = null;
-			while (paIterator.hasNext()) {
-				
-				auxPublishedApi = paIterator.next();
-				  
-				if (auxPublishedApi.getApiCall().equals("load")	) {// per/load
-					
-					thePublishedApi = auxPublishedApi;
-					break; 
-				}
-				  	  
-			}
-			log.info("thePublishedApi: " + thePublishedApi.getApiCall());
-			
-			String thePayload = null;
-			BindingEnum theBinding = null;
-			switch (moduleID.toLowerCase()) {
-			
-				case "localmobile":
-					thePayload = sessionID;
-					
-					theBinding = BindingEnum.GET;
-					break;
-					
-				case "googledrive":
-					String msToken =  null;
-					
-					msToken = smConn.generateToken (sessionID, theModuleID);
-					thePayload = msToken;
-					
-					log.info ("token generated");
-					
-					theBinding = BindingEnum.POST;
-					
-					// Update sessionData: PDS = googleDrive
-					smConn.updateVariable(sessionID,"PDS", moduleID);
-					break;
-					
-				case "onedrive":
-				case "remotemobile":
-				case "browser":
-					log.info ("BE AWARE: undefined persistence module: " + moduleID);
-					break;
-				
-				default:
-					log.info ("BE AWARE: unknown persistence module: " + moduleID);
-			}
-			
-			// Returns moduleTrigger to client
-			// it returns the address of the API to call .... /per/load
-
-			ModuleTrigger moduleTrigger = new ModuleTrigger();
-
+			ModuleTrigger moduleTrigger = new ModuleTrigger();		
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
-			String statusMessage = Constants.PERSISTENCE_LOADED_MSG;
-			String mainCode = Constants.SUCESS_CODE;;
-			String secondaryCode = Constants.PERSISTENCE_LOADED_CODE;
 			
-			theStatus.setMessage(statusMessage);
-			theStatus.setMainCode(mainCode); 
-			theStatus.setSecondaryCode(secondaryCode); 
-			moduleTrigger.setStatus (theStatus);		
+			theModuleID = confMngrConnService.getEntityMetadata("PERSISTENCE", moduleID).getMicroservice().get(0); // The first one.
+			log.info("theModuleID: " + theModuleID);
 			
-			ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
-			theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
-			theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
-			theAccess.setBodyContent("TO ASK: bodyContent");
-			theAccess.setContentType("TO ASK: contentType");
-			moduleTrigger.setAccess (theAccess);
-			
-			moduleTrigger.setAccess (theAccess);
-			moduleTrigger.setPayload(thePayload);
-			
+			theMs = confMngrConnService.getMicroservicesByApiClass("PER").getMs(theModuleID); // This is the Persistence microservice
+			if (theMs != null) {
+				log.info("theMS: " + theMs.getMsId());
+				
+				PublishedApiType thePublishedApi = null;
+				//For fulfilling theAccess (see bellow)
+				List<PublishedApiType> thePublishedApiList = theMs.getPublishedAPI();
+				
+				Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
+				PublishedApiType auxPublishedApi = null;
+				while (paIterator.hasNext()) {
+					
+					auxPublishedApi = paIterator.next();
+					  
+					if (auxPublishedApi.getApiCall().equals("load")	) {// per/load
+						
+						thePublishedApi = auxPublishedApi;
+						break; 
+					}
+					  	  
+				}
+				log.info("thePublishedApi: " + (thePublishedApi != null ? thePublishedApi.getApiCall() : thePublishedApi));
+				
+				String thePayload = null;
+				BindingEnum theBinding = null;
+				switch (moduleID.toLowerCase()) {
+				
+					case "localmobile":
+						thePayload = sessionID;
+						
+						theBinding = BindingEnum.GET;
+						break;
+						
+					case "googledrive":
+						String msToken =  null;
+						
+						msToken = smConn.generateToken (sessionID, theModuleID);
+						thePayload = msToken;
+						
+						log.info ("token generated");
+						
+						theBinding = BindingEnum.POST;
+						
+						// Update sessionData: PDS = googleDrive
+						smConn.updateVariable(sessionID,"PDS", moduleID);
+						break;
+						
+					case "onedrive":
+					case "remotemobile":
+					case "browser":
+						log.info ("BE AWARE: undefined persistence module: " + moduleID);
+						break;
+					
+					default:
+						log.info ("BE AWARE: unknown persistence module: " + moduleID);
+				}
+				
+				// Returns moduleTrigger to client
+				// it returns the address of the API to call .... /per/load
+	
+				
+				
+				if (thePublishedApi != null ) {
+					
+					String statusMessage = Constants.PERSISTENCE_LOADED_MSG;
+					String mainCode = Constants.SUCESS_CODE;;
+					String secondaryCode = Constants.PERSISTENCE_LOADED_CODE;
+					
+					theStatus.setMessage(statusMessage);
+					theStatus.setMainCode(mainCode); 
+					theStatus.setSecondaryCode(secondaryCode); 
+					moduleTrigger.setStatus (theStatus);		
+					
+					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
+					theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
+					theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
+					theAccess.setBodyContent("TO ASK: bodyContent");
+					theAccess.setContentType("TO ASK: contentType");
+					moduleTrigger.setAccess (theAccess);
+					
+					moduleTrigger.setAccess (theAccess);
+				}
+				else {
+					theStatus.setMessage(Constants.NO_PERSISTENCE_LOADED_MSG);
+					theStatus.setMainCode(Constants.FAIL_CODE); 
+					theStatus.setSecondaryCode(Constants.NO_PERSISTENCE_LOADED_CODE); 
+					moduleTrigger.setStatus (theStatus);
+					moduleTrigger.setAccess (null);
+				}
+				moduleTrigger.setPayload(thePayload);
+			}
+			else {
+				theStatus.setMessage(Constants.INVALID_MODULE_ID_MSG); 
+				theStatus.setMainCode(Constants.FAIL_CODE); 
+				theStatus.setSecondaryCode(Constants.INVALID_MODULE_ID_CODE);
+				moduleTrigger.setAccess (null);
+				moduleTrigger.setPayload (null);
+			}
 			
 			return moduleTrigger;
 			

@@ -164,15 +164,16 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 			msToken = smConn.generateToken (sessionID, theModuleID);		
 			log.info ("token generated");
 			
-			log.info("theMS: " + theMs.getMsId());
+			log.info("theMS: " + (theMs != null ? theMs.getMsId(): theMs));
 			log.info("thePublishedApi: " + (thePublishedApi != null ? thePublishedApi.getApiCall() : thePublishedApi));
 			
 			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();
-
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
 			
-			if (thePublishedApi != null ) {
+			if (theMs != null) {
+			
+			 if (thePublishedApi != null ) {
 				String statusMessage = Constants.ID_RETRIEVED_MSG;
 				String mainCode = Constants.SUCESS_CODE;;
 				String secondaryCode = Constants.ID_RETRIEVED_CODE;
@@ -190,14 +191,25 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 				moduleTrigger.setAccess (theAccess);
 				
 				moduleTrigger.setAccess (theAccess);
+			 }
+			 else {
+				theStatus.setMessage(Constants.NO_ID_RETRIEVED);
+				theStatus.setMainCode(Constants.FAIL_CODE); 
+				theStatus.setSecondaryCode(Constants.NO_ID_RETRIEVED_CODE); 
+				moduleTrigger.setStatus (theStatus);
+				moduleTrigger.setAccess (null);
+			 }
+			
+			 moduleTrigger.setPayload(msToken); // The object to be returned.
 			}
 			else {
-				// TODO
+				theStatus.setMessage(Constants.INVALID_MODULE_ID_MSG); 
+				theStatus.setMainCode(Constants.FAIL_CODE); 
+				theStatus.setSecondaryCode(Constants.INVALID_MODULE_ID_CODE);
+				moduleTrigger.setAccess (null);
+				moduleTrigger.setPayload (null);
 			}
-			
-			moduleTrigger.setPayload(msToken); // The object to be returned.
-			
-			
+						
 			return moduleTrigger;
 			
 		}

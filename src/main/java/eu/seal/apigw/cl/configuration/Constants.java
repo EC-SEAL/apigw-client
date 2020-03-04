@@ -20,12 +20,14 @@ public class Constants {
 	public final static String COLLECTION_NOT_FOUND= "Collection not found"; 	// cl/list
 	public final static String ERROR_RETURNING = "Error returning to client"; 	// cl/callback
 	
-	// 404 in auth, ident/source controllers
+	// 404 in auth, identsource/retrieve, persistence/load controllers
 	public final static String ERROR_ACCESSING_MODULE= "Error accessing module";
 	
 	// 404 in session controllers
 	public final static String SESSION_START_ERROR = "Session start error";
 		
+	public final static String INVALID_MODULE_ID_MSG = "Invalid module id";
+	public final static String INVALID_MODULE_ID_CODE = "invalid_module_id_code";
 	
 	public final static String NEW_SESSION_MSG = "New session just created";
 	public final static String NEW_SESSION_CODE = "new_session_code";
@@ -41,9 +43,13 @@ public class Constants {
 	
 	public final static String ID_RETRIEVED_MSG = "Identity just retrieved";
 	public final static String ID_RETRIEVED_CODE = "id_retrieved_code";
+	public final static String NO_ID_RETRIEVED = "No identity retrieved";
+	public final static String NO_ID_RETRIEVED_CODE = "no_id_retrieved_code";
 	
 	public final static String PERSISTENCE_LOADED_MSG = "Persistence module loaded";
 	public final static String PERSISTENCE_LOADED_CODE = "persistence_loaded_code";
+	public final static String NO_PERSISTENCE_LOADED_MSG = "No persistence module loaded";
+	public final static String NO_PERSISTENCE_LOADED_CODE = "no_persistence_loaded_code";
 	
 	public final static String SUCESS_CODE = "OK";
 	public final static String FAIL_CODE = "KO";

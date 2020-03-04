@@ -105,7 +105,7 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 					myApRequest.setId( "AP_" + UUID.randomUUID().toString());
 					myApRequest.setType(AttributeSet.TypeEnum.REQUEST);
 					myApRequest.setIssuer(confMngrConnService.getMicroservicesByApiClass("CL").get(0).getMsId()); // The unique client
-					myApRequest.setRecipient(confMngrConnService.getEntityMetadata("AUTHSOURCE", moduleID).getMicroservice().get(0)); // the first one
+					myApRequest.setRecipient(confMngrConnService.getEntityMetadata("ATTRSOURCE", moduleID).getMicroservice().get(0)); // the first one
 					myApRequest.setAttributes(null);
 					
 					ObjectMapper objMapper = new ObjectMapper();
@@ -113,21 +113,27 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 					
 					EntityMetadata myApMetadata = new EntityMetadata();
 					myApMetadata.setEntityId("AP_" + UUID.randomUUID().toString());
-					//TODO
-					myApMetadata.setLocation(null);
-					myApMetadata.setDefaultDisplayName("TODOdefaultDisplayName");
-					myApMetadata.setDisplayNames(null);
-					myApMetadata.setClaims(null);
-					myApMetadata.setEncryptResponses(false);
-					myApMetadata.setEndpoints(null);
-					myApMetadata.setLogo(null);
-					myApMetadata.setMicroservice(null);
-					myApMetadata.setOtherData(null);
-					myApMetadata.setProtocol("TODOprotocol");
-					myApMetadata.setSecurityKeys(null);
-					myApMetadata.setSignResponses(false);
-					myApMetadata.setSupportedEncryptionAlg(null);
-					myApMetadata.setSupportedSigningAlg(null);
+					
+					EntityMetadata auxApMetadata = confMngrConnService.getEntityMetadataSet(moduleID.toUpperCase()).getMsEntities (myApRequest.getRecipient()).get(0);
+					
+					//log.info("auxApMetadata: " + auxApMetadata.toString());
+					
+					myApMetadata.setLocation(auxApMetadata.getLocation());
+					myApMetadata.setDefaultDisplayName(auxApMetadata.getDefaultDisplayName());
+					myApMetadata.setDisplayNames(auxApMetadata.getDisplayNames());
+					myApMetadata.setClaims(auxApMetadata.getClaims());
+					myApMetadata.setEncryptResponses(auxApMetadata.isEncryptResponses());
+					myApMetadata.setEndpoints(auxApMetadata.getEndpoints());
+					myApMetadata.setLogo(auxApMetadata.getLogo());
+					myApMetadata.setMicroservice(auxApMetadata.getMicroservice());
+					myApMetadata.setOtherData(auxApMetadata.getOtherData());
+					myApMetadata.setProtocol(auxApMetadata.getProtocol());
+					myApMetadata.setSecurityKeys(auxApMetadata.getSecurityKeys());
+					myApMetadata.setSignResponses(auxApMetadata.isSignResponses());
+					myApMetadata.setSupportedEncryptionAlg(auxApMetadata.getSupportedEncryptionAlg());
+					myApMetadata.setSupportedSigningAlg(auxApMetadata.getSupportedSigningAlg());
+					
+					log.info ("myApMetadata: " + myApMetadata.toString());
 					
 					ObjectMapper objMapper1 = new ObjectMapper();
 					smConn.updateVariable(sessionID, "apMetadata", objMapper1.writeValueAsString(myApMetadata));
@@ -135,7 +141,7 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
 					theModuleID = confMngrConnService.getEntityMetadata("ATTRSOURCE", moduleID).getMicroservice().get(0);	// The first one.
 					
-					theMs = confMngrConnService.getMicroservicesByApiClass("IS").getMs(theModuleID); // This is the Identity Source microservice
+					theMs = confMngrConnService.getMicroservicesByApiClass("AS").getMs(theModuleID); // This is the Identity Source microservice
 									
 					//For fulfilling theAccess (see bellow)
 					thePublishedApiList = theMs.getPublishedAPI();
@@ -186,8 +192,8 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 				ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
 				theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
 				theAccess.setBinding(BindingEnum.POST); // thePublishedApi.getApiConnectionType()
-				theAccess.setBodyContent("TO ASK: bodyContent");
-				theAccess.setContentType("TO ASK: contentType");
+				theAccess.setBodyContent("TODO: bodyContent"); // If the access method requires to transfer data on the body of the request, it will be written here
+				theAccess.setContentType("TODO: contentType"); // the MIME type of the body, if any
 				moduleTrigger.setAccess (theAccess);
 				
 				moduleTrigger.setAccess (theAccess);

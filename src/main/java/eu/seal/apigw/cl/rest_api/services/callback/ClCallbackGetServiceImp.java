@@ -20,12 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.domain.AttributeSet;
-import eu.seal.apigw.cl.domain.AttributeType;
+import eu.seal.apigw.cl.domain.DataSet;
 import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 
@@ -37,7 +37,9 @@ public class ClCallbackGetServiceImp implements ClCallbackGetService{
 	
 	@Autowired
 	private SessionManagerConnService smConn;
-
+	
+	@Autowired
+	private ConfMngrConnService confMngrConnService;
 	
 	@Override
 	public void clCallbackGet (String sessionID, String clientCallbackAddr) throws Exception {
@@ -57,53 +59,33 @@ public class ClCallbackGetServiceImp implements ClCallbackGetService{
 				log.info("Reading dataStore...");
 				log.info("## dataStore: " + datastore.toString() );
 				
-				// TODO
+				DataSet myDataset = datastore.getClearData() != null ? datastore.getClearData().get(0) : null;
+				
 				// ... update SM with the new retrieved eIDAS/eduGain/eMRTD identity attributes
-				ObjectMapper objMapper = new ObjectMapper();
-				AttributeSet authenticationSet = new AttributeSet ();
-				authenticationSet.setId(UUID.randomUUID().toString());
-				authenticationSet.setType(AttributeSet.TypeEnum.AUTHRESPONSE);
 				
-				// TODO: to get from the datastore read before.
-				authenticationSet.setIssuer( "the issuer");
-				authenticationSet.setRecipient("the recipient");
-				authenticationSet.setLoa("http://eidas.europa.eu/LoA/substantial");
-				authenticationSet.setNotAfter("2020-12-06T19:45:16Z");
-				authenticationSet.setNotBefore("2020-12-06T19:40:16Z");
 				
-				List<AttributeType> myAuthAttributes =  new ArrayList<AttributeType>();
-				AttributeType anAuthAttribute = new AttributeType ();
-				anAuthAttribute.setEncoding("plain");
-				anAuthAttribute.setFriendlyName("CurrentGivenName");
-				anAuthAttribute.setName("http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName");
-				anAuthAttribute.setLanguage(null);
-				anAuthAttribute.setMandatory(true);
-				anAuthAttribute.addValuesItem("JOHN JOHN");
-				myAuthAttributes.add(0, anAuthAttribute);
-//				
-//				AttributeType anAuthAttribute2 = new AttributeType ();
-//				anAuthAttribute2.setEncoding("plain");
-//				anAuthAttribute2.setFriendlyName("PersonIdentifier");
-//				anAuthAttribute2.setName("http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier");
-//				anAuthAttribute2.setLanguage(null);
-//				anAuthAttribute2.setIsMandatory(true);
-//				anAuthAttribute2.addValuesItem("ES/NO/1234ABCD");
-//				myAuthAttributes.add(1, anAuthAttribute2);
-//				
-				authenticationSet.setAttributes(myAuthAttributes);
-				
-				try
-				{
+				if (myDataset != null) {
+					// Get from the datastore read before.
+					
+					ObjectMapper objMapper = new ObjectMapper();
+					AttributeSet authenticationSet = new AttributeSet ();
+					authenticationSet.setId(UUID.randomUUID().toString());
+					//authenticationSet.setType(AttributeSet.TypeEnum(myDataset.getType()));
+					authenticationSet.setType(AttributeSet.TypeEnum.AUTHRESPONSE);
+					authenticationSet.setIssuer(myDataset.getIssuerId());
+					authenticationSet.setRecipient(confMngrConnService.getMicroservicesByApiClass("CL").get(0).getMsId()); // The unique client
+					authenticationSet.setLoa(myDataset.getLoa());
+					authenticationSet.setNotAfter(myDataset.getExpiration());
+					authenticationSet.setNotBefore(null);			
+					authenticationSet.setAttributes(myDataset.getAttributes());
+					
 					smConn.updateVariable(sessionID, "authenticationSet", objMapper.writeValueAsString(authenticationSet));
 				}
-				catch (Exception ex)
-				{
-					String errorMsg= "Exception calling SM (updateVariable authenticationSet)  \n";
-					errorMsg += "Exception message:" + ex.getMessage() + "\n";
-					log.error(errorMsg);
+				else {
+					smConn.updateVariable(sessionID, "authenticationSet", null);
 				}
 				
-			
+				
 			}
 			else {
 			// UC1.04
@@ -127,20 +109,22 @@ public class ClCallbackGetServiceImp implements ClCallbackGetService{
 				{
 					ObjectMapper objDatastore0 = new ObjectMapper();
 					smConn.updateVariable(sessionID, "dataStore", objDatastore0.writeValueAsString(datastore));
-					smConn.updateVariable(sessionID, "clientCallbackAddr", clientCallbackAddr);
+					
 				}
 				catch (Exception ex)
 				{
 					String errorMsg= "Exception calling SM (updateVariables)  \n";
 					errorMsg += "Exception message:" + ex.getMessage() + "\n";
-					log.error(errorMsg);
+					log.info(errorMsg);
+					throw new Exception (ex);
 				}
 				
 			}
+			smConn.updateVariable(sessionID, "clientCallbackAddr", clientCallbackAddr);
 			
 		}
 		catch (Exception e) {
-			log.error("Exception: ", e);
+			log.info("Exception: ", e);
 			throw new Exception (e);
 		}
 	}

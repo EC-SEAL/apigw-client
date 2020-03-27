@@ -35,10 +35,10 @@ import eu.seal.apigw.cl.domain.PublishedApiType;
 
 
 @Service
-public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
+public class ClModuleIDStoreGetServiceImp implements ClModuleIDStoreGetService{
 
 	
-	private static final Logger log = LoggerFactory.getLogger(ClModuleIDLoadGetServiceImp.class);
+	private static final Logger log = LoggerFactory.getLogger(ClModuleIDStoreGetServiceImp.class);
 	
 	@Autowired
 	private ConfMngrConnService confMngrConnService;
@@ -47,16 +47,16 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 	private SessionManagerConnService smConn;
 	
 	@Override
-	public ModuleTrigger clModuleIDLoadGet (String sessionID, String moduleID) throws Exception {
+	public ModuleTrigger clModuleIDStoreGet (String sessionID, String moduleID) throws Exception {
 		
 		log.info("moduleID: " + moduleID);
 		String theModuleID = null;
 		MsMetadata theMs = null;
 		
 		
-		// UC1.02, UC1.03, UC1.05, UC1.06
+		// UC2.05
 		try {
-			//moduleID was previously stored in settings as "localMobile", "googleDrive", "oneDrive"
+			//moduleID was previously stored in settings as "localMobile", "googleDrive"
 			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();		
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
@@ -78,7 +78,7 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 					
 					auxPublishedApi = paIterator.next();
 					  
-					if (auxPublishedApi.getApiCall().equals("load")	) {// per/load
+					if (auxPublishedApi.getApiCall().equals("store")	) {// per/store
 						
 						thePublishedApi = auxPublishedApi;
 						break; 
@@ -122,15 +122,15 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 				}
 				
 				// Returns moduleTrigger to client
-				// it returns the address of the API to call .... /per/load
+				// it returns the address of the API to call .... /per/store
 	
 				
 				
 				if (thePublishedApi != null ) {
 					
-					String statusMessage = Constants.PERSISTENCE_LOADED_MSG;
+					String statusMessage = Constants.PERSISTENCE_STORED_MSG;
 					String mainCode = Constants.SUCESS_CODE;;
-					String secondaryCode = Constants.PERSISTENCE_LOADED_CODE;
+					String secondaryCode = Constants.PERSISTENCE_STORED_CODE;
 					
 					theStatus.setMessage(statusMessage);
 					theStatus.setMainCode(mainCode); 
@@ -147,9 +147,9 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 					moduleTrigger.setAccess (theAccess);
 				}
 				else {
-					theStatus.setMessage(Constants.NO_PERSISTENCE_LOADED_MSG);
+					theStatus.setMessage(Constants.NO_PERSISTENCE_STORED_MSG);
 					theStatus.setMainCode(Constants.FAIL_CODE); 
-					theStatus.setSecondaryCode(Constants.NO_PERSISTENCE_LOADED_CODE); 
+					theStatus.setSecondaryCode(Constants.NO_PERSISTENCE_STORED_CODE); 
 					moduleTrigger.setStatus (theStatus);
 					moduleTrigger.setAccess (null);
 				}

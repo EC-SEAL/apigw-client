@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.rest_api.services.persistence.ClModuleIDLoadGetService;
+import eu.seal.apigw.cl.rest_api.services.persistence.ClModuleIDStoreGetService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class PersistenceApiController implements PersistenceApi {
         	
             try {
             	idRetrieved = clModuleIDLoadGetService.clModuleIDLoadGet(sessionID, moduleID);
-                return new ResponseEntity<ModuleTrigger>(idRetrieved, HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<ModuleTrigger>(idRetrieved, HttpStatus.OK);
             } catch (Exception e) {
             	log.error(Constants.ERROR_ACCESSING_MODULE, e);
                 return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);
@@ -72,14 +73,21 @@ public class PersistenceApiController implements PersistenceApi {
         return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    
+    @Autowired
+	private ClModuleIDStoreGetService clModuleIDStoreGetService;
+    
     public ResponseEntity<ModuleTrigger> clPersistenceModuleIDStoreGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
+        	ModuleTrigger idRetrieved = new ModuleTrigger();
+        	
             try {
-                return new ResponseEntity<ModuleTrigger>(objectMapper.readValue("{  \"access\" : {    \"address\" : \"address\",    \"binding\" : \"HTTP-POST-REDIRECT\",    \"bodyContent\" : \"bodyContent\",    \"contentType\" : \"contentType\"  },  \"payload\" : \"{}\",  \"status\" : {    \"mainCode\" : \"mainCode\",    \"secondaryCode\" : \"secondaryCode\",    \"message\" : \"message\"  }}", ModuleTrigger.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ModuleTrigger>(HttpStatus.INTERNAL_SERVER_ERROR);
+            	idRetrieved = clModuleIDStoreGetService.clModuleIDStoreGet(sessionID, moduleID);
+                return new ResponseEntity<ModuleTrigger>(idRetrieved, HttpStatus.OK);
+            } catch (Exception e) {
+            	log.error(Constants.ERROR_ACCESSING_MODULE, e);
+                return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);
             }
         }
 

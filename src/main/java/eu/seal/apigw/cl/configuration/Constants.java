@@ -20,7 +20,7 @@ public class Constants {
 	public final static String COLLECTION_NOT_FOUND= "Collection not found"; 	// cl/list
 	public final static String ERROR_RETURNING = "Error returning to client"; 	// cl/callback
 	
-	// 404 in auth, identsource/retrieve, identmngr/list, persistence/load controllers
+	// 404 in auth, identsource/retrieve, identmngr/list, persistence/load&store controllers
 	public final static String ERROR_ACCESSING_MODULE= "Error accessing module";
 	
 	// 404 in session controllers
@@ -50,6 +50,11 @@ public class Constants {
 	public final static String PERSISTENCE_LOADED_CODE = "persistence_loaded_code";
 	public final static String NO_PERSISTENCE_LOADED_MSG = "No persistence module loaded";
 	public final static String NO_PERSISTENCE_LOADED_CODE = "no_persistence_loaded_code";
+	
+	public final static String PERSISTENCE_STORED_MSG = "Persistence module stored";
+	public final static String PERSISTENCE_STORED_CODE = "persistence_stored_code";
+	public final static String NO_PERSISTENCE_STORED_MSG = "No persistence module stored";
+	public final static String NO_PERSISTENCE_STORED_CODE = "no_persistence_stored_code";
 	
 	public final static String SUCESS_CODE = "OK";
 	public final static String FAIL_CODE = "KO";

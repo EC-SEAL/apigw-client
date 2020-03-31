@@ -24,6 +24,7 @@ import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.rest_api.services.callback.ClCallbackGetService;
+import eu.seal.apigw.cl.rest_api.services.derivation.ClModuleIDGenerateGetService;
 import eu.seal.apigw.cl.rest_api.services.lists.ClListCollectionGetService;
 import eu.seal.apigw.cl.configuration.Constants;
 import io.swagger.annotations.*;
@@ -85,14 +86,21 @@ public class MiscApiController implements MiscApi {
         //return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @Autowired
+	private ClModuleIDGenerateGetService clModuleIDGenerateGetService;
+    
     public ResponseEntity<ModuleTrigger> clIdentDerivationModuleIDGenerateGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<ModuleTrigger>(objectMapper.readValue("{  \"access\" : {    \"address\" : \"address\",    \"binding\" : \"HTTP-POST-REDIRECT\",    \"bodyContent\" : \"bodyContent\",    \"contentType\" : \"contentType\"  },  \"payload\" : \"{}\",  \"status\" : {    \"mainCode\" : \"mainCode\",    \"secondaryCode\" : \"secondaryCode\",    \"message\" : \"message\"  }}", ModuleTrigger.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ModuleTrigger>(HttpStatus.INTERNAL_SERVER_ERROR);
+            	ModuleTrigger idRetrieved = new ModuleTrigger();
+            	
+            	idRetrieved = clModuleIDGenerateGetService.clModuleIDGenerateGet(sessionID, moduleID);
+            	return new ResponseEntity<ModuleTrigger>(idRetrieved, HttpStatus.OK);
+            	
+            } catch (Exception e) {
+            	log.error(Constants.ERROR_ACCESSING_MODULE, e);
+                return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);
             }
         }
 

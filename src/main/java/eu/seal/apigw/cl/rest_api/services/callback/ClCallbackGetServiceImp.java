@@ -120,7 +120,7 @@ public class ClCallbackGetServiceImp implements ClCallbackGetService{
 				}
 				
 			}
-			smConn.updateVariable(sessionID, "clientCallbackAddr", clientCallbackAddr);
+			smConn.updateVariable(sessionID, "ClientCallbackAddr", clientCallbackAddr);
 			
 		}
 		catch (Exception e) {

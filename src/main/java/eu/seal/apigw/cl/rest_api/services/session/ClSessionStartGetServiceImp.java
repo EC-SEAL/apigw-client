@@ -80,7 +80,7 @@ public class ClSessionStartGetServiceImp implements ClSessionStartGetService{
 					// Creating an empty datastore object
 					
 					// TODO
-					datastore.setId(UUID.randomUUID().toString());
+					datastore.setId("DS_" + UUID.randomUUID().toString());
 					datastore.setEncryptedData(null);
 					datastore.setEncryptionAlgorithm("this is the encryption algorithm");
 					datastore.setSignature("this is the signature");

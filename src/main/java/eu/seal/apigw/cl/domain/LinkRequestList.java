@@ -13,21 +13,22 @@ See README file for the full disclaimer information and LICENSE file for full li
 package eu.seal.apigw.cl.domain;
 
 import java.util.Objects;
+import io.swagger.annotations.ApiModel;
+import eu.seal.apigw.cl.domain.LinkRequest;
 import java.util.ArrayList;
-import java.util.Iterator;
-
+import java.util.List;
 import org.springframework.validation.annotation.Validated;
-
-import eu.seal.apigw.cl.domain.EntityMetadata;
-
-
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
- * EntityMetadataList
+ * List of linking requests
  */
+@ApiModel(description = "List of linking requests")
 @Validated
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2020-04-14T08:21:59.866Z")
 
-public class EntityMetadataList extends ArrayList<EntityMetadata>  {
+public class LinkRequestList extends ArrayList<LinkRequest>  {
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -48,7 +49,7 @@ public class EntityMetadataList extends ArrayList<EntityMetadata>  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class EntityMetadataList {\n");
+    sb.append("class LinkRequestList {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("}");
     return sb.toString();
@@ -64,41 +65,5 @@ public class EntityMetadataList extends ArrayList<EntityMetadata>  {
     }
     return o.toString().replace("\n", "\n    ");
   }
-  
-//Get the entity with a given entityId
- public EntityMetadata getEntityById (String entityId) {
-	  
-	 EntityMetadata theEntity = null;
-	  
-	 EntityMetadata anEntity;
-	 Iterator<EntityMetadata> entityMetadataIterator = this.iterator();
-	 while (entityMetadataIterator.hasNext()) {
-		 anEntity = entityMetadataIterator.next();
-		  if (anEntity.getEntityId().equals(entityId)) {
-				  theEntity = anEntity;
-			  	  break;
-		  }	  
-	  }
-	 
-	  return theEntity;
- }
- 
-//Get the list of entities with a given ms
-public EntityMetadataList getMsEntities (String ms) {
-	  
-	EntityMetadataList msEntities = new EntityMetadataList();
-	  
-	  EntityMetadata em;
-	  Iterator<EntityMetadata> msMetadataIterator = this.iterator();
-	  while (msMetadataIterator.hasNext()) {
-		  em = msMetadataIterator.next();
-		  if (!em.getMicroservice().isEmpty()) {
-			  if (em.getMicroservice().contains(ms))
-				  msEntities.add (em);
-		  }	  
-	  }
-	 
-	  return msEntities;
-	}
 }
 

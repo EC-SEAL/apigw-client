@@ -20,7 +20,7 @@ public class Constants {
 	public final static String COLLECTION_NOT_FOUND= "Collection not found"; 	// cl/list
 	public final static String ERROR_RETURNING = "Error returning to client"; 	// cl/callback
 	
-	// 404 in auth, identsource/retrieve, identmngr/list, persistence/load&store controllers, derivation
+	// 404 in auth, identsource/retrieve, identmngr/list, persistence/load&store controllers, derivation, linking
 	public final static String ERROR_ACCESSING_MODULE= "Error accessing module";
 	
 	// 404 in session controllers
@@ -61,27 +61,13 @@ public class Constants {
 	public final static String NO_PERSISTENCE_STORED_MSG = "No persistence module stored";
 	public final static String NO_PERSISTENCE_STORED_CODE = "no_persistence_stored_code";
 	
+	public final static String LINKING_REQUESTED_MSG = "Linking requested";
+	public final static String LINKING_REQUESTED_CODE = "linking_requested_code";
+	public final static String NO_LINKING_REQUESTED_MSG = "No linking requested";
+	public final static String NO_LINKING_REQUESTED_CODE = "no_linking_requested_code";
+	
 	public final static String SUCESS_CODE = "OK";
 	public final static String FAIL_CODE = "KO";
 	
 	
-	
-	
-//	public final static String MS_NOT_FOUND = "Microservices not found";
-//	public final static String PROFILES_NOT_FOUND = "Profile files not found.";
-//	public final static String ATTRIBUTES_NOT_FOUND = "Attributes not found";
-//	public final static String JSON_SYNTAX_ERROR = "Json Syntax error";
-//	public final static String FILE_ERROR = "File error";
-//	public final static String ENTITY_NOT_FOUND = "External entity not found";
-//	public final static String ENTITIES_NOT_FOUND = "External entities not found";
-//	public final static String ENTITY_FILES_NOT_FOUND = "External entity files not found";
-//	public final static String INTERNAL_CONF_FILES_NOT_FOUND = "Internal configuration files not found";
-//	public final static String INTERNAL_CONF_NOT_FOUND = "Internal configuration not found";
-//    
-//	public final static String EWP_REGISTRY_NOT_AVAILABLE = "EWP Registry not available";
-//    public final static String EWP_MANIFEST_NOT_FOUND = "EWP Manifest file not found";
-//    public final static String EWP_NO_SEAL_HOSTS = "No SEAL hosts found in the registry";
-//    
-//    public final static String SEAL_GW_DSAREQUEST = "dsaRequest"; 
-//	public final static String SEAL_GW_DSARESPONSE = "dsaResponse";
 }

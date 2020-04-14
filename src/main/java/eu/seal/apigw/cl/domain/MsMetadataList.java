@@ -121,16 +121,19 @@ public class MsMetadataList extends ArrayList<MsMetadata>  {
 public MsMetadata getMs (String msId) {
 	  
 	  MsMetadata ms = null;
+	  boolean found = false;
 	  Iterator<MsMetadata> msMetadataIterator = this.iterator();
 	  while (msMetadataIterator.hasNext()) {
 		  ms = msMetadataIterator.next();
 		  
-		  if (ms.getMsId().equals(msId))
+		  if (ms.getMsId().equals(msId)) {
+			  found = true;
 			  break; 
+		  }
 		  	  
 	  }
 	 
-	  return ms;
+	  return (found ? ms : null);
 }
  
   

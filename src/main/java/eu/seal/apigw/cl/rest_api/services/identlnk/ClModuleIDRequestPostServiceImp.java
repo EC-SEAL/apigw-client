@@ -12,19 +12,24 @@ See README file for the full disclaimer information and LICENSE file for full li
 
 @author Atos Research and Innovation, Atos SPAIN SA
 */
-package eu.seal.apigw.cl.rest_api.services.persistence;
+package eu.seal.apigw.cl.rest_api.services.identlnk;
 
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
+import eu.seal.apigw.cl.domain.DataSet;
+import eu.seal.apigw.cl.domain.LinkRequest;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
@@ -35,10 +40,10 @@ import eu.seal.apigw.cl.domain.PublishedApiType;
 
 
 @Service
-public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
+public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostService{
 
 	
-	private static final Logger log = LoggerFactory.getLogger(ClModuleIDLoadGetServiceImp.class);
+	private static final Logger log = LoggerFactory.getLogger(ClModuleIDRequestPostServiceImp.class);
 	
 	@Autowired
 	private ConfMngrConnService confMngrConnService;
@@ -47,24 +52,23 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 	private SessionManagerConnService smConn;
 	
 	@Override
-	public ModuleTrigger clModuleIDLoadGet (String sessionID, String moduleID) throws Exception {
+	public ModuleTrigger clModuleIDRequestPost (String sessionID, String moduleID, String datasetIDa, String datasetIDb) throws Exception {
 		
 		log.info("moduleID: " + moduleID);
 		String theModuleID = null;
 		MsMetadata theMs = null;
 		
-		
-		// UC1.02, UC1.03, UC1.05, UC1.06
+		// UC7.01: "linking", "linkRequest" session variables to be updated, 
 		try {
 			//moduleID was previously stored in settings as "localMobile", "googleDrive", "oneDrive"
 			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();		
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
 			
-			theModuleID = confMngrConnService.getEntityMetadata("PERSISTENCE", moduleID).getMicroservice().get(0); // The first one.
+			theModuleID = confMngrConnService.getEntityMetadata("LINKING", moduleID).getMicroservice().get(0); // The first one.
 			log.info("theModuleID: " + theModuleID);
 			
-			theMs = confMngrConnService.getMicroservicesByApiClass("PER").getMs(theModuleID); // This is the Persistence microservice
+			theMs = confMngrConnService.getMicroservicesByApiClass("LINK").getMs(theModuleID); // This is the Link microservice
 			if (theMs != null) {
 				log.info("theMS: " + theMs.getMsId());
 				
@@ -78,7 +82,7 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 					
 					auxPublishedApi = paIterator.next();
 					  
-					if (auxPublishedApi.getApiCall().equals("load")	) {// per/load
+					if (auxPublishedApi.getApiCall().equals("request-submit")	) {// /link/request/submit
 						
 						thePublishedApi = auxPublishedApi;
 						break; 
@@ -91,14 +95,7 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 				BindingEnum theBinding = null;
 				switch (moduleID.toLowerCase()) {
 				
-					case "localmobile":
-						thePayload = sessionID;
-						
-						theBinding = BindingEnum.GET;
-						break;
-						
-					case "onedrive":
-					case "googledrive":
+					case "autoseal":
 						String msToken =  null;
 						
 						msToken = smConn.generateToken (sessionID, theModuleID);
@@ -108,29 +105,68 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 						
 						theBinding = BindingEnum.POST;
 						
-						// Update sessionData: PDS = googleDrive, oneDrive
-						smConn.updateVariable(sessionID,"PDS", moduleID);
+						// Update sessionData: linking and linkRequest
+						smConn.updateVariable(sessionID,"linking", moduleID);
+						
+						LinkRequest myLinkRequest = new LinkRequest ();
+						myLinkRequest.setId("LINK_" + UUID.randomUUID().toString());
+						DataSet datasetA = new DataSet();
+						datasetA.setId(datasetIDa);
+						datasetA.setAttributes(null);
+						datasetA.setCategories(null);
+						datasetA.setExpiration(null);
+						datasetA.setIssued(null);
+						datasetA.setIssuerId(null);
+						datasetA.setLoa(null);
+						datasetA.setProperties(null);
+						datasetA.setSubjectId(null);
+						datasetA.setType(null);
+						
+						myLinkRequest.setDatasetA(datasetA);
+						
+						DataSet datasetB = new DataSet();
+						datasetB.setId(datasetIDb);
+						datasetB.setId(datasetIDa);
+						datasetB.setAttributes(null);
+						datasetB.setCategories(null);
+						datasetB.setExpiration(null);
+						datasetB.setIssued(null);
+						datasetB.setIssuerId(null);
+						datasetB.setLoa(null);
+						datasetB.setProperties(null);
+						datasetB.setSubjectId(null);
+						datasetB.setType(null);
+											
+						myLinkRequest.setDatasetB(datasetB);
+						
+						myLinkRequest.setConversation(null);
+						myLinkRequest.setEvidence(null);
+						myLinkRequest.setExpiration(null);
+						myLinkRequest.setIssued(null);
+						myLinkRequest.setIssuer(null);
+						myLinkRequest.setLloa(null);
+						myLinkRequest.setType(null);
+						
+						ObjectMapper objMapper = new ObjectMapper();						
+						smConn.updateVariable(sessionID,"linkRequest", objMapper.writeValueAsString(myLinkRequest));
+						
 						break;
 						
-					case "remotemobile":
-					case "browser":
-						log.info ("BE AWARE: undefined persistence module: " + moduleID);
-						break;
 					
 					default:
-						log.info ("BE AWARE: unknown persistence module: " + moduleID);
+						log.info ("BE AWARE: unknown linking module: " + moduleID);
 				}
 				
 				// Returns moduleTrigger to client
-				// it returns the address of the API to call .... /per/load
+				// it returns the address of the API to call .... /link/request/submit
 	
 				
 				
 				if (thePublishedApi != null ) {
 					
-					String statusMessage = Constants.PERSISTENCE_LOADED_MSG;
+					String statusMessage = Constants.LINKING_REQUESTED_MSG;
 					String mainCode = Constants.SUCESS_CODE;;
-					String secondaryCode = Constants.PERSISTENCE_LOADED_CODE;
+					String secondaryCode = Constants.LINKING_REQUESTED_CODE;
 					
 					theStatus.setMessage(statusMessage);
 					theStatus.setMainCode(mainCode); 
@@ -147,9 +183,9 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 					moduleTrigger.setAccess (theAccess);
 				}
 				else {
-					theStatus.setMessage(Constants.NO_PERSISTENCE_LOADED_MSG);
+					theStatus.setMessage(Constants.NO_LINKING_REQUESTED_MSG);
 					theStatus.setMainCode(Constants.FAIL_CODE); 
-					theStatus.setSecondaryCode(Constants.NO_PERSISTENCE_LOADED_CODE); 
+					theStatus.setSecondaryCode(Constants.NO_LINKING_REQUESTED_CODE); 
 					moduleTrigger.setStatus (theStatus);
 					moduleTrigger.setAccess (null);
 				}

@@ -212,6 +212,7 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 				theStatus.setMessage(Constants.INVALID_MODULE_ID_MSG); 
 				theStatus.setMainCode(Constants.FAIL_CODE); 
 				theStatus.setSecondaryCode(Constants.INVALID_MODULE_ID_CODE);
+				moduleTrigger.setStatus (theStatus);
 				moduleTrigger.setAccess (null);
 				moduleTrigger.setPayload (null);
 			}

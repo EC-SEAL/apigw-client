@@ -913,4 +913,109 @@ definitions:
       type: array
       items: 
         $ref: '#/definitions/attributeSet'
+        
+        
+  ####### IDLinking #######
+
+  fileObject:
+    type: object
+    properties:
+      filename:
+        type: string
+      fileID:
+        type: string
+      contentType:
+        type: string
+        description: MIME type of the file content
+      fileSize:
+        type: integer
+      content:
+        type: string
+        format: byte    
+        description: If not empty, the b64 encoded content of the file.
+
+
+
+  fileList:
+    description: List of file metadata objects
+    type: array
+    items:
+      $ref: '#/definitions/fileObject'
+
+
+
+  linkRequest:
+    description: Represents a linking request, as well as its resolution and the resulting linking dataset
+    type: object
+    properties:
+      id:
+        description: Unique identifier of the set
+        type: string
+        example: "6c0f70a8-f32b-4535-b5f6-0d596c52813a"
+      issuer:
+        description: Name of the entity that issued the link.
+        type: string
+      lloa: 
+        description: Level of certainty that both subjects are the same person
+        type: string
+      issued:
+        description: Date when the link was certified (the date this data set was issued)
+        type: string
+        example: "2018-12-06T19:40:16Z"
+      type:
+        description: Type of set.
+        type: string
+      expiration:
+        description: Maximum validity date of the link (empty means permanent)
+        type: string
+        example: "2018-12-06T19:45:16Z"
+      datasetA:
+        description: The dataset containing identity attributes or claims set A
+        $ref: '#/definitions/dataSet'
+      datasetB:
+        description: The dataset containing identity attributes or claims set B
+        $ref: '#/definitions/dataSet'
+      evidence:
+        type: array
+        description: List of additional files uploaded to the validator to check the person behind the identities
+        items:
+            $ref: '#/definitions/fileObject'
+      conversation:
+        type: array
+        description: List of messages exchanged between the requester and the validation officer
+        items:
+            $ref: '#/definitions/message'
+
+
+
+  linkRequestList:
+    description: List of linking requests
+    type: array
+    items:
+      $ref: '#/definitions/linkRequest'
+      
+  message:
+    type: object
+    properties:
+      timestamp:
+        type: integer
+        description: date and time when the message was sent
+      sender:
+        type: string
+        description: Identifier of the user who sent the message
+      senderType:
+        type: string
+        description: Identifier of the user category who sent the message
+      recipient:
+        type: string
+        description: Identifier of the user whom the message is addressed to
+      recipientType:
+        type: string
+        description: Identifier of the user category whom the message is addressed to
+      message:
+        type: string
+        description: Content of the message
+ 
+
+
   

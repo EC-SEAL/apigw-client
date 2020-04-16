@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.DataSet;
+import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.domain.LinkRequest;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
@@ -58,7 +59,7 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 		String theModuleID = null;
 		MsMetadata theMs = null;
 		
-		// UC7.01: "linking", "linkRequest" session variables to be updated, 
+		// UC7.01, 7.02: "linking", "linkRequest" session variables to be updated. 
 		try {
 			//moduleID was previously stored in settings as "localMobile", "googleDrive", "oneDrive"
 			
@@ -93,9 +94,9 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 				
 				String thePayload = null;
 				BindingEnum theBinding = null;
-				switch (moduleID.toLowerCase()) {
-				
-					case "autoseal":
+//				switch (moduleID.toLowerCase()) {
+//				
+//					case "autoseal":
 						String msToken =  null;
 						
 						msToken = smConn.generateToken (sessionID, theModuleID);
@@ -150,12 +151,12 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						ObjectMapper objMapper = new ObjectMapper();						
 						smConn.updateVariable(sessionID,"linkRequest", objMapper.writeValueAsString(myLinkRequest));
 						
-						break;
-						
-					
-					default:
-						log.info ("BE AWARE: unknown linking module: " + moduleID);
-				}
+//						break;
+//						
+//					
+//					default:
+//						log.info ("BE AWARE: unknown linking module: " + moduleID);
+//				}
 				
 				// Returns moduleTrigger to client
 				// it returns the address of the API to call .... /link/request/submit
@@ -176,7 +177,15 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
 					theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
 					theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
-					theAccess.setBodyContent("TO ASK: bodyContent");
+					
+					Object objDatastore = smConn.readVariable(sessionID, "dataStore");
+					if (objDatastore != null) {
+						theAccess.setBodyContent(objDatastore.toString());
+						log.info("dataStore: " + objDatastore.toString());
+					}
+					else
+						theAccess.setBodyContent(null);
+					
 					theAccess.setContentType("TO ASK: contentType");
 					moduleTrigger.setAccess (theAccess);
 					

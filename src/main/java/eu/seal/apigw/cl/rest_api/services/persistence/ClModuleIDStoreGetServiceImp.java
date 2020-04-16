@@ -140,7 +140,15 @@ public class ClModuleIDStoreGetServiceImp implements ClModuleIDStoreGetService{
 					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
 					theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
 					theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
-					theAccess.setBodyContent("TO ASK: bodyContent");
+					
+					Object objDatastore = smConn.readVariable(sessionID, "dataStore");
+					if (objDatastore != null) {
+						theAccess.setBodyContent(objDatastore.toString());
+						log.info("dataStore: " + objDatastore.toString());
+					}
+					else
+						theAccess.setBodyContent(null);
+					
 					theAccess.setContentType("TO ASK: contentType");
 					moduleTrigger.setAccess (theAccess);
 					

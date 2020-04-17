@@ -66,6 +66,11 @@ public class Constants {
 	public final static String NO_LINKING_REQUESTED_MSG = "No linking requested";
 	public final static String NO_LINKING_REQUESTED_CODE = "no_linking_requested_code";
 	
+	public final static String LINKING_RESULT_MSG = "Linking result";
+	public final static String LINKING_RESULT_CODE = "linking_result_code";
+	public final static String NO_LINKING_RESULT_MSG = "No linking result";
+	public final static String NO_LINKING_RESULT_CODE = "no_linking_result_code";
+	
 	public final static String SUCESS_CODE = "OK";
 	public final static String FAIL_CODE = "KO";
 	

@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.DataSet;
-import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.LinkRequest;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
@@ -43,10 +41,10 @@ import eu.seal.apigw.cl.domain.PublishedApiType;
 
 
 @Service
-public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostService{
+public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestResultGetService{
 
 	
-	private static final Logger log = LoggerFactory.getLogger(ClModuleIDRequestPostServiceImp.class);
+	private static final Logger log = LoggerFactory.getLogger(ClModuleIDRequestResultGetServiceImp.class);
 	
 	@Autowired
 	private ConfMngrConnService confMngrConnService;
@@ -55,13 +53,15 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 	private SessionManagerConnService smConn;
 	
 	@Override
-	public ModuleTrigger clModuleIDRequestPost (String sessionID, String moduleID, String datasetIDa, String datasetIDb) throws Exception {
+	public ModuleTrigger clModuleIDRequestResultGet (String sessionID, String moduleID, String requestId) throws Exception {
 		
 		log.info("moduleID: " + moduleID);
 		String theModuleID = null;
 		MsMetadata theMs = null;
 		
-		// UC7.01, 7.02: "linking", "linkRequest" session variables to be updated. 
+		//TODO: the usage of moduleID is pending for Paco's approval: email 17.4.2020, UC7.02 update by Ross
+		
+		// UC7.02: returns the uri related to the requestId to be found in the apigwLinkRequestList session variable
 		try {
 			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();		
@@ -95,76 +95,14 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 				
 				String thePayload = null;
 				BindingEnum theBinding = null;
-						String msToken =  null;
-						
-						msToken = smConn.generateToken (sessionID, theModuleID);
-						thePayload = msToken;
-						
-						log.info ("token generated");
-						
-						theBinding = BindingEnum.POST;
-						
-						// Update sessionData: linking and linkRequest
-						smConn.updateVariable(sessionID,"linking", moduleID);
-						
-						LinkRequest myLinkRequest = new LinkRequest ();
-						myLinkRequest.setId("LINK_" + UUID.randomUUID().toString());
-						DataSet datasetA = new DataSet();
-						datasetA.setId(datasetIDa);
-						datasetA.setAttributes(null);
-						datasetA.setCategories(null);
-						datasetA.setExpiration(null);
-						datasetA.setIssued(null);
-						datasetA.setIssuerId(null);
-						datasetA.setLoa(null);
-						datasetA.setProperties(null);
-						datasetA.setSubjectId(null);
-						datasetA.setType(null);
-						
-						myLinkRequest.setDatasetA(datasetA);
-						
-						DataSet datasetB = new DataSet();
-						datasetB.setId(datasetIDb);
-						datasetB.setAttributes(null);
-						datasetB.setCategories(null);
-						datasetB.setExpiration(null);
-						datasetB.setIssued(null);
-						datasetB.setIssuerId(null);
-						datasetB.setLoa(null);
-						datasetB.setProperties(null);
-						datasetB.setSubjectId(null);
-						datasetB.setType(null);
-											
-						myLinkRequest.setDatasetB(datasetB);
-						
-						myLinkRequest.setConversation(null);
-						myLinkRequest.setEvidence(null);
-						myLinkRequest.setExpiration(null);
-						myLinkRequest.setIssued(null);
-						myLinkRequest.setIssuer(null);
-						myLinkRequest.setLloa(null);
-						myLinkRequest.setType(null);
-						
-						ObjectMapper objMapper = new ObjectMapper();						
-						smConn.updateVariable(sessionID,"linkRequest", objMapper.writeValueAsString(myLinkRequest));
-				
-				Object objApigwLinkRequestList = smConn.readVariable(sessionID, "apigwLinkRequestList");				
-				DisplayableList myApigwLinkRequestList = (new ObjectMapper()).readValue(objApigwLinkRequestList.toString(),DisplayableList.class);
-				NameValuePair myPair = new NameValuePair(myLinkRequest.getId(), theMs.getMsId());				
-				myApigwLinkRequestList.add(myPair);
-				
-				log.info("apigwLinkRequestList: " + myApigwLinkRequestList.toString());
-				
-				ObjectMapper objMapper2 = new ObjectMapper();						
-				smConn.updateVariable(sessionID,"apigwLinkRequestList", objMapper2.writeValueAsString(myApigwLinkRequestList));
-				
+
 				// Returns moduleTrigger to client
-				// it returns the address of the API to call .... /link/request/submit
+				// it returns the address of the API to call the related linking microservice
 				if (thePublishedApi != null ) {
 					
-					String statusMessage = Constants.LINKING_REQUESTED_MSG;
+					String statusMessage = Constants.LINKING_RESULT_MSG;
 					String mainCode = Constants.SUCESS_CODE;;
-					String secondaryCode = Constants.LINKING_REQUESTED_CODE;
+					String secondaryCode = Constants.LINKING_RESULT_CODE;
 					
 					theStatus.setMessage(statusMessage);
 					theStatus.setMainCode(mainCode); 
@@ -172,23 +110,40 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 					moduleTrigger.setStatus (theStatus);		
 					
 					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
-					theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
-					theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
+//					theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
+//					theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
 					
-					Object objLinkRequest = smConn.readVariable(sessionID, "linkRequest");
-					theAccess.setBodyContent(objLinkRequest.toString());  // Set above.
-					log.info("linkRequest: " + objLinkRequest.toString());
+					Object objApigwLinkRequestList = smConn.readVariable(sessionID, "apigwLinkRequestList");
+					if (objApigwLinkRequestList != null) {
+						log.info("apigwLinkRequestList: " + objApigwLinkRequestList.toString());
+						DisplayableList apigwLinkRequestList = (new ObjectMapper()).readValue(objApigwLinkRequestList.toString(),DisplayableList.class);
+						if (apigwLinkRequestList.size() != 0) {
+						
+							//TODO
+							// Search for the Ms related to the requestId
+							
+							
+							// Ask CM for the below data:
+//							theAccess.setAddress(); // "theUrl"
+//							theAccess.setBinding(); // thePublishedApi.getApiConnectionType()
+							;
+						}
+						else
+							//TODO
+							;
+					}
 					
 					
 					theAccess.setContentType("TO ASK: contentType");
+					theAccess.setBodyContent("TO ASK: bodyContent");
 					moduleTrigger.setAccess (theAccess);
 					
 					moduleTrigger.setAccess (theAccess);
 				}
 				else {
-					theStatus.setMessage(Constants.NO_LINKING_REQUESTED_MSG);
+					theStatus.setMessage(Constants.NO_LINKING_RESULT_MSG);
 					theStatus.setMainCode(Constants.FAIL_CODE); 
-					theStatus.setSecondaryCode(Constants.NO_LINKING_REQUESTED_CODE); 
+					theStatus.setSecondaryCode(Constants.NO_LINKING_RESULT_CODE); 
 					moduleTrigger.setStatus (theStatus);
 					moduleTrigger.setAccess (null);
 				}

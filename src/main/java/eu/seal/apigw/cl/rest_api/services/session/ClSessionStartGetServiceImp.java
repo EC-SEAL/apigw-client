@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.DataStore;
+import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
 
@@ -91,6 +92,11 @@ public class ClSessionStartGetServiceImp implements ClSessionStartGetService{
 					// Saving the datastore object in the session
 					ObjectMapper objDatastore = new ObjectMapper();
 					smConn.updateVariable(theSessionID,"dataStore",objDatastore.writeValueAsString(datastore));
+					
+					// Creating an empty apigwLinkRequestList in the session
+					DisplayableList apigwLinkRequestList = new DisplayableList();
+					ObjectMapper objApigwLinkRequestList = new ObjectMapper();
+					smConn.updateVariable(theSessionID,"apigwLinkRequestList",objApigwLinkRequestList.writeValueAsString(apigwLinkRequestList));
 					
 					mainCode = Constants.SUCESS_CODE;
 					statusMessage = Constants.NEW_SESSION_MSG;				

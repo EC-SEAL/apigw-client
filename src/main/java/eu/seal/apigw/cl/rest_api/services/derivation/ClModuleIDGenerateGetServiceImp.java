@@ -109,13 +109,10 @@ public class ClModuleIDGenerateGetServiceImp implements ClModuleIDGenerateGetSer
 			if (theMs != null) {
 			
 			 if (thePublishedApi != null ) {
-				String statusMessage = Constants.ID_DERIVED_MSG;
-				String mainCode = Constants.SUCESS_CODE;;
-				String secondaryCode = Constants.ID_DERIVED_CODE;
 				
-				theStatus.setMessage(statusMessage);
-				theStatus.setMainCode(mainCode); 
-				theStatus.setSecondaryCode(secondaryCode); 
+				theStatus.setMessage(Constants.ID_DERIVED_MSG);
+				theStatus.setMainCode(Constants.SUCESS_CODE); 
+				theStatus.setSecondaryCode(Constants.ID_DERIVED_CODE); 
 				moduleTrigger.setStatus (theStatus);		
 				
 				ModuleTriggerAccess theAccess = new ModuleTriggerAccess();

@@ -128,13 +128,9 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 				
 				if (thePublishedApi != null ) {
 					
-					String statusMessage = Constants.PERSISTENCE_LOADED_MSG;
-					String mainCode = Constants.SUCESS_CODE;;
-					String secondaryCode = Constants.PERSISTENCE_LOADED_CODE;
-					
-					theStatus.setMessage(statusMessage);
-					theStatus.setMainCode(mainCode); 
-					theStatus.setSecondaryCode(secondaryCode); 
+					theStatus.setMessage(Constants.PERSISTENCE_LOADED_MSG);
+					theStatus.setMainCode(Constants.SUCESS_CODE); 
+					theStatus.setSecondaryCode(Constants.PERSISTENCE_LOADED_CODE); 
 					moduleTrigger.setStatus (theStatus);		
 					
 					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();

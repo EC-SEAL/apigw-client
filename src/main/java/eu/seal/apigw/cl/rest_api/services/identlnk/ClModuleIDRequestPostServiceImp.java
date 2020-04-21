@@ -30,7 +30,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.DataSet;
-import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.LinkRequest;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
@@ -61,7 +60,7 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 		String theModuleID = null;
 		MsMetadata theMs = null;
 		
-		// UC7.01, 7.02: "linking", "linkRequest" session variables to be updated. 
+		// UC7.01, 7.02: "linking", "linkRequest", "apigwLinkRequestList" session variables to be updated. 
 		try {
 			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();		
@@ -162,13 +161,9 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 				// it returns the address of the API to call .... /link/request/submit
 				if (thePublishedApi != null ) {
 					
-					String statusMessage = Constants.LINKING_REQUESTED_MSG;
-					String mainCode = Constants.SUCESS_CODE;;
-					String secondaryCode = Constants.LINKING_REQUESTED_CODE;
-					
-					theStatus.setMessage(statusMessage);
-					theStatus.setMainCode(mainCode); 
-					theStatus.setSecondaryCode(secondaryCode); 
+					theStatus.setMessage(Constants.LINKING_REQUESTED_MSG);
+					theStatus.setMainCode(Constants.SUCESS_CODE); 
+					theStatus.setSecondaryCode(Constants.LINKING_REQUESTED_CODE); 
 					moduleTrigger.setStatus (theStatus);		
 					
 					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();

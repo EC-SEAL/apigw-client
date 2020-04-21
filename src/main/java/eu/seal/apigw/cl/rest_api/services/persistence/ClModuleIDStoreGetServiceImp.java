@@ -128,13 +128,9 @@ public class ClModuleIDStoreGetServiceImp implements ClModuleIDStoreGetService{
 				
 				if (thePublishedApi != null ) {
 					
-					String statusMessage = Constants.PERSISTENCE_STORED_MSG;
-					String mainCode = Constants.SUCESS_CODE;;
-					String secondaryCode = Constants.PERSISTENCE_STORED_CODE;
-					
-					theStatus.setMessage(statusMessage);
-					theStatus.setMainCode(mainCode); 
-					theStatus.setSecondaryCode(secondaryCode); 
+					theStatus.setMessage(Constants.PERSISTENCE_STORED_MSG);
+					theStatus.setMainCode(Constants.SUCESS_CODE); 
+					theStatus.setSecondaryCode(Constants.PERSISTENCE_STORED_CODE); 
 					moduleTrigger.setStatus (theStatus);		
 					
 					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();

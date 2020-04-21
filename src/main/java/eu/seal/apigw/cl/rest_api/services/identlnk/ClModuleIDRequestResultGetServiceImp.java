@@ -17,20 +17,20 @@ package eu.seal.apigw.cl.rest_api.services.identlnk;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
+//import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
-import eu.seal.apigw.cl.domain.DataSet;
 import eu.seal.apigw.cl.domain.DisplayableList;
-import eu.seal.apigw.cl.domain.LinkRequest;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
@@ -55,11 +55,12 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 	@Override
 	public ModuleTrigger clModuleIDRequestResultGet (String sessionID, String moduleID, String requestId) throws Exception {
 		
-		log.info("moduleID: " + moduleID);
-		String theModuleID = null;
+//		log.info("moduleID: " + moduleID);
+
 		MsMetadata theMs = null;
 		
-		//TODO: the usage of moduleID is pending for Paco's approval: email 17.4.2020, UC7.02 update by Ross
+		//TODO: the usage of moduleID is removed (Paco's approval: email 20.4.2020). The interfaces.yml and UC7.02 to be updated
+		//
 		
 		// UC7.02: returns the uri related to the requestId to be found in the apigwLinkRequestList session variable
 		try {
@@ -67,95 +68,97 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 			ModuleTrigger moduleTrigger = new ModuleTrigger();		
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
 			
-			theModuleID = confMngrConnService.getEntityMetadata("LINKING", moduleID).getMicroservice().get(0); // The first one.
-			log.info("theModuleID: " + theModuleID);
-			
-			theMs = confMngrConnService.getMicroservicesByApiClass("LINK").getMs(theModuleID); // This is the Link microservice
-			if (theMs != null) {
-				log.info("theMS: " + theMs.getMsId());
+			Object objApigwLinkRequestList = smConn.readVariable(sessionID, "apigwLinkRequestList");
+			if (objApigwLinkRequestList != null) {
+				log.info("apigwLinkRequestList: " + objApigwLinkRequestList.toString());
+				DisplayableList apigwLinkRequestList = (new ObjectMapper()).readValue(objApigwLinkRequestList.toString(),DisplayableList.class);
+				if (apigwLinkRequestList.size() != 0) {
 				
-				PublishedApiType thePublishedApi = null;
-				//For fulfilling theAccess (see bellow)
-				List<PublishedApiType> thePublishedApiList = theMs.getPublishedAPI();
-				
-				Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
-				PublishedApiType auxPublishedApi = null;
-				while (paIterator.hasNext()) {
-					
-					auxPublishedApi = paIterator.next();
-					  
-					if (auxPublishedApi.getApiCall().equals("request-submit")	) {// /link/request/submit
+					// Search for the Ms related to the requestId
+					String myMs = null;
+					//NameValuePair ms = null;
+					Iterator<Object> msIterator = apigwLinkRequestList.iterator();
+					while (msIterator.hasNext()) {
+						//ms = (NameValuePair) msIterator.next();	
+						//ms = (new ObjectMapper()).readValue(msIterator.next().toString(),NameValuePair.class); //no quotes at all
+//						if (ms.getName().equals(requestId)) {
+//							myMs = ms.getValue();
+//							break; 
+//						}
 						
-						thePublishedApi = auxPublishedApi;
-						break; 
+						JsonObject myJSONms = new JsonParser().parse(msIterator.next().toString()).getAsJsonObject();						
+						log.info("myJSONms: " + myJSONms.toString());
+						
+						if (myJSONms.get("name").toString().equals("\"" + requestId + "\"")) {
+							myMs = myJSONms.get("value").toString();
+							myMs = myMs.replaceAll("^\"|\"$", ""); // Without quotes
+							break;
+						}				  	  
 					}
-					  	  
-				}
-				log.info("thePublishedApi: " + (thePublishedApi != null ? thePublishedApi.getApiCall() : thePublishedApi));
-				
-				String thePayload = null;
-				BindingEnum theBinding = null;
-
-				// Returns moduleTrigger to client
-				// it returns the address of the API to call the related linking microservice
-				if (thePublishedApi != null ) {
 					
-					String statusMessage = Constants.LINKING_RESULT_MSG;
-					String mainCode = Constants.SUCESS_CODE;;
-					String secondaryCode = Constants.LINKING_RESULT_CODE;
-					
-					theStatus.setMessage(statusMessage);
-					theStatus.setMainCode(mainCode); 
-					theStatus.setSecondaryCode(secondaryCode); 
-					moduleTrigger.setStatus (theStatus);		
-					
-					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
-//					theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
-//					theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
-					
-					Object objApigwLinkRequestList = smConn.readVariable(sessionID, "apigwLinkRequestList");
-					if (objApigwLinkRequestList != null) {
-						log.info("apigwLinkRequestList: " + objApigwLinkRequestList.toString());
-						DisplayableList apigwLinkRequestList = (new ObjectMapper()).readValue(objApigwLinkRequestList.toString(),DisplayableList.class);
-						if (apigwLinkRequestList.size() != 0) {
-						
-							//TODO
-							// Search for the Ms related to the requestId
+					String thePayload = null;
+					PublishedApiType thePublishedApi = null;
+					//For fulfilling theAccess (see bellow)
+					if (myMs != null) {
+						// Ask CM for data
+						theMs = confMngrConnService.getMicroservicesByApiClass("LINK").getMs(myMs); // This is the Link microservice
+						if (theMs != null) {
+							log.info("theMS: " + theMs.getMsId());
+														
+							List<PublishedApiType> thePublishedApiList = theMs.getPublishedAPI();
 							
+							Iterator<PublishedApiType> paIterator = thePublishedApiList.iterator();
+							PublishedApiType auxPublishedApi = null;
+							while (paIterator.hasNext()) {
+								
+								auxPublishedApi = paIterator.next();								  
+								if (auxPublishedApi.getApiCall().equals("request-submit")	) {// /link/request/submit									
+									thePublishedApi = auxPublishedApi;
+									break; 
+								}								  	  
+							}
+							log.info("thePublishedApi: " + (thePublishedApi != null ? thePublishedApi.getApiCall() : thePublishedApi));	
 							
-							// Ask CM for the below data:
-//							theAccess.setAddress(); // "theUrl"
-//							theAccess.setBinding(); // thePublishedApi.getApiConnectionType()
-							;
+							thePayload = smConn.generateToken (sessionID, myMs);
 						}
-						else
-							//TODO
-							;
 					}
-					
-					
-					theAccess.setContentType("TO ASK: contentType");
-					theAccess.setBodyContent("TO ASK: bodyContent");
-					moduleTrigger.setAccess (theAccess);
-					
-					moduleTrigger.setAccess (theAccess);
+	
+					// Returns moduleTrigger to client
+					// it returns the address of the API to call the related linking microservice
+					if (thePublishedApi != null ) {
+						BindingEnum theBinding = null;
+						
+						theStatus.setMessage(Constants.LINKING_RESULT_MSG);
+						theStatus.setMainCode(Constants.SUCESS_CODE); 
+						theStatus.setSecondaryCode(Constants.LINKING_RESULT_CODE); 
+						moduleTrigger.setStatus (theStatus);		
+						
+						ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
+						theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
+						theBinding = BindingEnum.POST;
+						theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
+						
+						theAccess.setContentType("TO ASK: contentType");
+						theAccess.setBodyContent("TO ASK: bodyContent");
+						moduleTrigger.setAccess (theAccess);
+					}
+					else {
+						theStatus.setMessage(Constants.INVALID_REQUEST_ID_MSG); 
+						theStatus.setMainCode(Constants.FAIL_CODE); 
+						theStatus.setSecondaryCode(Constants.INVALID_REQUEST_ID_CODE);
+						moduleTrigger.setStatus (theStatus);
+						moduleTrigger.setAccess (null);
+					}
+					moduleTrigger.setPayload(thePayload);				
 				}
 				else {
 					theStatus.setMessage(Constants.NO_LINKING_RESULT_MSG);
 					theStatus.setMainCode(Constants.FAIL_CODE); 
-					theStatus.setSecondaryCode(Constants.NO_LINKING_RESULT_CODE); 
+					theStatus.setSecondaryCode(Constants.NO_LINKING_RESULT_CODE);
 					moduleTrigger.setStatus (theStatus);
 					moduleTrigger.setAccess (null);
-				}
-				moduleTrigger.setPayload(thePayload);
-			}
-			else {
-				theStatus.setMessage(Constants.INVALID_MODULE_ID_MSG); 
-				theStatus.setMainCode(Constants.FAIL_CODE); 
-				theStatus.setSecondaryCode(Constants.INVALID_MODULE_ID_CODE);
-				moduleTrigger.setStatus (theStatus);
-				moduleTrigger.setAccess (null);
-				moduleTrigger.setPayload (null);
+					moduleTrigger.setPayload (null);
+				}		
 			}
 			
 			return moduleTrigger;

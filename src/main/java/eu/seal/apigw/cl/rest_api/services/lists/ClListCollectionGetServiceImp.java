@@ -24,6 +24,7 @@ import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.EntityMetadata;
 import eu.seal.apigw.cl.domain.EntityMetadataList;
+import javafx.util.Pair;
 
 import org.apache.commons.httpclient.NameValuePair;
 
@@ -42,9 +43,6 @@ public class ClListCollectionGetServiceImp implements ClListCollectionGetService
 		
 		try {
 			
-			// Depending on the kind of the collection, 
-			// the class of the list to be returned will be one or another.
-			
 			DisplayableList displayableList = null;
 			
 			EntityMetadataList myList = confMngrConnService.getEntityMetadataSet(collection.toUpperCase());
@@ -52,11 +50,8 @@ public class ClListCollectionGetServiceImp implements ClListCollectionGetService
 				displayableList = new DisplayableList();
 			
 				for (EntityMetadata em: myList) {
-					// Add the necessary fields to the node to be added to the displayable list.
-					
-					// Select one of the list of the msInstances. The first one by the moment (TODO)
-					
-					NameValuePair myPair = new NameValuePair(em.getEntityId(), em.getMicroservice() != null ? em.getMicroservice().get(0) : null);
+					//NameValuePair myPair = new NameValuePair(em.getEntityId(), em.getMicroservice() != null ? em.getMicroservice().get(0) : null);
+					Pair<String, EntityMetadata> myPair = new Pair (em.getEntityId(), em);
 					
 					displayableList.add(myPair);
 				}

@@ -61,7 +61,7 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 	@Override
 	public ModuleTrigger clModuleIDLoginGet (String sessionID, String moduleID) throws Exception {
 		
-		String msToken = null;
+		
 		
 		// UC1.01: DEPRECATED
 		
@@ -74,17 +74,14 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 			// Validating session
 			// Checking whether this sessionID exists.
 			
-			//***Object objDatastore = smConn.readVariable(sessionID, "datastore");
-			//***if (objDatastore != null) {
-			
-			if (true) { // testing
-				
+			Object objDatastore = smConn.readVariable(sessionID, "datastore");
+			if (objDatastore != null) {
 				MsMetadata theAuthMs = null;
 			
 				//***log.info("Existing Datastore: " + objDatastore.toString());				
 				
 				// Selecting the ID source data from the ConfManager
-				EntityMetadata authMetadata0 = confMngrConnService.getEntityMetadata("AUTHSOURCE", moduleID.toUpperCase()); // Reading the AUTHSOURCEmetadata.json
+				EntityMetadata authMetadata0 = confMngrConnService.getEntityMetadata("AUTHSOURCE", moduleID); // Reading the AUTHSOURCEmetadata.json
 				 
 				PublishedApiType thePublishedApi = null;
 				boolean found = false;
@@ -101,7 +98,6 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 						
 						if ((authMetadataList != null) && !authMetadataList.isEmpty()) {
 							idpMetadata = authMetadataList.get(0); //TODO: randomly
-				
 							
 							List<String> theClaims = idpMetadata.getClaims();
 							AttributeTypeList attributes = new AttributeTypeList();
@@ -139,15 +135,13 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 									AttributeTypeList attTypeList2 = confMngrConnService.getAttributeSetByProfile("schac");
 									for ( String aClaim : theClaims)
 									{
-										
 										Optional<AttributeType> foundAtt=null;
 										foundAtt = attTypeList.stream().filter(a ->a.getFriendlyName().equals(aClaim) ).findAny();
 																			
 										if (foundAtt !=null && foundAtt.isPresent())
 										{
 											attributes.add( foundAtt.get());
-											log.info ("FoundAtt in EDUPERSON:" + foundAtt.get());
-											
+											log.info ("FoundAtt in EDUPERSON:" + foundAtt.get());										
 										}
 										else
 										{ // Searching in SCHAC
@@ -157,8 +151,7 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 											if (foundAtt2 !=null && foundAtt2.isPresent())
 											{
 												attributes.add( foundAtt2.get());
-												log.info ("FoundAtt in SHAC:" + foundAtt2.get());
-												
+												log.info ("FoundAtt in SHAC:" + foundAtt2.get());											
 											}
 											else
 											{ // Searching in SCHAC
@@ -168,19 +161,14 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 									}
 									break;
 								default:
-									;
-							
+									log.info ("****BE AWARE unknown moduleID: " + moduleID);							
 								} 
 							
-							
-							
 							MsMetadataList authMs0 = confMngrConnService.getMicroservicesByApiClass("AS"); // Reading the msMetadataList.json
-							MsMetadataList authMs = authMs0.getApicallMs("authenticate");  // Reading the msMetadataList.json
-							// Check the apicall is "authenticate"
 							// Select the previous one.
-							theAuthMs = authMs.getMs(authMsName);
+							theAuthMs = authMs0.getMs(authMsName);
 							if (theAuthMs == null) {
-								log.error("Not found in msMetadataList.json: " + theAuthMs.getMsId());
+								log.error("Not found in msMetadataList.json: " + authMsName);
 								throw new Exception ("ERROR: check the msMetadataList.json");
 							}
 							//For fulfilling theAccess (see bellow)
@@ -192,13 +180,12 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 								
 								auxPublishedApi = paIterator.next();
 								  
-								if (auxPublishedApi.getApiClass().equals("AS") &&
+								if (auxPublishedApi.getApiClass().toString().equals("AS") &&
 									auxPublishedApi.getApiCall().equals("authenticate")	) {
 									
 									thePublishedApi = auxPublishedApi;
 									break; 
-								}
-								  	  
+								}							  	  
 							}
 							
 							// TODO: ASK!!
@@ -230,23 +217,23 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 				
 				
 				if (found) {
-					
-					log.info("Saving the session.");
-				
-					// idpMetadata is creating with the eIDAS/eduGain info from the ConfMngr. Saving in the session.				
-					ObjectMapper objIdpMetadata = new ObjectMapper();
-					smConn.updateVariable(sessionID,"idpMetadata",objIdpMetadata.writeValueAsString(idpMetadata));
-					
-					// idpRequest is creating. Saving in the session too.				
-					ObjectMapper objIdpRequest = new ObjectMapper();
-					smConn.updateVariable(sessionID,"idpRequest",objIdpRequest.writeValueAsString(idpRequest));
-					
-					// Generate token for returning the session.
-					msToken = smConn.generateToken(sessionID, theAuthMs.getMsId()); // Create msToken: GET /sm/generateToken
-					
 					// Building the moduleTrigger to be returned: access: binding, the url of the IdPms, and the msToken. 
 					
 					if (thePublishedApi != null) {
+						String msToken = null;
+						
+						log.info("Saving the session.");
+						
+						// idpMetadata is creating with the eIDAS/eduGain info from the ConfMngr. Saving in the session.				
+						ObjectMapper objIdpMetadata = new ObjectMapper();
+						smConn.updateVariable(sessionID,"idpMetadata",objIdpMetadata.writeValueAsString(idpMetadata));
+						
+						// idpRequest is creating. Saving in the session too.				
+						ObjectMapper objIdpRequest = new ObjectMapper();
+						smConn.updateVariable(sessionID,"idpRequest",objIdpRequest.writeValueAsString(idpRequest));
+						
+						// Generate token for returning the session.
+						msToken = smConn.generateToken(sessionID, theAuthMs.getMsId()); // Create msToken: GET /sm/generateToken
 					
 						theStatus.setMessage(Constants.AVAILABLE_IDPS_MSG); 
 						theStatus.setMainCode(Constants.SUCESS_CODE); 
@@ -259,15 +246,16 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 						theAccess.setBodyContent(null); // If the access method requires to transfer data on the body of the request, it will be written here
 						theAccess.setContentType(null); // MIME type of the body, if any
 						moduleTrigger.setAccess (theAccess);
+						
+						moduleTrigger.setPayload(msToken);
 						}
 					else {
 						theStatus.setMessage(Constants.NO_IDPS_MSG); 
 						theStatus.setMainCode(Constants.FAIL_CODE); 
 						theStatus.setSecondaryCode(Constants.NO_IDPS_CODE);
 						moduleTrigger.setAccess (null);
+						moduleTrigger.setPayload (null);
 					}
-					
-					moduleTrigger.setPayload(msToken);
 				}
 				else {
 				// Not a valid moduleID
@@ -280,8 +268,6 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 					moduleTrigger.setAccess (null);
 					moduleTrigger.setPayload (null);
 				}
-					
-		
 			}
 			else {
 				
@@ -295,8 +281,6 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 				moduleTrigger.setAccess (null);
 				moduleTrigger.setPayload (null);
 			}
-				
-			
 			moduleTrigger.setStatus (theStatus);
 			
 			return (moduleTrigger);
@@ -306,6 +290,5 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 			throw new Exception (e);
 		}
 	}
-
 }
 

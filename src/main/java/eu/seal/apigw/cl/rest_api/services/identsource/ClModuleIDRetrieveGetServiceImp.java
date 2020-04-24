@@ -141,7 +141,7 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
 					theModuleID = confMngrConnService.getEntityMetadata("ATTRSOURCE", moduleID).getMicroservice().get(0);	// The first one.
 					
-					theMs = confMngrConnService.getMicroservicesByApiClass("AS").getMs(theModuleID); // This is the Identity Source microservice
+					theMs = confMngrConnService.getMicroservicesByApiClass("IS").getMs(theModuleID); // This is the Identity Source microservice
 									
 					//For fulfilling theAccess (see bellow)
 					thePublishedApiList = theMs.getPublishedAPI();

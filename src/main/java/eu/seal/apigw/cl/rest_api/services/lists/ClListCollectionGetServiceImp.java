@@ -51,7 +51,7 @@ public class ClListCollectionGetServiceImp implements ClListCollectionGetService
 			
 				for (EntityMetadata em: myList) {
 					//NameValuePair myPair = new NameValuePair(em.getEntityId(), em.getMicroservice() != null ? em.getMicroservice().get(0) : null);
-					Pair<String, EntityMetadata> myPair = new Pair (em.getEntityId(), em);
+					Pair<String, EntityMetadata> myPair = new Pair <> (em.getEntityId(), em);
 					
 					displayableList.add(myPair);
 				}

@@ -26,7 +26,7 @@ import eu.seal.apigw.cl.domain.EntityMetadata;
 import eu.seal.apigw.cl.domain.EntityMetadataList;
 import javafx.util.Pair;
 
-import org.apache.commons.httpclient.NameValuePair;
+
 
 
 @Service

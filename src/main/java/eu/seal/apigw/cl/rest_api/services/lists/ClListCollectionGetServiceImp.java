@@ -24,7 +24,8 @@ import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.EntityMetadata;
 import eu.seal.apigw.cl.domain.EntityMetadataList;
-import javafx.util.Pair;
+//import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 
 
 
@@ -51,7 +52,8 @@ public class ClListCollectionGetServiceImp implements ClListCollectionGetService
 			
 				for (EntityMetadata em: myList) {
 					//NameValuePair myPair = new NameValuePair(em.getEntityId(), em.getMicroservice() != null ? em.getMicroservice().get(0) : null);
-					Pair<String, EntityMetadata> myPair = new Pair <> (em.getEntityId(), em);
+					//Pair<String, EntityMetadata> myPair = new Pair <> (em.getEntityId(), em); // import javafx.util.Pair
+					Pair<String, EntityMetadata> myPair = Pair.of (em.getEntityId(), em);
 					
 					displayableList.add(myPair);
 				}

@@ -12,7 +12,7 @@ See README file for the full disclaimer information and LICENSE file for full li
 
 @author Atos Research and Innovation, Atos SPAIN SA
 */
-package eu.seal.apigw.cl.rest_api.services.derivation;
+package eu.seal.apigw.cl.rest_api.services.vc;
 
 
 import java.util.Iterator;
@@ -33,10 +33,10 @@ import eu.seal.apigw.cl.domain.PublishedApiType;
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 
 @Service
-public class ClModuleIDGenerateGetServiceImp implements ClModuleIDGenerateGetService{
+public class ClVcGenerateGetServiceImp implements ClVcGenerateGetService{
 
 	
-	private static final Logger log = LoggerFactory.getLogger(ClModuleIDGenerateGetServiceImp.class);
+	private static final Logger log = LoggerFactory.getLogger(ClVcGenerateGetServiceImp.class);
 	
 	@Autowired
 	private SessionManagerConnService smConn;
@@ -46,11 +46,11 @@ public class ClModuleIDGenerateGetServiceImp implements ClModuleIDGenerateGetSer
 
 	
 	@Override
-	public ModuleTrigger clModuleIDGenerateGet (String sessionID, String moduleID) throws Exception {
+	public ModuleTrigger clVcGenerateGet (String sessionID, String moduleID) throws Exception {
 		
 		log.info("moduleID: " + moduleID);
 			
-		// UC6.01
+		// UC5.01
 		
 		
 		try {
@@ -63,15 +63,15 @@ public class ClModuleIDGenerateGetServiceImp implements ClModuleIDGenerateGetSer
 			
 			switch (moduleID.toLowerCase()) {
 			
-				case "uuid":
+				case "uport":
 					
 					// Update sessionData: derivation = UUID
-					smConn.updateVariable(sessionID,"derivation", moduleID.toUpperCase());
+					smConn.updateVariable(sessionID,"VCDefinition", moduleID.toUpperCase());
 					
 					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
-					theModuleID = confMngrConnService.getEntityMetadata("DERIVATION", moduleID).getMicroservice().get(0);	// The first one.
+					theModuleID = confMngrConnService.getEntityMetadata("VCDEFINITIONS", moduleID).getMicroservice().get(0);	// The first one.
 					
-					theMs = confMngrConnService.getMicroservicesByApiClass("IDBOOT").getMs(theModuleID); // This is the IDBOOT microservice
+					theMs = confMngrConnService.getMicroservicesByApiClass("VC").getMs(theModuleID); // This is the IDBOOT microservice
 									
 					//For fulfilling theAccess (see bellow)
 					thePublishedApiList = theMs.getPublishedAPI();
@@ -81,7 +81,7 @@ public class ClModuleIDGenerateGetServiceImp implements ClModuleIDGenerateGetSer
 					while (paIterator0.hasNext()) {
 						
 						auxPublishedApi0 = paIterator0.next();						  
-						if (auxPublishedApi0.getApiCall().equals("generate")	) { // idboot/generate
+						if (auxPublishedApi0.getApiCall().equals("issue")	) { // vc/issue
 							thePublishedApi = auxPublishedApi0;  
 							break; 
 						}
@@ -95,8 +95,11 @@ public class ClModuleIDGenerateGetServiceImp implements ClModuleIDGenerateGetSer
 			
 			
 			// Returns msToken and moduleTrigger to client
+			
+			
 			log.info("theMS: " + (theMs != null ? theMs.getMsId(): theMs));
 			log.info("thePublishedApi: " + (thePublishedApi != null ? thePublishedApi.getApiCall() : thePublishedApi));
+			
 			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
@@ -104,12 +107,13 @@ public class ClModuleIDGenerateGetServiceImp implements ClModuleIDGenerateGetSer
 			if (theMs != null) {
 			
 			 if (thePublishedApi != null ) {
+				 
 				msToken = smConn.generateToken (sessionID, theModuleID);		
 				log.info ("token generated");
 				
-				theStatus.setMessage(Constants.ID_DERIVED_MSG);
+				theStatus.setMessage(Constants.VC_ISSUED_MSG);
 				theStatus.setMainCode(Constants.SUCESS_CODE); 
-				theStatus.setSecondaryCode(Constants.ID_DERIVED_CODE); 
+				theStatus.setSecondaryCode(Constants.VC_ISSUED_CODE); 
 				moduleTrigger.setStatus (theStatus);		
 				
 				ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
@@ -123,9 +127,9 @@ public class ClModuleIDGenerateGetServiceImp implements ClModuleIDGenerateGetSer
 				moduleTrigger.setPayload(msToken);
 			 }
 			 else {
-				theStatus.setMessage(Constants.NO_ID_DERIVED);
+				theStatus.setMessage(Constants.NO_VC_ISSUED);
 				theStatus.setMainCode(Constants.FAIL_CODE); 
-				theStatus.setSecondaryCode(Constants.NO_ID_DERIVED_CODE); 
+				theStatus.setSecondaryCode(Constants.NO_VC_ISSUED_CODE); 
 				moduleTrigger.setStatus (theStatus);
 				moduleTrigger.setAccess (null);
 				moduleTrigger.setPayload(null);

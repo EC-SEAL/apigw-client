@@ -16,16 +16,14 @@ See README file for the full disclaimer information and LICENSE file for full li
 package eu.seal.apigw.cl.rest_api.controller.misc;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eu.seal.apigw.cl.domain.DataSet;
-import eu.seal.apigw.cl.domain.DataStore;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.rest_api.services.callback.ClCallbackGetService;
 import eu.seal.apigw.cl.rest_api.services.derivation.ClModuleIDGenerateGetService;
 import eu.seal.apigw.cl.rest_api.services.lists.ClListCollectionGetService;
+import eu.seal.apigw.cl.rest_api.services.vc.ClVcGenerateGetService;
 import eu.seal.apigw.cl.configuration.Constants;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -33,19 +31,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
 
 @Controller
 public class MiscApiController implements MiscApi {
@@ -69,7 +60,7 @@ public class MiscApiController implements MiscApi {
     public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@NotNull @ApiParam(value = "the actual callback url the modules will call when returning control to the client", required = true) @Valid @RequestParam(value = "ClientCallbackAddr", required = true) String clientCallbackAddr) {
         
    // public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID, Model model) {
-        String accept = request.getHeader("Accept");
+        //String accept = request.getHeader("Accept");
         
         //if (accept != null && accept.contains("application/json")) {
         	
@@ -131,14 +122,21 @@ public class MiscApiController implements MiscApi {
     }
 
 
+    @Autowired
+	private ClVcGenerateGetService clVcGenerateGetService;
+    
     public ResponseEntity<ModuleTrigger> clVcIssuingModuleIDGenerateGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID) {
-        String accept = request.getHeader("Accept");
+    	String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<ModuleTrigger>(objectMapper.readValue("{  \"access\" : {    \"address\" : \"address\",    \"binding\" : \"HTTP-POST-REDIRECT\",    \"bodyContent\" : \"bodyContent\",    \"contentType\" : \"contentType\"  },  \"payload\" : \"{}\",  \"status\" : {    \"mainCode\" : \"mainCode\",    \"secondaryCode\" : \"secondaryCode\",    \"message\" : \"message\"  }}", ModuleTrigger.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ModuleTrigger>(HttpStatus.INTERNAL_SERVER_ERROR);
+            	ModuleTrigger idRetrieved = new ModuleTrigger();
+            	
+            	idRetrieved = clVcGenerateGetService.clVcGenerateGet(sessionID, moduleID);
+            	return new ResponseEntity<ModuleTrigger>(idRetrieved, HttpStatus.OK);
+            	
+            } catch (Exception e) {
+            	log.error(Constants.ERROR_ACCESSING_MODULE, e);
+                return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);
             }
         }
 

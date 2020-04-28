@@ -20,7 +20,7 @@ public class Constants {
 	public final static String COLLECTION_NOT_FOUND= "Collection not found"; 	// cl/list
 	public final static String ERROR_RETURNING = "Error returning to client"; 	// cl/callback
 	
-	// 404 in auth, identsource/retrieve, identmngr/list, persistence/load&store controllers, derivation, linking
+	// 404 in auth, identsource/retrieve, identmngr/list, persistence/load&store controllers, derivation, linking, issuing
 	public final static String ERROR_ACCESSING_MODULE= "Error accessing module";
 	
 	// 404 in session controllers
@@ -72,6 +72,11 @@ public class Constants {
 	public final static String NO_LINKING_RESULT_CODE = "no_linking_result_code";
 	public final static String INVALID_REQUEST_ID_MSG = "Invalid request";
 	public final static String INVALID_REQUEST_ID_CODE = "invalid_request_code";
+	
+	public final static String VC_ISSUED_MSG = "VC just issued";
+	public final static String VC_ISSUED_CODE = "vc_issued_code";
+	public final static String NO_VC_ISSUED = "No VC issued";
+	public final static String NO_VC_ISSUED_CODE = "no_vc_issued_code";
 	
 	public final static String SUCESS_CODE = "OK";
 	public final static String FAIL_CODE = "KO";

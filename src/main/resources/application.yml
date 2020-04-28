@@ -1,0 +1,76 @@
+###
+# Copyright © 2019  Atos Spain SA. All rights reserved.
+# This file is part of SEAL API Gateway Client (SEAL Apigwcl).
+# SEAL Apigwcl is free software: you can redistribute it and/or modify it under the terms of EUPL 1.2.
+# THE SOFTWARE IS PROVIDED \u201CAS IS\u201D, WITHOUT ANY WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT, 
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+# DAMAGES OR OTHER LIABILITY, WHETHER IN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# See README file for the full disclaimer information and LICENSE file for full license information in the project root.
+#
+# @author Atos Research and Innovation, Atos SPAIN SA
+###
+
+springfox:
+  documentation.swagger.v2.path: /api-docs
+
+spring.jackson:
+  date-format: eu.seal.apigw.cl.RFC3339DateFormat
+  serialization.WRITE_DATES_AS_TIMESTAMPS: false
+
+##
+## SEAL Apigwcl microservice. 
+##
+server:
+  #contextPath: /
+  port: 8053
+  port.http: 8050
+  #key-store: ${KEYSTORE_PATH}
+  #key-store-password: ${STORE_PASS}
+  #key-password: ${KEY_PASS}
+  #signing-secret: ${SIGNING_SECRET}
+  ssl:
+    enabled: true
+    key-store: ${SSL_KEYSTORE_PATH}
+    key-store-password: ${SSL_STORE_PASS}
+    key-password: ${SSL_KEY_PASS}
+    key-alias: ${SSL_CERT_ALIAS}
+
+#security.require-ssl: true
+
+
+##
+## SEAL configuration manager. To be read from environment variables (dockerization)
+##
+apigwcl.cm:
+   getAttributeProfilesPath: /cm/metadata/attributes/
+   getAttributeSetByProfilePath: /cm/metadata/attributes/, attrProfileId
+   getExternalEntitiesPath: /cm/metadata/externalEntities/
+   getEntityMetadataSetPath: /cm/metadata/externalEntities/, collectionId
+   getEntityMetadataPath: /cm/metadata/externalEntities/, collectionId, entityId
+   getAllMicroservicesPath: /cm/metadata/microservices/
+   getMicroservicesByApiClassPath: /cm/metadata/microservices/, apiClass
+   getInternalsPath: /cm/metadata/internal/
+   getConfigurationPath: /cm/metadata/internal/, confId
+   
+   
+
+##
+## SEAL Session Manager. To be read from the ConfMngr
+##
+apigwcl.sm:
+   #protocol: http
+   #server: 5.79.83.118
+   #port: 8090
+   #name: SMms001
+   #contextPath: /fakeSm  # without httpSig
+   #contextPath: /sm       
+   
+
+ 
+apigwcl.httpSig:
+   numAttempts: ${HTTPSIG_ATTEMPTS}
+
+   

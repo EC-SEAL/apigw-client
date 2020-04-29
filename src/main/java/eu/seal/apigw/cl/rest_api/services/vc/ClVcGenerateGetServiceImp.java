@@ -61,9 +61,9 @@ public class ClVcGenerateGetServiceImp implements ClVcGenerateGetService{
 			List<PublishedApiType> thePublishedApiList = null;
 			
 			
-			switch (moduleID.toLowerCase()) {
+			//switch (moduleID.toLowerCase()) {
 			
-				case "eidas": 
+			//	case "eidas": 
 					
 					// Update sessionData: derivation = UUID
 					smConn.updateVariable(sessionID,"VCDefinition", moduleID.toUpperCase());
@@ -87,11 +87,11 @@ public class ClVcGenerateGetServiceImp implements ClVcGenerateGetService{
 						}
 					}
 
-					break;
+				//	break;
 					
-				default:
-					log.info ("BE AWARE: to be defined: " + moduleID);
-			}
+				//default:
+				//	log.info ("BE AWARE: to be defined: " + moduleID);
+			//}
 			
 			
 			// Returns msToken and moduleTrigger to client

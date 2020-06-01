@@ -12,10 +12,12 @@ See README file for the full disclaimer information and LICENSE file for full li
 
 @author Atos Research and Innovation, Atos SPAIN SA
 */
-package eu.seal.apigw.cl.rest_api.services.callback;
+package eu.seal.apigw.cl.rest_api.services.identlnk;
 
-public interface ClCallbackGetService {
+import eu.seal.apigw.cl.domain.ModuleTrigger;
+
+public interface ClModuleIDRequestStatusGetService {
 	
-	void clCallbackGet (String sessionID, String clientCallbackAddr) throws Exception;
+	ModuleTrigger clModuleIDRequestStatusGet (String sessionID, String moduleID, String requestId) throws Exception;
 
 }

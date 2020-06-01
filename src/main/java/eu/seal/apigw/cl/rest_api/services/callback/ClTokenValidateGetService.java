@@ -14,8 +14,8 @@ See README file for the full disclaimer information and LICENSE file for full li
 */
 package eu.seal.apigw.cl.rest_api.services.callback;
 
-public interface ClCallbackGetService {
+public interface ClTokenValidateGetService {
 	
-	void clCallbackGet (String sessionID, String clientCallbackAddr) throws Exception;
+	void clTokenValidateGet (String sessionID, String msToken) throws Exception;
 
 }

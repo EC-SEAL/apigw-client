@@ -16,7 +16,7 @@ jobs:
       language: java
       before_script:
       - if [ $TRAVIS_BRANCH == "development" ]; then
-            export CONTAINER_TAG="0.0.1";
+            export CONTAINER_TAG="0.0.2";
         elif [ $TRAVIS_BRANCH == "master" ]; then
             export CONTAINER_TAG=latest;
         elif [ $TRAVIS_BRANCH == "interface" ]; then

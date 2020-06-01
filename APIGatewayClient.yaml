@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   title: "APIGatewayClient (SEAL Service Microservice Specification)"
-  version: 0.0.1
+  version: 0.0.2
   description: "This document contains the formal specification of the API Gateway Client interface in SEAL Service.
   
   **Take into account that parameters marked as cookie type, will instead be passed through the session object**
@@ -661,6 +661,32 @@ paths:
           description: "Callback registered"
         404:
           description: "Error registering callback"
+          
+          
+          
+  /cl/token/validate:
+    get:
+      tags:
+        - APIGatewayClient
+      summary: Now the callback address is on the client domain, the client will need some endpoint to validate the msToken the module will send along when calling the callback, to secure the app flow. The client will send the msToken to the api gw for validation through this call.
+      description: _
+      parameters:
+        - name: "sessionID"
+          in: "query"
+          required: true
+          type: string
+        - name: "msToken"
+          in: "query"
+          required: true
+          description: B64 string with the received msToken
+          type: string            
+      responses:
+        200:
+          description: "msToken is legitimate"
+        403:
+          description: "msToken is invalid"
+        404:
+          description: "Error validating token"
   
           
 

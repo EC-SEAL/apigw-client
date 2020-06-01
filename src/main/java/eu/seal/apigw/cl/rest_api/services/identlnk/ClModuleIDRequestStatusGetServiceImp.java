@@ -41,10 +41,10 @@ import eu.seal.apigw.cl.domain.PublishedApiType;
 
 
 @Service
-public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestResultGetService{
+public class ClModuleIDRequestStatusGetServiceImp implements ClModuleIDRequestStatusGetService{
 
 	
-	private static final Logger log = LoggerFactory.getLogger(ClModuleIDRequestResultGetServiceImp.class);
+	private static final Logger log = LoggerFactory.getLogger(ClModuleIDRequestStatusGetServiceImp.class);
 	
 	@Autowired
 	private ConfMngrConnService confMngrConnService;
@@ -53,16 +53,19 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 	private SessionManagerConnService smConn;
 	
 	@Override
-	public ModuleTrigger clModuleIDRequestResultGet (String sessionID, String moduleID, String requestId) throws Exception {
+	public ModuleTrigger clModuleIDRequestStatusGet (String sessionID, String moduleID, String requestId) throws Exception {
+		
 		
 //		log.info("moduleID: " + moduleID);
 
 		MsMetadata theMs = null;
 		
-		//TODO: the usage of moduleID is removed (Paco's approval: email 20.4.2020). The interfaces.yml and UC7.02 to be updated
+		//TODO: the usage of moduleID would be removed ?
 		//
 		
-		// UC7.02: returns the uri related to the requestId to be found in the apigwLinkRequestList session variable
+		// UC7.02: to be updated (Ross to do it)
+		
+		//Request the status of a reconciliation request to a specific method module.
 		try {
 			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();		
@@ -112,7 +115,7 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 							while (paIterator.hasNext()) {
 								
 								auxPublishedApi = paIterator.next();								  
-								if (auxPublishedApi.getApiCall().equals("result-get")	) {// /link/{requestId}/result/get ---> It's front channel									
+								if (auxPublishedApi.getApiCall().equals("status")	) {// /link/{requestId}/status	---> It's back channel								
 									thePublishedApi = auxPublishedApi;
 									break; 
 								}								  	  
@@ -128,14 +131,14 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 					if (thePublishedApi != null ) {
 						BindingEnum theBinding = null;
 						
-						theStatus.setMessage(Constants.LINKING_RESULT_MSG);
+						theStatus.setMessage(Constants.LINKING_STATUS_MSG);
 						theStatus.setMainCode(Constants.SUCESS_CODE); 
-						theStatus.setSecondaryCode(Constants.LINKING_RESULT_CODE); 
+						theStatus.setSecondaryCode(Constants.LINKING_STATUS_CODE); 
 						moduleTrigger.setStatus (theStatus);		
 						
 						ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
 						theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
-						theBinding = BindingEnum.POST;
+						theBinding = BindingEnum.GET;
 						theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
 						
 						theAccess.setContentType("TO ASK: contentType");
@@ -152,9 +155,9 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 					moduleTrigger.setPayload(thePayload);				
 				}
 				else {
-					theStatus.setMessage(Constants.NO_LINKING_RESULT_MSG);
+					theStatus.setMessage(Constants.NO_LINKING_STATUS_MSG);
 					theStatus.setMainCode(Constants.FAIL_CODE); 
-					theStatus.setSecondaryCode(Constants.NO_LINKING_RESULT_CODE);
+					theStatus.setSecondaryCode(Constants.NO_LINKING_STATUS_CODE);
 					moduleTrigger.setStatus (theStatus);
 					moduleTrigger.setAccess (null);
 					moduleTrigger.setPayload (null);

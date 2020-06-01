@@ -46,6 +46,12 @@ public class ClCallbackGetServiceImp implements ClCallbackGetService{
 			
 		try {
 			
+			// TODO: validate the clientCallbackAddr
+			// Try to build an URL object: parsing the string to get the server, port, protocol, path...
+			// If exception, returns error
+			// If not, it is a valid clientCallbackAddr
+			
+			
 			// Get sessionData from SM
 			Object objDatastore = smConn.readVariable(sessionID, "dataStore");
 			if (objDatastore != null) {

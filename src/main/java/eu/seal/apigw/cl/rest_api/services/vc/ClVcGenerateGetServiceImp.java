@@ -61,9 +61,9 @@ public class ClVcGenerateGetServiceImp implements ClVcGenerateGetService{
 			List<PublishedApiType> thePublishedApiList = null;
 			
 			
-			switch (moduleID.toLowerCase()) {
+			//switch (moduleID.toLowerCase()) {
 			
-				case "uport":
+			//	case "eidas": 
 					
 					// Update sessionData: derivation = UUID
 					smConn.updateVariable(sessionID,"VCDefinition", moduleID.toUpperCase());
@@ -71,7 +71,7 @@ public class ClVcGenerateGetServiceImp implements ClVcGenerateGetService{
 					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
 					theModuleID = confMngrConnService.getEntityMetadata("VCDEFINITIONS", moduleID).getMicroservice().get(0);	// The first one.
 					
-					theMs = confMngrConnService.getMicroservicesByApiClass("VC").getMs(theModuleID); // This is the IDBOOT microservice
+					theMs = confMngrConnService.getMicroservicesByApiClass("VC").getMs(theModuleID); // This is the VC microservice
 									
 					//For fulfilling theAccess (see bellow)
 					thePublishedApiList = theMs.getPublishedAPI();
@@ -87,11 +87,11 @@ public class ClVcGenerateGetServiceImp implements ClVcGenerateGetService{
 						}
 					}
 
-					break;
+				//	break;
 					
-				default:
-					log.info ("BE AWARE: to be defined: " + moduleID);
-			}
+				//default:
+				//	log.info ("BE AWARE: to be defined: " + moduleID);
+			//}
 			
 			
 			// Returns msToken and moduleTrigger to client

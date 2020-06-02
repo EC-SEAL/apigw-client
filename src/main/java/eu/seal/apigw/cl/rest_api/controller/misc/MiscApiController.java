@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
-import eu.seal.apigw.cl.rest_api.services.callback.ClCallbackGetService;
+import eu.seal.apigw.cl.rest_api.services.callback.*;
 import eu.seal.apigw.cl.rest_api.services.derivation.ClModuleIDGenerateGetService;
 import eu.seal.apigw.cl.rest_api.services.lists.ClListCollectionGetService;
 import eu.seal.apigw.cl.rest_api.services.vc.ClVcGenerateGetService;
@@ -59,12 +59,7 @@ public class MiscApiController implements MiscApi {
     
     public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@NotNull @ApiParam(value = "the actual callback url the modules will call when returning control to the client", required = true) @Valid @RequestParam(value = "ClientCallbackAddr", required = true) String clientCallbackAddr) {
         
-   // public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID, Model model) {
-        //String accept = request.getHeader("Accept");
-        
-        //if (accept != null && accept.contains("application/json")) {
-        	
-        	try {
+           	try {
             	clCallbackGetService.clCallbackGet (sessionID, clientCallbackAddr);
                 return new ResponseEntity<Void>(HttpStatus.OK);
             }
@@ -73,9 +68,27 @@ public class MiscApiController implements MiscApi {
 	    		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
             }
             
-        //}
-        //return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
+    
+    
+    @Autowired
+	private ClTokenValidateGetService clTokenValidateGetService;
+    
+    public ResponseEntity<Void> clTokenValidateGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@NotNull @ApiParam(value = "B64 string with the received msToken", required = true) @Valid @RequestParam(value = "msToken", required = true) String msToken) {
+        try {
+        	clTokenValidateGetService.clTokenValidateGet (sessionID, msToken);
+            return new ResponseEntity<Void>(HttpStatus.OK);
+        }
+        catch (Exception e) {
+        	if (e.getMessage().contains(Integer.toString(HttpStatus.NOT_FOUND.value()))) {
+	        	log.error(Constants.ERROR_RETURNING, e);
+	    		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+        	}
+        	else
+        		return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+        }
+    }
+    
 
     @Autowired
 	private ClModuleIDGenerateGetService clModuleIDGenerateGetService;

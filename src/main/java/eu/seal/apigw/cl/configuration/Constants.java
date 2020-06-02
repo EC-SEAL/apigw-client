@@ -70,6 +70,10 @@ public class Constants {
 	public final static String LINKING_RESULT_CODE = "linking_result_code";
 	public final static String NO_LINKING_RESULT_MSG = "No linking result";
 	public final static String NO_LINKING_RESULT_CODE = "no_linking_result_code";
+	public final static String LINKING_STATUS_MSG = "Linking status";
+	public final static String LINKING_STATUS_CODE = "linking_status_code";
+	public final static String NO_LINKING_STATUS_MSG = "No linking status";
+	public final static String NO_LINKING_STATUS_CODE = "no_linking_status_code";
 	public final static String INVALID_REQUEST_ID_MSG = "Invalid request";
 	public final static String INVALID_REQUEST_ID_CODE = "invalid_request_code";
 	

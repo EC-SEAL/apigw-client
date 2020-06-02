@@ -21,6 +21,7 @@ import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.rest_api.services.identlnk.ClModuleIDRequestPostService;
 import eu.seal.apigw.cl.rest_api.services.identlnk.ClModuleIDRequestResultGetService;
+import eu.seal.apigw.cl.rest_api.services.identlnk.ClModuleIDRequestStatusGetService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,14 +133,21 @@ public class IdentLnkApiController implements IdentLnkApi {
         return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    
+    @Autowired
+	private ClModuleIDRequestStatusGetService clModuleIDRequestStatusGetService;
+    
     public ResponseEntity<ModuleTrigger> clIdentLinkingModuleIDRequestIdStatusGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID,@ApiParam(value = "",required=true) @PathVariable("requestId") String requestId) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<ModuleTrigger>(objectMapper.readValue("{  \"access\" : {    \"address\" : \"address\",    \"binding\" : \"HTTP-POST-REDIRECT\",    \"bodyContent\" : \"bodyContent\",    \"contentType\" : \"contentType\"  },  \"payload\" : \"{}\",  \"status\" : {    \"mainCode\" : \"mainCode\",    \"secondaryCode\" : \"secondaryCode\",    \"message\" : \"message\"  }}", ModuleTrigger.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ModuleTrigger>(HttpStatus.INTERNAL_SERVER_ERROR);
+            	ModuleTrigger lnkStatus = new ModuleTrigger();
+              	
+            	lnkStatus = clModuleIDRequestStatusGetService.clModuleIDRequestStatusGet(sessionID, moduleID, requestId);
+	          	return new ResponseEntity<ModuleTrigger>(lnkStatus, HttpStatus.OK);
+	        } catch (Exception e) {
+	        	log.error(Constants.ERROR_ACCESSING_MODULE, e);
+	            return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);
             }
         }
 

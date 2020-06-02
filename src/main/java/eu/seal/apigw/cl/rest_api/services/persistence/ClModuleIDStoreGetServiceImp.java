@@ -91,10 +91,14 @@ public class ClModuleIDStoreGetServiceImp implements ClModuleIDStoreGetService{
 				BindingEnum theBinding = null;
 				switch (moduleID.toLowerCase()) {
 				
-					case "localmobile":
+					case "mobile":
+					case "browser":
 						thePayload = sessionID;
 						
 						theBinding = BindingEnum.GET;
+						
+						// Update sessionData: PDS = mobile, browser
+						smConn.updateVariable(sessionID,"PDS", moduleID);
 						break;
 						
 					case "onedrive":
@@ -112,11 +116,6 @@ public class ClModuleIDStoreGetServiceImp implements ClModuleIDStoreGetService{
 						smConn.updateVariable(sessionID,"PDS", moduleID);
 						break;
 						
-					case "remotemobile":
-					case "browser":
-						log.info ("BE AWARE: undefined persistence module: " + moduleID);
-						break;
-					
 					default:
 						log.info ("BE AWARE: unknown persistence module: " + moduleID);
 				}

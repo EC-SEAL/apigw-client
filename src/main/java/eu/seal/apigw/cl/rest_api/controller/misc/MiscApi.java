@@ -51,6 +51,16 @@ public interface MiscApi {
     	method = RequestMethod.GET)
     ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@NotNull @ApiParam(value = "the actual callback url the modules will call when returning control to the client", required = true) @Valid @RequestParam(value = "ClientCallbackAddr", required = true) String clientCallbackAddr);
 
+    
+    @ApiOperation(value = "Now the callback address is on the client domain, the client will need some endpoint to validate the msToken the module will send along when calling the callback, to secure the app flow. The client will send the msToken to the api gw for validation through this call.", nickname = "clTokenValidateGet", notes = "_", tags={ "APIGatewayClient", })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "msToken is legitimate"),
+        @ApiResponse(code = 403, message = "msToken is invalid"),
+        @ApiResponse(code = 404, message = "Error validating token") })
+    @RequestMapping(value = "/cl/token/validate",
+        method = RequestMethod.GET)
+    ResponseEntity<Void> clTokenValidateGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@NotNull @ApiParam(value = "B64 string with the received msToken", required = true) @Valid @RequestParam(value = "msToken", required = true) String msToken);
+
 
     @ApiOperation(value = "Generate a derived identity through a specific method module.", nickname = "clIdentDerivationModuleIDGenerateGet", notes = "_", response = ModuleTrigger.class, tags={ "APIGatewayClient", })
     @ApiResponses(value = { 

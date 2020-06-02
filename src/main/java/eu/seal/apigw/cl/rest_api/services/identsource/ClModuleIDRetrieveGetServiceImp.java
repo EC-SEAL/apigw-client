@@ -70,12 +70,13 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 			switch (moduleID.toLowerCase()) {
 			
 				case "uport":
+				case "sovrin":
 					
 					// Update sessionData: ssiWallet = uPort
 					smConn.updateVariable(sessionID,"ssiWallet", moduleID);
 					
 					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
-					theModuleID = confMngrConnService.getEntityMetadata("SSIWALLET", moduleID).getMicroservice().get(0);	// The first one.
+					theModuleID = confMngrConnService.getEntityMetadata("SSI", moduleID).getMicroservice().get(0);	// The first one.
 					
 					theMs = confMngrConnService.getMicroservicesByApiClass("VC").getMs(theModuleID); // This is the VC microservice
 									
@@ -194,6 +195,7 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 				moduleTrigger.setAccess (theAccess);
 				
 				moduleTrigger.setAccess (theAccess);
+				moduleTrigger.setPayload(msToken);
 			 }
 			 else {
 				theStatus.setMessage(Constants.NO_ID_RETRIEVED);
@@ -201,9 +203,9 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 				theStatus.setSecondaryCode(Constants.NO_ID_RETRIEVED_CODE); 
 				moduleTrigger.setStatus (theStatus);
 				moduleTrigger.setAccess (null);
+				moduleTrigger.setPayload (null);
 			 }
 			
-			 moduleTrigger.setPayload(msToken); // The object to be returned.
 			}
 			else {
 				theStatus.setMessage(Constants.INVALID_MODULE_ID_MSG); 

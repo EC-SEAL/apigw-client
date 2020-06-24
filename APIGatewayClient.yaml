@@ -663,7 +663,7 @@ paths:
           description: "Error registering callback"
           
           
-          
+
   /cl/token/validate:
     get:
       tags:
@@ -680,13 +680,17 @@ paths:
           required: true
           description: B64 string with the received msToken
           type: string            
+      produces:
+        - application/json
       responses:
         200:
-          description: "msToken is legitimate"
-        403:
-          description: "msToken is invalid"
+          description: Result of the Token validation, sessionID and additional data
+          schema:
+            $ref: '#/definitions/SessionMngrResponse'
+  
         404:
           description: "Error validating token"
+          
   
           
 
@@ -736,6 +740,35 @@ definitions:
           bodyContent:
             type: string
             description: If the access method requires to transfer data on the body of the request, it will be written here
+
+####### SessionManager ########
+
+  MngrSessionTO:
+    type: object
+    required: [sessionId]
+    properties:
+      sessionId:
+        type: string
+      sessionVariables:
+        type: object
+    title: MngrSessionTO
+                
+  SessionMngrResponse:
+    type: object
+    properties:
+      additionalData:
+        type: string
+      code:
+        type: string
+        enum:
+          - OK
+          - ERROR
+          - NEW
+      error:
+        type: string
+      sessionData:
+        $ref: '#/definitions/MngrSessionTO'
+    title: SessionMngrResponse
             
 ####### Revocation #######
 

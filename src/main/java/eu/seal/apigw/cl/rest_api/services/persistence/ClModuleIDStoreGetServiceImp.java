@@ -92,17 +92,17 @@ public class ClModuleIDStoreGetServiceImp implements ClModuleIDStoreGetService{
 				switch (moduleID.toLowerCase()) {
 				
 					case "mobile":
-					case "browser":
 						thePayload = sessionID;
 						
 						theBinding = BindingEnum.GET;
 						
-						// Update sessionData: PDS = mobile, browser
+						// Update sessionData: PDS = mobile
 						smConn.updateVariable(sessionID,"PDS", moduleID);
 						break;
 						
 					case "onedrive":
 					case "googledrive":
+					case "browser":
 						String msToken =  null;
 						
 						msToken = smConn.generateToken (sessionID, theModuleID);
@@ -112,7 +112,7 @@ public class ClModuleIDStoreGetServiceImp implements ClModuleIDStoreGetService{
 						
 						theBinding = BindingEnum.POST;
 						
-						// Update sessionData: PDS = googleDrive, oneDrive
+						// Update sessionData: PDS = googleDrive, oneDrive, browser
 						smConn.updateVariable(sessionID,"PDS", moduleID);
 						break;
 						

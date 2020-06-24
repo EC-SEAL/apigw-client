@@ -26,6 +26,8 @@ import eu.seal.apigw.cl.rest_api.services.lists.ClListCollectionGetService;
 import eu.seal.apigw.cl.rest_api.services.vc.ClVcGenerateGetService;
 import eu.seal.apigw.cl.configuration.Constants;
 import io.swagger.annotations.*;
+
+import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -60,8 +62,17 @@ public class MiscApiController implements MiscApi {
     public ResponseEntity<Void> clCallbackGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@NotNull @ApiParam(value = "the actual callback url the modules will call when returning control to the client", required = true) @Valid @RequestParam(value = "ClientCallbackAddr", required = true) String clientCallbackAddr) {
         
            	try {
-            	clCallbackGetService.clCallbackGet (sessionID, clientCallbackAddr);
-                return new ResponseEntity<Void>(HttpStatus.OK);
+           		
+           		String[] schemes = {"http","https"}; // DEFAULT schemes = "http", "https", "ftp"
+           		UrlValidator urlValidator = new UrlValidator(schemes);
+           		if (urlValidator.isValid(clientCallbackAddr)) {
+	            	clCallbackGetService.clCallbackGet (sessionID, clientCallbackAddr);
+	                return new ResponseEntity<Void>(HttpStatus.OK);
+           		}
+           		else {
+           			log.info("Invalid URL: " + clientCallbackAddr);
+           			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+           		}
             }
             catch (Exception e) {
 	        	log.error(Constants.ERROR_RETURNING, e);

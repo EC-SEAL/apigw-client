@@ -56,7 +56,6 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 		
 		// UC1.02, UC1.03, UC1.05, UC1.06
 		try {
-			//moduleID was previously stored in settings as "localMobile", "googleDrive", "oneDrive"
 			
 			ModuleTrigger moduleTrigger = new ModuleTrigger();		
 			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
@@ -89,20 +88,21 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 				
 				String thePayload = null;
 				BindingEnum theBinding = null;
-				switch (moduleID.toLowerCase()) {
+/*				switch (moduleID.toLowerCase()) {
 				
 					case "mobile":
-					case "browser":
 						thePayload = sessionID;
 						
 						theBinding = BindingEnum.GET;
 						
-						// Update sessionData: PDS = mobile, browser
+						// Update sessionData: PDS = mobile
 						smConn.updateVariable(sessionID,"PDS", moduleID);
 						break;
 						
 					case "onedrive":
 					case "googledrive":
+					case "browser":
+					*/
 						String msToken =  null;
 						
 						msToken = smConn.generateToken (sessionID, theModuleID);
@@ -112,14 +112,14 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 						
 						theBinding = BindingEnum.POST;
 						
-						// Update sessionData: PDS = googleDrive, oneDrive
 						smConn.updateVariable(sessionID,"PDS", moduleID);
-						break;
+/*						break;
 						
 					default:
 						log.info ("BE AWARE: unknown persistence module: " + moduleID);
 				}
-				
+*/				
+						
 				// Returns moduleTrigger to client
 				// it returns the address of the API to call .... /per/load
 	

@@ -28,6 +28,10 @@ public interface SessionManagerConnService
 										FileNotFoundException, NoSuchAlgorithmException, 
 										CertificateException, InvalidKeySpecException, IOException;
 	
+	public String startSessionDS(String sessionId) throws UnrecoverableKeyException, KeyStoreException, 
+										FileNotFoundException, NoSuchAlgorithmException, 
+										CertificateException, InvalidKeySpecException, IOException;
+	
 	public String generateToken(String sessionId, String receiver) throws UnrecoverableKeyException, KeyStoreException, 
 	 													 FileNotFoundException, NoSuchAlgorithmException, 
 	 													 CertificateException, InvalidKeySpecException, IOException ;
@@ -37,6 +41,10 @@ public interface SessionManagerConnService
 													 CertificateException, InvalidKeySpecException, IOException ;
 	
 	public Object readVariable( String sessionId, String variableName) throws UnrecoverableKeyException, KeyStoreException, 
+																			  FileNotFoundException, NoSuchAlgorithmException, 
+																			  CertificateException, InvalidKeySpecException, IOException ;
+	
+	public Object readDS( String sessionId, String variableName) throws UnrecoverableKeyException, KeyStoreException, 
 																			  FileNotFoundException, NoSuchAlgorithmException, 
 																			  CertificateException, InvalidKeySpecException, IOException ;
 	

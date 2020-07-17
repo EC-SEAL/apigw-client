@@ -35,7 +35,8 @@ import org.springframework.stereotype.Service;
 import eu.seal.apigw.cl.domain.EntityMetadata;
 import eu.seal.apigw.cl.domain.MsMetadataList;
 import eu.seal.apigw.cl.domain.SessionMngrResponse;
-import eu.seal.apigw.cl.domain.SessionMngrResponse.CodeEnum;
+//import eu.seal.apigw.cl.domain.SessionMngrResponse.CodeEnum;
+import eu.seal.apigw.cl.domain.ResponseCode;
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.network_api.NetworkServiceImpl;
 import eu.seal.apigw.cl.params_api.KeyStoreService;
@@ -141,6 +142,29 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 	}
 	
 	@Override
+	public String startSessionDS(String sessionId) throws UnrecoverableKeyException, KeyStoreException, 
+										FileNotFoundException, NoSuchAlgorithmException, 
+										CertificateException, InvalidKeySpecException, IOException 
+	{
+		String service = "/sm/new/startSession";
+		
+		if (network == null)
+		{
+				network = new NetworkServiceImpl(keyStoreService);
+				//log.info ("startSessionDS network just created");
+		}
+		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        urlParameters.add(new NameValuePair("sessionId",sessionId));
+		
+		SessionMngrResponse smResponse = network.sendPostFormSMResponse(hostURL, service, urlParameters, 1);
+		
+		//log.info("SMresponse(startSessionDS): " +smResponse.toString());
+		log.info("sessionID: "+smResponse.getSessionData().getSessionId());
+		
+		return smResponse.getSessionData().getSessionId();
+	}
+	
+	@Override
 	public String generateToken(String sessionId, String receiver)
 			throws UnrecoverableKeyException, KeyStoreException, FileNotFoundException, NoSuchAlgorithmException,
 			CertificateException, InvalidKeySpecException, IOException
@@ -171,7 +195,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
         
         String additionalData="";
         //System.out.println("SMresponse(generateToken):" +smResponse.toString());
-        if ( smResponse.getCode()==CodeEnum.NEW)
+        if ( smResponse.getCode()==ResponseCode.NEW)
         {
 	        //System.out.println( "addDAta:"+ smResponse.getAdditionalData());
 	        additionalData = smResponse.getAdditionalData();
@@ -212,7 +236,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 	    //response = network.sendGet(hostURL, service, urlParameters);
 	    smResponse = network.sendGetSMResponse(hostURL, service, urlParameters, 1);
 	    
-	    if ( smResponse.getCode()==CodeEnum.OK)
+	    if ( smResponse.getCode()==ResponseCode.OK)
 	    {
 	    	sessionID = smResponse.getSessionData().getSessionId();
 	    	//System.out.println("SessionID:"+sessionID);
@@ -256,7 +280,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 			e.printStackTrace();
 		}
 	    //System.out.println("Response getSessionData:<"+smResponse.toString()+">");
-	    if (smResponse.getCode()==CodeEnum.OK)
+	    if (smResponse.getCode()==ResponseCode.OK)
 	    {
 	    	sessionVbles = (HashMap<String, Object>) smResponse.getSessionData().getSessionVariables();
 	    }
@@ -301,7 +325,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 			e.printStackTrace();
 		}
 	    //System.out.println("Response getSessionData:<"+smResponse.toString()+">");
-	    if (smResponse.getCode()==CodeEnum.OK)
+	    if (smResponse.getCode()==ResponseCode.OK)
 	    {
 	    	sessionVbles = (HashMap<String, Object>) smResponse.getSessionData().getSessionVariables();
 	    	
@@ -315,6 +339,47 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 	    
 	    
 	    return sessionVbles.get(variableName);
+	}
+	
+	@Override
+	public Object readDS(String sessionId, String variableName) throws UnrecoverableKeyException, KeyStoreException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, IOException
+	{
+		String service = "/sm/new/get";
+		//HashMap<String, Object> sessionVbles = new HashMap<String, Object>();
+		Object sessionVble = new Object();
+		
+		if (network == null)
+		{
+				network = new NetworkServiceImpl(keyStoreService);
+		}
+		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+	    urlParameters.add(new NameValuePair("sessionId",sessionId));
+	    urlParameters.add(new NameValuePair("variableName",variableName));
+	    
+	    SessionMngrResponse smResponse = null;
+	    try {
+	    	log.info("Sending new/getSessionData ...");
+	    	//response = network.sendGet(hostURL, service, urlParameters);
+	    	smResponse = network.sendGetSMResponse(hostURL, service, urlParameters, 1);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    //log.info("Response new/getSessionData:<"+smResponse.toString()+">");
+	    if (smResponse.getCode()==ResponseCode.OK)
+	    {
+	    	//sessionVbles = (HashMap<String, Object>) smResponse.getSessionData().getSessionVariables();
+	    	sessionVble = smResponse.getAdditionalData();
+	    	
+	    	log.info("sessionVble: "+ sessionVble.toString());
+	    }
+	    
+	    
+	    //return sessionVbles.get(variableName);
+	    return sessionVble;
 	}
 
 	

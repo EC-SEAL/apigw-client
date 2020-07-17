@@ -53,7 +53,7 @@ public class ClCallbackGetServiceImp implements ClCallbackGetService{
 			
 			
 			// Get sessionData from SM
-			Object objDatastore = smConn.readVariable(sessionID, "dataStore");
+			Object objDatastore = smConn.readDS(sessionID, "dataStore");
 			if (objDatastore != null) {
 // NOT SURE OF THIS NOW (2020.02.26)
 				
@@ -97,6 +97,9 @@ public class ClCallbackGetServiceImp implements ClCallbackGetService{
 			// UC1.04
 				
 				// Initialise dataStore on empty SSI access
+				smConn.startSessionDS(sessionID);
+				
+				/* Old SM
 				DataStore datastore = new DataStore(); // This is the very first data stored in the Session.
 				
 				// TODO
@@ -124,7 +127,7 @@ public class ClCallbackGetServiceImp implements ClCallbackGetService{
 					log.info(errorMsg);
 					throw new Exception (ex);
 				}
-				
+				*/
 			}
 			smConn.updateVariable(sessionID, "ClientCallbackAddr", clientCallbackAddr);
 			

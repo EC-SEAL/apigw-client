@@ -41,6 +41,89 @@ public class ClSessionStartGetServiceImp implements ClSessionStartGetService{
 	
 	@Override
 	public ModuleTrigger clSessionStartGet (String sessionID) throws Exception {
+		try {
+			ModuleTrigger moduleTrigger = new ModuleTrigger();
+			
+			String theSessionID = "";
+			String statusMessage = "";
+			String mainCode = "";
+			String secondaryCode = "";
+			
+			if (sessionID != null) {  
+				// To retake a session in case it already exists
+				theSessionID = sessionID;
+				
+				// Checking whether this sessionID exists.
+				Object objDatastore = smConn.readDS(theSessionID, "dataStore");
+				if (objDatastore != null) {
+				
+					log.info("Existing Datastore: " + objDatastore.toString());
+					mainCode = Constants.SUCESS_CODE;
+					statusMessage = Constants.RETAKE_SESSION_MSG;				
+					secondaryCode = Constants.RETAKE_SESSION_CODE;
+				}
+				else { // Not a valid sessionID
+					
+					log.info("Invalid sessionID: " + theSessionID);
+					mainCode = Constants.FAIL_CODE;
+					statusMessage = Constants.INVALID_SESSION_MSG;				
+					secondaryCode = Constants.INVALID_SESSION_CODE;
+				}
+			}
+			else { 
+				theSessionID = smConn.startSession();
+				if (theSessionID != null) {	
+				
+			// Start Session: POST /sm/new/startSession
+			// (Creating an empty datastore object)
+				
+					smConn.startSessionDS(theSessionID);
+				
+					
+					// Creating an empty apigwLinkRequestList in the session
+					DisplayableList apigwLinkRequestList = new DisplayableList();
+					ObjectMapper objApigwLinkRequestList = new ObjectMapper();
+					smConn.updateVariable(theSessionID,"apigwLinkRequestList",objApigwLinkRequestList.writeValueAsString(apigwLinkRequestList));
+					
+					mainCode = Constants.SUCESS_CODE;
+					statusMessage = Constants.NEW_SESSION_MSG;				
+					secondaryCode = Constants.NEW_SESSION_CODE;
+				}
+			}
+			
+			
+			// Building the return moduleTrigger: OK, the sessionID. 
+			
+			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
+			
+			theStatus.setMessage(statusMessage);
+			theStatus.setMainCode(mainCode); 
+			theStatus.setSecondaryCode(secondaryCode); 
+			moduleTrigger.setStatus (theStatus);
+			
+			// It doesn't make sense to fill any Access
+//			ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
+//			theAccess.setAddress("theUrl");
+//			theAccess.setBinding(BindingEnum.POST); // Any
+//			theAccess.setBodyContent("bodyContent");
+//			theAccess.setContentType("contentType");
+//			moduleTrigger.setAccess (theAccess);
+			
+			moduleTrigger.setAccess (null);
+			moduleTrigger.setPayload(theSessionID); // The object to be returned.
+			
+			
+			return (moduleTrigger);
+
+		}
+		catch (Exception e) {
+			log.error("Exception: ", e);
+			throw new Exception (e);
+		}
+	}
+		/*
+	@Override
+	public ModuleTrigger clSessionStartGet (String sessionID) throws Exception {
 		
 		try {
 			DataStore datastore = new DataStore(); // This is the very first data stored in the Session.
@@ -132,6 +215,7 @@ public class ClSessionStartGetServiceImp implements ClSessionStartGetService{
 			throw new Exception (e);
 		}
 	}
+	*/
 
 }
 

@@ -74,7 +74,7 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 			// Validating session
 			// Checking whether this sessionID exists.
 			
-			Object objDatastore = smConn.readVariable(sessionID, "datastore");
+			Object objDatastore = smConn.readDS(sessionID, "dataStore");
 			if (objDatastore != null) {
 				MsMetadata theAuthMs = null;
 			

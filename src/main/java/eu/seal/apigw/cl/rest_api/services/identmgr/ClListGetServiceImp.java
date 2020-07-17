@@ -43,7 +43,7 @@ public class ClListGetServiceImp implements ClListGetService{
 		try {
 			DataStore ds = null;
 			
-			Object objDatastore = smConn.readVariable(sessionID, "dataStore");
+			Object objDatastore = smConn.readDS(sessionID, "dataStore");
 			if (objDatastore != null) {
 			
 				log.info("Existing Datastore: " + objDatastore.toString());

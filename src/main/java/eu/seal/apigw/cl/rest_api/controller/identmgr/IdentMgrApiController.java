@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.seal.apigw.cl.domain.DataStore;
+import eu.seal.apigw.cl.domain.DataStoreObject;
+import eu.seal.apigw.cl.domain.DataStoreObjectList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.rest_api.services.identmgr.ClListGetService;
 import eu.seal.apigw.cl.configuration.Constants;
@@ -96,22 +98,22 @@ public class IdentMgrApiController implements IdentMgrApi {
 
     @Autowired
 	private ClListGetService clListGetService;
-    public ResponseEntity<DataStore> clIdentMgrListGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID) {
+    public ResponseEntity<DataStoreObjectList> clIdentMgrListGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID) {
     	String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
         	
-        	DataStore ds = new DataStore();
+        	DataStoreObjectList ds = new DataStoreObjectList();
     	
             try {
             	ds = clListGetService.clListGet(sessionID);
-                return new ResponseEntity<DataStore>(ds, HttpStatus.OK);
+                return new ResponseEntity<DataStoreObjectList>(ds, HttpStatus.OK);
             } catch (Exception e) {
             	log.error(Constants.ERROR_ACCESSING_MODULE, e);
-                return new ResponseEntity<DataStore>(HttpStatus.NOT_FOUND);
+                return new ResponseEntity<DataStoreObjectList>(HttpStatus.NOT_FOUND);
             }
         }
 
-        return new ResponseEntity<DataStore>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<DataStoreObjectList>(HttpStatus.NOT_IMPLEMENTED);
     }
     
 

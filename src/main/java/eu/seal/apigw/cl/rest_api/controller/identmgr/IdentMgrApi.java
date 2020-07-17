@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import eu.seal.apigw.cl.domain.DataSet;
 import eu.seal.apigw.cl.domain.DataStore;
+import eu.seal.apigw.cl.domain.DataStoreObject;
+import eu.seal.apigw.cl.domain.DataStoreObjectList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 
 import javax.validation.Valid;
@@ -70,7 +72,7 @@ public interface IdentMgrApi {
     @RequestMapping(value = "/cl/ident/mgr/list",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<DataStore> clIdentMgrListGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID);
+    ResponseEntity<DataStoreObjectList> clIdentMgrListGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID);
 
 
 }

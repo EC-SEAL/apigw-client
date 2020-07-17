@@ -22,7 +22,9 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eu.seal.apigw.cl.domain.DataStore;
+//import eu.seal.apigw.cl.domain.DataStore;
+//import eu.seal.apigw.cl.domain.DataStoreObject;
+import eu.seal.apigw.cl.domain.DataStoreObjectList;
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 
 @Service
@@ -36,18 +38,18 @@ public class ClListGetServiceImp implements ClListGetService{
 	
 	
 	@Override
-	public DataStore clListGet (String sessionID) throws Exception {
+	public DataStoreObjectList clListGet (String sessionID) throws Exception {
 		
 		// UC3.02
 		
 		try {
-			DataStore ds = null;
+			DataStoreObjectList ds = null;
 			
 			Object objDatastore = smConn.readDS(sessionID);
 			if (objDatastore != null) {
 			
 				log.info("Existing Datastore: " + objDatastore.toString());
-				ds = (new ObjectMapper()).readValue(objDatastore.toString(),DataStore.class);				
+				ds = (new ObjectMapper()).readValue(objDatastore.toString(),DataStoreObjectList.class);				
 			}
 			else  {// Not a valid sessionID
 				//log.info("Invalid sessionID: " + sessionID);

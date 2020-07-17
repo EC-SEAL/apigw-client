@@ -14,11 +14,13 @@ See README file for the full disclaimer information and LICENSE file for full li
 */
 package eu.seal.apigw.cl.rest_api.services.identmgr;
 
-import eu.seal.apigw.cl.domain.DataStore;
+//import eu.seal.apigw.cl.domain.DataStore;
+//import eu.seal.apigw.cl.domain.DataStoreObject;
+import eu.seal.apigw.cl.domain.DataStoreObjectList;
 
 
 public interface ClListGetService {
 	
-	DataStore clListGet (String sessionID) throws Exception;
+	DataStoreObjectList clListGet (String sessionID) throws Exception;
 
 }

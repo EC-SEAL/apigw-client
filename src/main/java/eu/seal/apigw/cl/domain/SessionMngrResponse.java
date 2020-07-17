@@ -10,7 +10,7 @@ import eu.seal.apigw.cl.domain.MngrSessionTO;
 
 /**
  *
- * @author nikos
+ * @author nikos & ATOS
  */
 public class SessionMngrResponse {
 
@@ -62,6 +62,28 @@ public class SessionMngrResponse {
     }
 
     
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder();
+      sb.append("class SessionMngrResponse {\n");
+      
+      sb.append("    code: ").append(toIndentedString(code)).append("\n");
+      sb.append("    sessionData: ").append(toIndentedString(sessionData)).append("\n");
+      sb.append("    additionalData: ").append(toIndentedString(additionalData)).append("\n");
+      sb.append("    error: ").append(toIndentedString(error)).append("\n");
+      sb.append("}");
+      return sb.toString();
+    }
     
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(java.lang.Object o) {
+      if (o == null) {
+        return "null";
+      }
+      return o.toString().replace("\n", "\n    ");
+    }
     
 }

@@ -342,7 +342,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 	}
 	
 	@Override
-	public Object readDS(String sessionId, String variableName) throws UnrecoverableKeyException, KeyStoreException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, IOException
+	public Object readDS(String sessionId) throws UnrecoverableKeyException, KeyStoreException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, IOException
 	{
 		String service = "/sm/new/get";
 		//HashMap<String, Object> sessionVbles = new HashMap<String, Object>();
@@ -354,7 +354,6 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 		}
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 	    urlParameters.add(new NameValuePair("sessionId",sessionId));
-	    urlParameters.add(new NameValuePair("variableName",variableName));
 	    
 	    SessionMngrResponse smResponse = null;
 	    try {

@@ -37,7 +37,7 @@ public class ClTokenValidateGetServiceImp implements ClTokenValidateGetService{
 		try {
 			
 			// Get sessionData from SM
-			Object objDatastore = smConn.readDS(sessionID, "dataStore");
+			Object objDatastore = smConn.readDS(sessionID);
 			if (objDatastore != null) {
 				log.info("Right sessionId. Validating the msToken ...");
 				

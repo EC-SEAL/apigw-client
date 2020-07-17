@@ -53,7 +53,7 @@ public class ClCallbackGetServiceImp implements ClCallbackGetService{
 			
 			
 			// Get sessionData from SM
-			Object objDatastore = smConn.readDS(sessionID, "dataStore");
+			Object objDatastore = smConn.readDS(sessionID);
 			if (objDatastore != null) {
 // NOT SURE OF THIS NOW (2020.02.26)
 				

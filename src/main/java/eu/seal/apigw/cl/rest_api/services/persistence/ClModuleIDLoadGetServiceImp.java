@@ -136,7 +136,7 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 					theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
 					theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
 					
-					Object objDatastore = smConn.readDS(sessionID, "dataStore");
+					Object objDatastore = smConn.readDS(sessionID);
 					if (objDatastore != null) {
 						theAccess.setBodyContent(objDatastore.toString());
 						log.info("dataStore: " + objDatastore.toString());

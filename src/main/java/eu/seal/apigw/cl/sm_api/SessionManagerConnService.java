@@ -44,7 +44,7 @@ public interface SessionManagerConnService
 																			  FileNotFoundException, NoSuchAlgorithmException, 
 																			  CertificateException, InvalidKeySpecException, IOException ;
 	
-	public Object readDS( String sessionId, String variableName) throws UnrecoverableKeyException, KeyStoreException, 
+	public Object readDS( String sessionId) throws UnrecoverableKeyException, KeyStoreException, 
 																			  FileNotFoundException, NoSuchAlgorithmException, 
 																			  CertificateException, InvalidKeySpecException, IOException ;
 	

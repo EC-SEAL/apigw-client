@@ -54,7 +54,7 @@ public class ClSessionStartGetServiceImp implements ClSessionStartGetService{
 				theSessionID = sessionID;
 				
 				// Checking whether this sessionID exists.
-				Object objDatastore = smConn.readDS(theSessionID, "dataStore");
+				Object objDatastore = smConn.readDS(theSessionID);
 				if (objDatastore != null) {
 				
 					log.info("Existing Datastore: " + objDatastore.toString());
@@ -71,6 +71,7 @@ public class ClSessionStartGetServiceImp implements ClSessionStartGetService{
 				}
 			}
 			else { 
+				
 				theSessionID = smConn.startSession();
 				if (theSessionID != null) {	
 				

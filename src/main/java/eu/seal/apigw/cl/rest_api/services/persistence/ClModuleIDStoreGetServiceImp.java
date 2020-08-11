@@ -88,21 +88,22 @@ public class ClModuleIDStoreGetServiceImp implements ClModuleIDStoreGetService{
 				
 				String thePayload = null;
 				BindingEnum theBinding = null;
-/*				switch (moduleID.toLowerCase()) {
+				switch (moduleID.toLowerCase()) {
 				
-					case "mobile":
+					case "localmobile":  // back-channel
 						thePayload = sessionID;
 						
-						theBinding = BindingEnum.GET;
+						theBinding = BindingEnum.POST;
 						
-						// Update sessionData: PDS = mobile
+						// Update sessionData: PDS = localmobile
 						smConn.updateVariable(sessionID,"PDS", moduleID);
 						break;
 						
+					case "mobile":
 					case "onedrive":
 					case "googledrive":
-					case "browser":
-*/
+					case "browser":  // front-channel
+
 						String msToken =  null;
 						
 						msToken = smConn.generateToken (sessionID, theModuleID);
@@ -112,13 +113,14 @@ public class ClModuleIDStoreGetServiceImp implements ClModuleIDStoreGetService{
 						
 						theBinding = BindingEnum.POST;
 						
+						// Update sessionData: PDS = moduleID
 						smConn.updateVariable(sessionID,"PDS", moduleID);
-/*						break;
+						break;
 						
 					default:
 						log.info ("BE AWARE: unknown persistence module: " + moduleID);
 				}
-*/				
+				
 						
 				// Returns moduleTrigger to client
 				// it returns the address of the API to call .... /per/store

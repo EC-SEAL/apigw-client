@@ -242,7 +242,7 @@ public class ClModuleIDLoginGetServiceImp implements ClModuleIDLoginGetService{
 						ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
 						theAccess.setAddress(thePublishedApi.getApiEndpoint()); 
 						// TODO: how to translate ApiConnectionType into BindingEnum
-						theAccess.setBinding(BindingEnum.POST); // thePublishedApi.getApiConnectionType()
+						theAccess.setBinding(BindingEnum.POST_REDIRECT); // thePublishedApi.getApiConnectionType()
 						theAccess.setBodyContent(null); // If the access method requires to transfer data on the body of the request, it will be written here
 						theAccess.setContentType(null); // MIME type of the body, if any
 						moduleTrigger.setAccess (theAccess);

@@ -101,7 +101,7 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						
 						log.info ("token generated");
 						
-						theBinding = BindingEnum.POST;
+						theBinding = BindingEnum.POST_REDIRECT;
 						
 						// Update sessionData: linking and linkRequest
 						smConn.updateVariable(sessionID,"linking", moduleID);

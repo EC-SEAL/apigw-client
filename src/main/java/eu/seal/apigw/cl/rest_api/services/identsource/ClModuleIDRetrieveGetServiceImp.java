@@ -189,7 +189,7 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 				
 				ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
 				theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
-				theAccess.setBinding(BindingEnum.POST); // thePublishedApi.getApiConnectionType()
+				theAccess.setBinding(BindingEnum.POST_REDIRECT); // thePublishedApi.getApiConnectionType()
 				theAccess.setBodyContent("TODO: bodyContent"); // If the access method requires to transfer data on the body of the request, it will be written here
 				theAccess.setContentType("TODO: contentType"); // the MIME type of the body, if any
 				moduleTrigger.setAccess (theAccess);

@@ -114,7 +114,7 @@ public class ClModuleIDLoadGetServiceImp implements ClModuleIDLoadGetService{
 						
 						log.info ("token generated");
 						
-						theBinding = BindingEnum.POST;
+						theBinding = BindingEnum.POST_REDIRECT;
 						
 						// Update sessionData: PDS = moduleID
 						smConn.updateVariable(sessionID,"PDS", moduleID);

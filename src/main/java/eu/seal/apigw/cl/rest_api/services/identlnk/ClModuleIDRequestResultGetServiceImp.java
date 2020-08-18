@@ -135,7 +135,7 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 						
 						ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
 						theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
-						theBinding = BindingEnum.POST;
+						theBinding = BindingEnum.POST_REDIRECT;
 						theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
 						
 						theAccess.setContentType("TO ASK: contentType");

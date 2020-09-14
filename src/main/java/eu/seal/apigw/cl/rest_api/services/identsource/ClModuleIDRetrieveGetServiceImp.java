@@ -66,6 +66,8 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 			PublishedApiType thePublishedApi = null;
 			List<PublishedApiType> thePublishedApiList = null;
 			
+			BindingEnum theBinding = null;
+			
 			
 			switch (moduleID.toLowerCase()) {
 			
@@ -93,6 +95,8 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 							break; 
 						}
 					}
+					
+					theBinding = BindingEnum.GET_REDIRECT;
 
 					break;
 					
@@ -158,6 +162,8 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 						}
 					}
 					
+					theBinding = BindingEnum.POST_REDIRECT;
+					
 					break;
 					
 				default:
@@ -189,7 +195,7 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 				
 				ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
 				theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
-				theAccess.setBinding(BindingEnum.POST_REDIRECT); // thePublishedApi.getApiConnectionType()
+				theAccess.setBinding(theBinding); // thePublishedApi.getApiConnectionType()
 				theAccess.setBodyContent("TODO: bodyContent"); // If the access method requires to transfer data on the body of the request, it will be written here
 				theAccess.setContentType("TODO: contentType"); // the MIME type of the body, if any
 				moduleTrigger.setAccess (theAccess);

@@ -87,9 +87,9 @@ public interface MiscApi {
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "Module access trigger", response = ModuleTrigger.class),
         @ApiResponse(code = 404, message = "Error accessing module") })
-    @RequestMapping(value = "/cl/vc/issuing/{moduleID}/generate",
+    @RequestMapping(value = "/cl/vc/issuing/{SSIId}/generate",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<ModuleTrigger> clVcIssuingModuleIDGenerateGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID);
+    ResponseEntity<ModuleTrigger> clVcIssuingModuleIDGenerateGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("SSIId") String SSIId);
 
 }

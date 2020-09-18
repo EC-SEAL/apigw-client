@@ -46,9 +46,9 @@ public class ClVcGenerateGetServiceImp implements ClVcGenerateGetService{
 
 	
 	@Override
-	public ModuleTrigger clVcGenerateGet (String sessionID, String moduleID) throws Exception {
+	public ModuleTrigger clVcGenerateGet (String sessionID, String SSIId) throws Exception {
 		
-		log.info("moduleID: " + moduleID);
+		log.info("SSIId: " + SSIId);
 			
 		// UC5.01
 		
@@ -60,39 +60,26 @@ public class ClVcGenerateGetServiceImp implements ClVcGenerateGetService{
 			PublishedApiType thePublishedApi = null;
 			List<PublishedApiType> thePublishedApiList = null;
 			
-			
-			//switch (moduleID.toLowerCase()) {
-			
-			//	case "eidas": 
+ 		    // smConn.updateVariable(sessionID,"VCDefinition", ...);  // Dashboard does it!
 					
-					// Update sessionData: derivation = UUID
-					smConn.updateVariable(sessionID,"VCDefinition", moduleID.toUpperCase());
+			// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
+			theModuleID = confMngrConnService.getEntityMetadata("SSI", SSIId).getMicroservice().get(0);	// The first one.
 					
-					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
-					theModuleID = confMngrConnService.getEntityMetadata("VCDEFINITIONS", moduleID).getMicroservice().get(0);	// The first one.
-					
-					theMs = confMngrConnService.getMicroservicesByApiClass("VC").getMs(theModuleID); // This is the VC microservice
+			theMs = confMngrConnService.getMicroservicesByApiClass("VC").getMs(theModuleID); // This is the VC microservice
 									
-					//For fulfilling theAccess (see bellow)
-					thePublishedApiList = theMs.getPublishedAPI();
+			//For fulfilling theAccess (see bellow)
+			thePublishedApiList = theMs.getPublishedAPI();
 					
-					Iterator<PublishedApiType> paIterator0 = thePublishedApiList.iterator();
-					PublishedApiType auxPublishedApi0 = null;
-					while (paIterator0.hasNext()) {
-						
-						auxPublishedApi0 = paIterator0.next();						  
-						if (auxPublishedApi0.getApiCall().equals("issue")	) { // vc/issue
+			Iterator<PublishedApiType> paIterator0 = thePublishedApiList.iterator();
+			PublishedApiType auxPublishedApi0 = null;
+			while (paIterator0.hasNext()) {						
+					auxPublishedApi0 = paIterator0.next();						  
+					if (auxPublishedApi0.getApiCall().equals("issue")	) { // vc/issue
 							thePublishedApi = auxPublishedApi0;  
 							break; 
-						}
 					}
+			}
 
-				//	break;
-					
-				//default:
-				//	log.info ("BE AWARE: to be defined: " + moduleID);
-			//}
-			
 			
 			// Returns msToken and moduleTrigger to client
 			

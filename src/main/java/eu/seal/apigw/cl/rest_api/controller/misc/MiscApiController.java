@@ -149,13 +149,13 @@ public class MiscApiController implements MiscApi {
     @Autowired
 	private ClVcGenerateGetService clVcGenerateGetService;
     
-    public ResponseEntity<ModuleTrigger> clVcIssuingModuleIDGenerateGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID) {
+    public ResponseEntity<ModuleTrigger> clVcIssuingModuleIDGenerateGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("SSIId") String SSIId) {
     	String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
             	ModuleTrigger idRetrieved = new ModuleTrigger();
             	
-            	idRetrieved = clVcGenerateGetService.clVcGenerateGet(sessionID, moduleID);
+            	idRetrieved = clVcGenerateGetService.clVcGenerateGet(sessionID, SSIId);
             	return new ResponseEntity<ModuleTrigger>(idRetrieved, HttpStatus.OK);
             	
             } catch (Exception e) {

@@ -615,7 +615,7 @@ paths:
           description: "Error accessing module"
 
           
-  /cl/vc/issuing/{moduleID}/generate:
+  /cl/vc/issuing/{SSIId}/generate:
     get:
       tags:
         - APIGatewayClient
@@ -628,7 +628,7 @@ paths:
           in: "query"
           required: true
           type: string
-        - name: "moduleID"
+        - name: "SSIId"
           in: "path"
           required: true
           type: string

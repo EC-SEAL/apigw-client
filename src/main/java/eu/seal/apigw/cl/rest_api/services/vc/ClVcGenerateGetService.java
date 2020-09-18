@@ -18,6 +18,6 @@ import eu.seal.apigw.cl.domain.ModuleTrigger;
 
 public interface ClVcGenerateGetService {
 	
-	ModuleTrigger clVcGenerateGet (String sessionID, String moduleID) throws Exception;
+	ModuleTrigger clVcGenerateGet (String sessionID, String SSIId) throws Exception;
 
 }

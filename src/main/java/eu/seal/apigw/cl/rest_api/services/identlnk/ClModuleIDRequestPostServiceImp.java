@@ -108,31 +108,36 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						
 						LinkRequest myLinkRequest = new LinkRequest ();
 						myLinkRequest.setId("LINK_" + UUID.randomUUID().toString());
-						DataSet datasetA = new DataSet();
-						datasetA.setId(datasetIDa);
-						datasetA.setAttributes(null);
-						datasetA.setCategories(null);
-						datasetA.setExpiration(null);
-						datasetA.setIssued(null);
-						datasetA.setIssuerId(null);
-						datasetA.setLoa(null);
-						datasetA.setProperties(null);
-						datasetA.setSubjectId(null);
-						datasetA.setType(null);
+						
+						Object objDataSetA = smConn.getDataSet(sessionID, datasetIDa);
+						DataSet datasetA = null;
+						datasetA = (new ObjectMapper()).readValue(objDataSetA.toString(),DataSet.class);
+//						datasetA.setId(datasetIDa);
+//						datasetA.setAttributes(null);
+//						datasetA.setCategories(null);
+//						datasetA.setExpiration(null);
+//						datasetA.setIssued(null);
+//						datasetA.setIssuerId(null);
+//						datasetA.setLoa(null);
+//						datasetA.setProperties(null);
+//						datasetA.setSubjectId(null);
+//						datasetA.setType(null);
 						
 						myLinkRequest.setDatasetA(datasetA);
 						
-						DataSet datasetB = new DataSet();
-						datasetB.setId(datasetIDb);
-						datasetB.setAttributes(null);
-						datasetB.setCategories(null);
-						datasetB.setExpiration(null);
-						datasetB.setIssued(null);
-						datasetB.setIssuerId(null);
-						datasetB.setLoa(null);
-						datasetB.setProperties(null);
-						datasetB.setSubjectId(null);
-						datasetB.setType(null);
+						Object objDataSetB = smConn.getDataSet(sessionID, datasetIDa);
+						DataSet datasetB = null;
+						datasetB = (new ObjectMapper()).readValue(objDataSetB.toString(),DataSet.class);
+//						datasetB.setId(datasetIDb);
+//						datasetB.setAttributes(null);
+//						datasetB.setCategories(null);
+//						datasetB.setExpiration(null);
+//						datasetB.setIssued(null);
+//						datasetB.setIssuerId(null);
+//						datasetB.setLoa(null);
+//						datasetB.setProperties(null);
+//						datasetB.setSubjectId(null);
+//						datasetB.setType(null);
 											
 						myLinkRequest.setDatasetB(datasetB);
 						

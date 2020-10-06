@@ -357,7 +357,48 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 	    
 	    SessionMngrResponse smResponse = null;
 	    try {
-	    	log.info("Sending new/getSessionData ...");
+	    	log.info("Sending new/get ...");
+	    	//response = network.sendGet(hostURL, service, urlParameters);
+	    	smResponse = network.sendGetSMResponse(hostURL, service, urlParameters, 1);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    //log.info("Response new/getSessionData:<"+smResponse.toString()+">");
+	    if (smResponse.getCode()==ResponseCode.OK)
+	    {
+	    	//sessionVbles = (HashMap<String, Object>) smResponse.getSessionData().getSessionVariables();
+	    	sessionVble = smResponse.getAdditionalData();
+	    	
+	    	log.info("sessionVble: "+ sessionVble.toString());
+	    }
+	    
+	    
+	    //return sessionVbles.get(variableName);
+	    return sessionVble;
+	}
+	
+	@Override
+	public Object getDataSet(String sessionId, String dataSetId) throws UnrecoverableKeyException, KeyStoreException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, IOException
+	{
+		String service = "/sm/new/get";
+		//HashMap<String, Object> sessionVbles = new HashMap<String, Object>();
+		Object sessionVble = new Object();
+		
+		if (network == null)
+		{
+				network = new NetworkServiceImpl(keyStoreService);
+		}
+		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+	    urlParameters.add(new NameValuePair("sessionId",sessionId));
+	    urlParameters.add(new NameValuePair("id",dataSetId));
+	    
+	    SessionMngrResponse smResponse = null;
+	    try {
+	    	log.info("Sending new/get ...");
 	    	//response = network.sendGet(hostURL, service, urlParameters);
 	    	smResponse = network.sendGetSMResponse(hostURL, service, urlParameters, 1);
 		} catch (NoSuchAlgorithmException e) {

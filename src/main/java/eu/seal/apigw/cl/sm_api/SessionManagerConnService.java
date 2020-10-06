@@ -44,10 +44,15 @@ public interface SessionManagerConnService
 																			  FileNotFoundException, NoSuchAlgorithmException, 
 																			  CertificateException, InvalidKeySpecException, IOException ;
 	
+	// Read all the dataStore
 	public Object readDS( String sessionId) throws UnrecoverableKeyException, KeyStoreException, 
 																			  FileNotFoundException, NoSuchAlgorithmException, 
 																			  CertificateException, InvalidKeySpecException, IOException ;
 	
+	// Retrieve a given dataSet from the dataStore
+	public Object getDataSet( String sessionId, String dataSetId) throws UnrecoverableKeyException, KeyStoreException, 
+	  																	FileNotFoundException, NoSuchAlgorithmException, 
+	  																	CertificateException, InvalidKeySpecException, IOException ;
 
 	public void deleteSession(String sessionId) throws UnrecoverableKeyException, KeyStoreException, 
 													   FileNotFoundException, NoSuchAlgorithmException, 

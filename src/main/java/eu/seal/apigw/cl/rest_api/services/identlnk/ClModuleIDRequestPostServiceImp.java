@@ -15,6 +15,8 @@ See README file for the full disclaimer information and LICENSE file for full li
 package eu.seal.apigw.cl.rest_api.services.identlnk;
 
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -106,12 +108,9 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						// Update sessionData: linking and linkRequest
 						smConn.updateVariable(sessionID,"linking", moduleID);
 						
-						LinkRequest myLinkRequest = new LinkRequest ();
-						myLinkRequest.setId("LINK_" + UUID.randomUUID().toString());
-						
-						Object objDataSetA = smConn.getDataSet(sessionID, datasetIDa);
-						DataSet datasetA = null;
-						datasetA = (new ObjectMapper()).readValue(objDataSetA.toString(),DataSet.class);
+						Object objDataSetA0 = smConn.getDataSet(sessionID, datasetIDa);
+						DataSet datasetA0 = null;
+						datasetA0 = (new ObjectMapper()).readValue(objDataSetA0.toString(),DataSet.class);
 //						datasetA.setId(datasetIDa);
 //						datasetA.setAttributes(null);
 //						datasetA.setCategories(null);
@@ -123,22 +122,42 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 //						datasetA.setSubjectId(null);
 //						datasetA.setType(null);
 						
-						myLinkRequest.setDatasetA(datasetA);
 						
-						Object objDataSetB = smConn.getDataSet(sessionID, datasetIDa);
-						DataSet datasetB = null;
-						datasetB = (new ObjectMapper()).readValue(objDataSetB.toString(),DataSet.class);
-//						datasetB.setId(datasetIDb);
-//						datasetB.setAttributes(null);
-//						datasetB.setCategories(null);
-//						datasetB.setExpiration(null);
-//						datasetB.setIssued(null);
-//						datasetB.setIssuerId(null);
-//						datasetB.setLoa(null);
-//						datasetB.setProperties(null);
-//						datasetB.setSubjectId(null);
-//						datasetB.setType(null);
-											
+						Object objDataSetB0 = smConn.getDataSet(sessionID, datasetIDa);
+						DataSet datasetB0 = null;
+						datasetB0 = (new ObjectMapper()).readValue(objDataSetB0.toString(),DataSet.class);
+						
+						DataSet datasetA = new DataSet();
+						DataSet datasetB = new DataSet();
+						if (datasetA0.getSubjectId().compareTo(datasetB0.getSubjectId()) < 0) {
+							datasetA = datasetA0;
+							datasetB = datasetB0;
+						}
+						else if (datasetA0.getSubjectId().compareTo(datasetB0.getSubjectId()) > 0) {
+							datasetA = datasetB0;
+							datasetB = datasetA0;
+						}
+						else //equals
+							if (datasetA0.getIssuerId().compareTo(datasetB0.getIssuerId()) <= 0) {
+								datasetA = datasetA0;
+								datasetB = datasetB0;
+							}
+							else {
+								datasetA = datasetB0;
+								datasetB = datasetA0;
+							}
+						
+						LinkRequest myLinkRequest = new LinkRequest ();
+						//myLinkRequest.setId("LINK_" + UUID.randomUUID().toString());
+						// "urn:mace:project-seal.eu:link:{LinkIssuerId}:{LLoA}:{SubjectA}:{IssuerA}:{SubjectB}:{IssuerB}"
+						// LinkIssuerId = "project-seal.eu_automatedLink"
+						myLinkRequest.setId("urn:mace:project-seal.eu:link:" + "LinkIssuerId" + ":" +"LLoA" + ":" +
+								URLEncoder.encode(datasetA.getSubjectId(), StandardCharsets.UTF_8.toString()) + ":" + 
+								URLEncoder.encode(datasetA.getIssuerId(), StandardCharsets.UTF_8.toString())  + ":" +  
+								URLEncoder.encode(datasetB.getSubjectId(), StandardCharsets.UTF_8.toString()) + ":" + 
+								URLEncoder.encode(datasetB.getIssuerId(), StandardCharsets.UTF_8.toString()));
+						
+						myLinkRequest.setDatasetA(datasetA);					
 						myLinkRequest.setDatasetB(datasetB);
 						
 						myLinkRequest.setConversation(null);

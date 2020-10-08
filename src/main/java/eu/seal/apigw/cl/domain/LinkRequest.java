@@ -51,6 +51,9 @@ public class LinkRequest   {
 
   @JsonProperty("expiration")
   private String expiration = null;
+  
+  @JsonProperty("uri")
+  private String uri = null;
 
   @JsonProperty("datasetA")
   private DataSet datasetA = null;
@@ -185,6 +188,19 @@ public class LinkRequest   {
   public void setExpiration(String expiration) {
     this.expiration = expiration;
   }
+  
+  public String getUri() {
+	    return uri;
+  }
+
+  public void setUri(String uri) {
+	    this.uri = uri;
+  }
+
+  public LinkRequest uri(String uri) {
+	    this.uri = uri;
+	    return this;
+  }
 
   public LinkRequest datasetA(DataSet datasetA) {
     this.datasetA = datasetA;
@@ -302,6 +318,7 @@ public class LinkRequest   {
         Objects.equals(this.issued, linkRequest.issued) &&
         Objects.equals(this.type, linkRequest.type) &&
         Objects.equals(this.expiration, linkRequest.expiration) &&
+        Objects.equals(this.uri, linkRequest.uri) &&
         Objects.equals(this.datasetA, linkRequest.datasetA) &&
         Objects.equals(this.datasetB, linkRequest.datasetB) &&
         Objects.equals(this.evidence, linkRequest.evidence) &&
@@ -310,7 +327,7 @@ public class LinkRequest   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, issuer, lloa, issued, type, expiration, datasetA, datasetB, evidence, conversation);
+    return Objects.hash(id, issuer, lloa, issued, type, expiration, uri, datasetA, datasetB, evidence, conversation);
   }
 
   @Override
@@ -324,6 +341,7 @@ public class LinkRequest   {
     sb.append("    issued: ").append(toIndentedString(issued)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    expiration: ").append(toIndentedString(expiration)).append("\n");
+    sb.append("    uri: ").append(toIndentedString(uri)).append("\n");
     sb.append("    datasetA: ").append(toIndentedString(datasetA)).append("\n");
     sb.append("    datasetB: ").append(toIndentedString(datasetB)).append("\n");
     sb.append("    evidence: ").append(toIndentedString(evidence)).append("\n");

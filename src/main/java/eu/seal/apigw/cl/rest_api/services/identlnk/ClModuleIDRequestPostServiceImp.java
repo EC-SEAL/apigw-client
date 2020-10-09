@@ -112,7 +112,8 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						
 						Object objDataSetA0 = smConn.getDataSet(sessionID, datasetIDa);
 						DataSet datasetA0 = null;
-						String datasetA0_str = (new ObjectMapper()).readValue(objDataSetA0.toString(),DataStoreObject.class).getData();
+						DataStoreObject datasetA0_dso = new ObjectMapper().readValue(objDataSetA0.toString(),DataStoreObject.class);
+						String datasetA0_str = datasetA0_dso.getData();
 						Gson gson = new Gson();
 						datasetA0= gson.fromJson(datasetA0_str, DataSet.class);
 //						datasetA.setId(datasetIDa);
@@ -129,7 +130,7 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						
 						Object objDataSetB0 = smConn.getDataSet(sessionID, datasetIDb);
 						DataSet datasetB0 = null;
-						String datasetB0_str = (new ObjectMapper()).readValue(objDataSetB0.toString(),DataStoreObject.class).getData();
+						String datasetB0_str = (new ObjectMapper().readValue(objDataSetB0.toString(),DataStoreObject.class)).getData();
 						Gson gson2 = new Gson();
 						datasetB0= gson2.fromJson(datasetB0_str, DataSet.class);
 						

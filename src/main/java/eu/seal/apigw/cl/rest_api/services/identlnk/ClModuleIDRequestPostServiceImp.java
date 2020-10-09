@@ -28,10 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.DataSet;
+import eu.seal.apigw.cl.domain.DataStoreObject;
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.LinkRequest;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
@@ -110,7 +112,9 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						
 						Object objDataSetA0 = smConn.getDataSet(sessionID, datasetIDa);
 						DataSet datasetA0 = null;
-						datasetA0 = (new ObjectMapper()).readValue(objDataSetA0.toString(),DataSet.class);
+						String datasetA0_str = (new ObjectMapper()).readValue(objDataSetA0.toString(),DataStoreObject.class).getData();
+						Gson gson = new Gson();
+						datasetA0= gson.fromJson(datasetA0_str, DataSet.class);
 //						datasetA.setId(datasetIDa);
 //						datasetA.setAttributes(null);
 //						datasetA.setCategories(null);
@@ -125,7 +129,9 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						
 						Object objDataSetB0 = smConn.getDataSet(sessionID, datasetIDa);
 						DataSet datasetB0 = null;
-						datasetB0 = (new ObjectMapper()).readValue(objDataSetB0.toString(),DataSet.class);
+						String datasetB0_str = (new ObjectMapper()).readValue(objDataSetB0.toString(),DataStoreObject.class).getData();
+						Gson gson2 = new Gson();
+						datasetB0= gson2.fromJson(datasetB0_str, DataSet.class);
 						
 						DataSet datasetA = new DataSet();
 						DataSet datasetB = new DataSet();

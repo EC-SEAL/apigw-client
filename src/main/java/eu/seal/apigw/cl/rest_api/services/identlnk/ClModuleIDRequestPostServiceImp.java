@@ -127,7 +127,7 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 //						datasetA.setType(null);
 						
 						
-						Object objDataSetB0 = smConn.getDataSet(sessionID, datasetIDa);
+						Object objDataSetB0 = smConn.getDataSet(sessionID, datasetIDb);
 						DataSet datasetB0 = null;
 						String datasetB0_str = (new ObjectMapper()).readValue(objDataSetB0.toString(),DataStoreObject.class).getData();
 						Gson gson2 = new Gson();

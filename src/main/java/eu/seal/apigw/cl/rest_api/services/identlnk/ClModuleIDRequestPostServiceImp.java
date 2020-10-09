@@ -151,7 +151,9 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						//myLinkRequest.setId("LINK_" + UUID.randomUUID().toString());
 						// "urn:mace:project-seal.eu:link:{LinkIssuerId}:{IdentityA}:{IdentityB}"
 						// LinkIssuerId = "project-seal.eu_automatedLink"
-						myLinkRequest.setId("urn:mace:project-seal.eu:link:" + "project-seal.eu_automatedLink" + ":" + //"LLoA" + ":" +
+						myLinkRequest.setId("urn:mace:project-seal.eu:link:" + 
+								URLEncoder.encode(theModuleID, StandardCharsets.UTF_8.toString()) + ":" + // TO ASK
+								//"LLoA" + ":" +
 								URLEncoder.encode(datasetA.getSubjectId(), StandardCharsets.UTF_8.toString()) + ":" + 
 								URLEncoder.encode(datasetA.getIssuerId(), StandardCharsets.UTF_8.toString())  + ":" +  
 								URLEncoder.encode(datasetB.getSubjectId(), StandardCharsets.UTF_8.toString()) + ":" + 
@@ -164,7 +166,7 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						myLinkRequest.setEvidence(null);
 						myLinkRequest.setExpiration(null);
 						// URI: "urn:mace:project-seal.eu:link:{LinkIssuerId}:{LLoA}:{SubjectA}:{IssuerA}:{SubjectB}:{IssuerB}"
-						// LinkIssuerId = "project-seal.eu_automatedLink"
+						// LinkIssuerId = "project-seal.eu_automatedLink" OR theModuleID???
 						myLinkRequest.setUri(null);
 						myLinkRequest.setIssued(null);
 						myLinkRequest.setIssuer(null);

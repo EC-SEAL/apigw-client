@@ -30,6 +30,7 @@ import eu.seal.apigw.cl.domain.ModuleTriggerAccess.BindingEnum;
 import eu.seal.apigw.cl.domain.ModuleTriggerStatus;
 import eu.seal.apigw.cl.domain.MsMetadata;
 import eu.seal.apigw.cl.domain.PublishedApiType;
+import eu.seal.apigw.cl.rest_api.APIGWException;
 import eu.seal.apigw.cl.sm_api.SessionManagerConnService;
 
 @Service
@@ -60,88 +61,100 @@ public class ClModuleIDGenerateGetServiceImp implements ClModuleIDGenerateGetSer
 			PublishedApiType thePublishedApi = null;
 			List<PublishedApiType> thePublishedApiList = null;
 			
+			Object objAuthenticatedSubject = null;
+			objAuthenticatedSubject = smConn.readVariable(sessionID, "authenticatedSubject");
 			
-			switch (moduleID.toLowerCase()) {
+			if (objAuthenticatedSubject!=null) // The user is authenticated already.
+			{
 			
-				case "uuid":
-					
-					// Update sessionData: derivation = UUID
-					smConn.updateVariable(sessionID,"derivation", moduleID.toUpperCase());
-					
-					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
-					theModuleID = confMngrConnService.getEntityMetadata("DERIVATION", moduleID).getMicroservice().get(0);	// The first one.
-					
-					theMs = confMngrConnService.getMicroservicesByApiClass("IDBOOT").getMs(theModuleID); // This is the IDBOOT microservice
-									
-					//For fulfilling theAccess (see bellow)
-					thePublishedApiList = theMs.getPublishedAPI();
-					
-					Iterator<PublishedApiType> paIterator0 = thePublishedApiList.iterator();
-					PublishedApiType auxPublishedApi0 = null;
-					while (paIterator0.hasNext()) {
+				switch (moduleID.toLowerCase()) {
+				
+					case "uuid":
 						
-						auxPublishedApi0 = paIterator0.next();						  
-						if (auxPublishedApi0.getApiCall().equals("generate")	) { // idboot/generate
-							thePublishedApi = auxPublishedApi0;  
-							break; 
+						// Update sessionData: derivation = UUID
+						smConn.updateVariable(sessionID,"derivation", moduleID.toUpperCase());
+						
+						// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
+						theModuleID = confMngrConnService.getEntityMetadata("DERIVATION", moduleID).getMicroservice().get(0);	// The first one.
+						
+						theMs = confMngrConnService.getMicroservicesByApiClass("IDBOOT").getMs(theModuleID); // This is the IDBOOT microservice
+										
+						//For fulfilling theAccess (see bellow)
+						thePublishedApiList = theMs.getPublishedAPI();
+						
+						Iterator<PublishedApiType> paIterator0 = thePublishedApiList.iterator();
+						PublishedApiType auxPublishedApi0 = null;
+						while (paIterator0.hasNext()) {
+							
+							auxPublishedApi0 = paIterator0.next();						  
+							if (auxPublishedApi0.getApiCall().equals("generate")	) { // idboot/generate
+								thePublishedApi = auxPublishedApi0;  
+								break; 
+							}
 						}
-					}
-
-					break;
+	
+						break;
+						
+					default:
+						log.info ("BE AWARE: to be defined: " + moduleID);
+				}
+				
+				
+				// Returns msToken and moduleTrigger to client
+				log.info("theMS: " + (theMs != null ? theMs.getMsId(): theMs));
+				log.info("thePublishedApi: " + (thePublishedApi != null ? thePublishedApi.getApiCall() : thePublishedApi));
+				
+				ModuleTrigger moduleTrigger = new ModuleTrigger();
+				ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
+				
+				if (theMs != null) {
+				
+				 if (thePublishedApi != null ) {
+					msToken = smConn.generateToken (sessionID, theModuleID);		
+					log.info ("token generated");
 					
-				default:
-					log.info ("BE AWARE: to be defined: " + moduleID);
-			}
-			
-			
-			// Returns msToken and moduleTrigger to client
-			log.info("theMS: " + (theMs != null ? theMs.getMsId(): theMs));
-			log.info("thePublishedApi: " + (thePublishedApi != null ? thePublishedApi.getApiCall() : thePublishedApi));
-			
-			ModuleTrigger moduleTrigger = new ModuleTrigger();
-			ModuleTriggerStatus theStatus = new ModuleTriggerStatus();
-			
-			if (theMs != null) {
-			
-			 if (thePublishedApi != null ) {
-				msToken = smConn.generateToken (sessionID, theModuleID);		
-				log.info ("token generated");
+					theStatus.setMessage(Constants.ID_DERIVED_MSG);
+					theStatus.setMainCode(Constants.SUCESS_CODE); 
+					theStatus.setSecondaryCode(Constants.ID_DERIVED_CODE); 
+					moduleTrigger.setStatus (theStatus);		
+					
+					ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
+					theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
+					theAccess.setBinding(BindingEnum.POST_REDIRECT); // thePublishedApi.getApiConnectionType()
+					theAccess.setBodyContent("TODO: bodyContent"); // If the access method requires to transfer data on the body of the request, it will be written here
+					theAccess.setContentType("TODO: contentType"); // the MIME type of the body, if any
+					moduleTrigger.setAccess (theAccess);
+					
+					moduleTrigger.setAccess (theAccess);
+					moduleTrigger.setPayload(msToken);
+				 }
+				 else {
+					theStatus.setMessage(Constants.NO_ID_DERIVED);
+					theStatus.setMainCode(Constants.FAIL_CODE); 
+					theStatus.setSecondaryCode(Constants.NO_ID_DERIVED_CODE); 
+					moduleTrigger.setStatus (theStatus);
+					moduleTrigger.setAccess (null);
+					moduleTrigger.setPayload(null);
+				 }
 				
-				theStatus.setMessage(Constants.ID_DERIVED_MSG);
-				theStatus.setMainCode(Constants.SUCESS_CODE); 
-				theStatus.setSecondaryCode(Constants.ID_DERIVED_CODE); 
-				moduleTrigger.setStatus (theStatus);		
-				
-				ModuleTriggerAccess theAccess = new ModuleTriggerAccess();
-				theAccess.setAddress(thePublishedApi.getApiEndpoint()); // "theUrl"
-				theAccess.setBinding(BindingEnum.POST_REDIRECT); // thePublishedApi.getApiConnectionType()
-				theAccess.setBodyContent("TODO: bodyContent"); // If the access method requires to transfer data on the body of the request, it will be written here
-				theAccess.setContentType("TODO: contentType"); // the MIME type of the body, if any
-				moduleTrigger.setAccess (theAccess);
-				
-				moduleTrigger.setAccess (theAccess);
-				moduleTrigger.setPayload(msToken);
-			 }
-			 else {
-				theStatus.setMessage(Constants.NO_ID_DERIVED);
-				theStatus.setMainCode(Constants.FAIL_CODE); 
-				theStatus.setSecondaryCode(Constants.NO_ID_DERIVED_CODE); 
-				moduleTrigger.setStatus (theStatus);
-				moduleTrigger.setAccess (null);
-				moduleTrigger.setPayload(null);
-			 }
-			
-			}
-			else {
-				theStatus.setMessage(Constants.INVALID_MODULE_ID_MSG); 
-				theStatus.setMainCode(Constants.FAIL_CODE); 
-				theStatus.setSecondaryCode(Constants.INVALID_MODULE_ID_CODE);
-				moduleTrigger.setStatus (theStatus);
-				moduleTrigger.setAccess (null);
-				moduleTrigger.setPayload (null);
-			}
+				}
+				else {
+					theStatus.setMessage(Constants.INVALID_MODULE_ID_MSG); 
+					theStatus.setMainCode(Constants.FAIL_CODE); 
+					theStatus.setSecondaryCode(Constants.INVALID_MODULE_ID_CODE);
+					moduleTrigger.setStatus (theStatus);
+					moduleTrigger.setAccess (null);
+					moduleTrigger.setPayload (null);
+				}
 						
 			return moduleTrigger;
+			
+		}
+		else { // 401 not authorized
+				
+			throw new APIGWException (0, Constants.UNAUTHORIZED);
+		}
+			
 			
 		}
 		catch (Exception e) {

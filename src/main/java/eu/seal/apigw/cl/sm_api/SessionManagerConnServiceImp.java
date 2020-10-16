@@ -398,7 +398,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 	    
 	    SessionMngrResponse smResponse = null;
 	    try {
-	    	log.info("Sending new/get ...");
+	    	log.info("Sending new/get DataSet ...");
 	    	//response = network.sendGet(hostURL, service, urlParameters);
 	    	smResponse = network.sendGetSMResponse(hostURL, service, urlParameters, 1);
 		} catch (NoSuchAlgorithmException e) {

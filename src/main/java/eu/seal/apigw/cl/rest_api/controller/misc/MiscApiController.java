@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.seal.apigw.cl.domain.DisplayableList;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
+import eu.seal.apigw.cl.rest_api.APIGWException;
 import eu.seal.apigw.cl.rest_api.services.callback.*;
 import eu.seal.apigw.cl.rest_api.services.derivation.ClModuleIDGenerateGetService;
 import eu.seal.apigw.cl.rest_api.services.lists.ClListCollectionGetService;
@@ -113,6 +114,9 @@ public class MiscApiController implements MiscApi {
             	idRetrieved = clModuleIDGenerateGetService.clModuleIDGenerateGet(sessionID, moduleID);
             	return new ResponseEntity<ModuleTrigger>(idRetrieved, HttpStatus.OK);
             	
+            } catch (APIGWException e) {
+	        	log.error(Constants.UNAUTHORIZED, e);
+	            return new ResponseEntity<ModuleTrigger>(HttpStatus.UNAUTHORIZED);
             } catch (Exception e) {
             	log.error(Constants.ERROR_ACCESSING_MODULE, e);
                 return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);

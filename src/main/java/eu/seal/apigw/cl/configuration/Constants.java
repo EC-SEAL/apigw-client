@@ -16,6 +16,9 @@ package eu.seal.apigw.cl.configuration;
 public class Constants {
 	private Constants() {}
 	
+	//401 in misc controllers
+	public final static String UNAUTHORIZED= "Unauthorized";   ///cl/ident/derivation
+	
 	// 404 in misc controllers
 	public final static String COLLECTION_NOT_FOUND= "Collection not found"; 	// cl/list
 	public final static String ERROR_RETURNING = "Error returning to client"; 	// cl/callback

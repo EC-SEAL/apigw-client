@@ -20,6 +20,9 @@ import eu.seal.apigw.cl.params_api.KeyStoreService;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -401,6 +404,74 @@ public class NetworkServiceImpl implements NetworkService
         	//LOG.info ("Before exchange: " + builder.toUriString()+ " *** " + entity);
             ResponseEntity<SessionMngrResponse> response = restTemplate.exchange(
                     builder.toUriString(), HttpMethod.GET, entity, SessionMngrResponse.class);
+            //LOG.info ("After exchange: "  + response);
+            return response.getBody();
+        } catch (RestClientException e) {
+            if (attempt < 2) {
+                return sendGetSMResponse(hostUrl, uri,
+                        				 urlParameters, attempt + 1);
+            }
+        }
+        return null;
+	}
+	
+	@Override
+	public SessionMngrResponse sendGetNewSMResponse(String hostUrl, String uri, List<NameValuePair> urlParameters,
+												 int attempt) throws IOException, NoSuchAlgorithmException 
+	{
+		LOG.info ("sendGetNewSMResponse");
+		
+		Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String nowDate = formatter.format(date);
+        String requestId = UUID.randomUUID().toString();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(hostUrl + uri);
+        if (urlParameters != null) {
+            Map<String, String> map = new HashMap();
+            urlParameters.stream().forEach(nameVal -> {
+                map.put(nameVal.getName(), nameVal.getValue());
+                builder.queryParam(nameVal.getName(), nameVal.getValue());
+            });
+        }
+        
+        LOG.info ("builder.toString: " + builder.toString());
+        LOG.info ("DECODE builder.toUriString: " + URLDecoder.decode(builder.toUriString(), StandardCharsets.UTF_8.toString()));
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders requestHeaders = new HttpHeaders();
+        String host = hostUrl.replace("http://", "").replace("https://", "");
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
+        try {
+            requestHeaders.add("host", host);
+            requestHeaders.add("original-date", nowDate);
+            requestHeaders.add("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)));
+            requestHeaders.add("x-request-id", requestId);
+            URL url = new URL(builder.toUriString());
+            
+//            LOG.info ("uri: " + uri);
+//            requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", uri, null, "application/x-www-form-urlencoded", requestId));
+
+            //requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", url.getPath() + "?" + url.getQuery(), null, "application/x-www-form-urlencoded", requestId));
+        
+            String getURL = StringUtils.isEmpty(url.getQuery())?url.getPath():url.getPath() + "?" + url.getQuery(); 
+            LOG.info ("getURL: " + getURL);
+            requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", getURL, null, "application/x-www-form-urlencoded", requestId));
+        
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
+            LOG.error("could not generate signature!!");
+            LOG.error(e.getMessage());
+        }
+        
+        //LOG.info ("Signature added.");
+
+        HttpEntity entity = new HttpEntity(requestHeaders);
+        try {
+        	LOG.info ("Before exchange: " + builder.toUriString()+ " *** " + entity);
+        	LOG.info ("Before exchange DECODE: " + URLDecoder.decode(builder.toUriString(), StandardCharsets.UTF_8.toString()) + " *** " + entity);
+            ResponseEntity<SessionMngrResponse> response = restTemplate.exchange(
+            		URLDecoder.decode(builder.toUriString(), StandardCharsets.UTF_8.toString()), HttpMethod.GET, entity, SessionMngrResponse.class);
+                    //builder.toUriString(), HttpMethod.GET, entity, SessionMngrResponse.class);
             //LOG.info ("After exchange: "  + response);
             return response.getBody();
         } catch (RestClientException e) {

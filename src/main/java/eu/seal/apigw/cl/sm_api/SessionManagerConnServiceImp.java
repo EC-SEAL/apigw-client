@@ -15,7 +15,7 @@ package eu.seal.apigw.cl.sm_api;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
+import java.net.URLEncoder;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
@@ -394,13 +394,14 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 		}
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 	    urlParameters.add(new NameValuePair("sessionId",sessionId));
+	    //urlParameters.add(new NameValuePair("id",URLEncoder.encode(dataSetId)));
 	    urlParameters.add(new NameValuePair("id",dataSetId));
 	    
 	    SessionMngrResponse smResponse = null;
 	    try {
 	    	log.info("Sending new/get DataSet ...");
 	    	//response = network.sendGet(hostURL, service, urlParameters);
-	    	smResponse = network.sendGetSMResponse(hostURL, service, urlParameters, 1);
+	    	smResponse = network.sendGetNewSMResponse(hostURL, service, urlParameters, 1);
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

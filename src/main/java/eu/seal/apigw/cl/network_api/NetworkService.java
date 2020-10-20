@@ -43,6 +43,10 @@ public interface NetworkService {
 	public SessionMngrResponse sendGetSMResponse(String hostUrl, String uri, 
 												 List<NameValuePair> urlParameters, int attempt) 
 			throws IOException, NoSuchAlgorithmException;
+	
+	public SessionMngrResponse sendGetNewSMResponse(String hostUrl, String uri, 
+			 										List<NameValuePair> urlParameters, int attempt) 
+			throws IOException, NoSuchAlgorithmException;
 
 
 }

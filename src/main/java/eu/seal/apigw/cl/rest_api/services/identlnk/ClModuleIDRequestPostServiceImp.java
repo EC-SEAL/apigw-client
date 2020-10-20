@@ -110,6 +110,8 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						// Update sessionData: linking and linkRequest
 						smConn.updateVariable(sessionID,"linking", moduleID);
 						
+						//Object objDataSetA0 = smConn.getDataSet(sessionID, URLEncoder.encode(datasetIDa, StandardCharsets.UTF_8.toString()));
+						log.info ("datasetIDa: " + datasetIDa);
 						Object objDataSetA0 = smConn.getDataSet(sessionID, datasetIDa);
 						DataSet datasetA0 = null;
 						DataStoreObject datasetA0_dso = new ObjectMapper().readValue(objDataSetA0.toString(),DataStoreObject.class);

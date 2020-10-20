@@ -155,16 +155,16 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 							}
 						
 						LinkRequest myLinkRequest = new LinkRequest ();
-						//myLinkRequest.setId("LINK_" + UUID.randomUUID().toString());
+						myLinkRequest.setId("LINK_" + UUID.randomUUID().toString());
 						// "urn:mace:project-seal.eu:link:{LinkIssuerId}:{IdentityA}:{IdentityB}"
 						// LinkIssuerId = "project-seal.eu_automatedLink"
-						myLinkRequest.setId("urn:mace:project-seal.eu:link:" + 
-								URLEncoder.encode(theModuleID, StandardCharsets.UTF_8.toString()) + ":" + // TO ASK
-								//"LLoA" + ":" +
-								URLEncoder.encode(datasetA.getSubjectId(), StandardCharsets.UTF_8.toString()) + ":" + 
-								URLEncoder.encode(datasetA.getIssuerId(), StandardCharsets.UTF_8.toString())  + ":" +  
-								URLEncoder.encode(datasetB.getSubjectId(), StandardCharsets.UTF_8.toString()) + ":" + 
-								URLEncoder.encode(datasetB.getIssuerId(), StandardCharsets.UTF_8.toString()));
+//						myLinkRequest.setId("urn:mace:project-seal.eu:link:" + 
+//								URLEncoder.encode(theModuleID, StandardCharsets.UTF_8.toString()) + ":" + // TO ASK
+//								//"LLoA" + ":" +
+//								URLEncoder.encode(datasetA.getSubjectId(), StandardCharsets.UTF_8.toString()) + ":" + 
+//								URLEncoder.encode(datasetA.getIssuerId(), StandardCharsets.UTF_8.toString())  + ":" +  
+//								URLEncoder.encode(datasetB.getSubjectId(), StandardCharsets.UTF_8.toString()) + ":" + 
+//								URLEncoder.encode(datasetB.getIssuerId(), StandardCharsets.UTF_8.toString()));
 						
 						myLinkRequest.setDatasetA(datasetA);					
 						myLinkRequest.setDatasetB(datasetB);

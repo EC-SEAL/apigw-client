@@ -189,7 +189,7 @@ public class NetworkServiceImpl implements NetworkService
             if (response.getBody() == null && attempt < 2) {
             	LOG.error("A SECOND trial!");
             
-            	return sendGetURIParams(hostUrl, uri,
+            	return sendGet(hostUrl, uri,
                         urlParameters, attempt + 1);
             }
             
@@ -269,7 +269,7 @@ public class NetworkServiceImpl implements NetworkService
         String host = hostUrl.replace("http://", "").replace("https://", "");
         try {
             HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.add("authorization", sigServ.generateSignature(host, "POST", "/sm/updateSessionData", postBody, "application/json;charset=UTF-8", requestId));
+            requestHeaders.add("authorization", sigServ.generateSignature(host, "POST", /*"/sm/updateSessionData"*/uri, postBody, "application/json;charset=UTF-8", requestId));
             requestHeaders.add("host", hostUrl);
             requestHeaders.add("original-date", nowDate);
             requestHeaders.add("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()))));
@@ -288,6 +288,58 @@ public class NetworkServiceImpl implements NetworkService
                 LOG.info("request failed will retry");
                 if (attempt < 2) {
                     return sendPostBody(hostUrl, uri, postBody, contentType, attempt + 1);
+                }
+            }
+        } catch (UnrecoverableKeyException e) {
+            LOG.info(e.getMessage());
+        } catch (KeyStoreException e) {
+            LOG.info(e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            LOG.info(e.getMessage());
+        }
+        return null;
+
+	}
+	
+	@Override
+	public SessionMngrResponse sendPostBodySMResponse(String hostUrl, String uri, Object postBody, String contentType, int attempt)
+			throws IOException, NoSuchAlgorithmException 
+	{
+		Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String nowDate = formatter.format(date);
+        String requestId = UUID.randomUUID().toString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        String updateString = mapper.writeValueAsString(postBody);
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()); // post parameters are added as uri parameters not in the body when form-encoding
+        String host = hostUrl.replace("http://", "").replace("https://", "");
+        try {
+            HttpHeaders requestHeaders = new HttpHeaders();
+            requestHeaders.add("authorization", sigServ.generateSignature(host, "POST", /*"/sm/updateSessionData"*/uri, postBody, "application/json;charset=UTF-8", requestId));
+            requestHeaders.add("host", hostUrl);
+            requestHeaders.add("original-date", nowDate);
+            requestHeaders.add("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(MessageDigest.getInstance("SHA-256").digest(updateString.getBytes()))));
+            requestHeaders.add("x-request-id", requestId);
+            requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+            requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(hostUrl + uri);
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<Object> requestEntity = new HttpEntity<>(postBody, requestHeaders);
+            try {
+            	ResponseEntity<String> response
+                        = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, requestEntity,
+                                String.class);
+ 
+              //LOG.info("response body: " + response.getBody());  
+              SessionMngrResponse smResponse = (new ObjectMapper()).readValue(response.getBody(),SessionMngrResponse.class);
+              return smResponse;
+              
+            } catch (RestClientException e) {
+                LOG.info("request failed will retry");
+                if (attempt < 2) {
+                    return sendPostBodySMResponse(hostUrl, uri, postBody, contentType, attempt + 1);
                 }
             }
         } catch (UnrecoverableKeyException e) {
@@ -476,7 +528,7 @@ public class NetworkServiceImpl implements NetworkService
             return response.getBody();
         } catch (RestClientException e) {
             if (attempt < 2) {
-                return sendGetSMResponse(hostUrl, uri,
+                return sendGetNewSMResponse(hostUrl, uri,
                         				 urlParameters, attempt + 1);
             }
         }

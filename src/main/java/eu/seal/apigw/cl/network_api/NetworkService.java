@@ -20,10 +20,6 @@ import org.apache.commons.httpclient.NameValuePair;
 
 import eu.seal.apigw.cl.domain.SessionMngrResponse;
 
-/**
- *
- * @author UAegean
- */
 public interface NetworkService {
 
 	
@@ -47,6 +43,12 @@ public interface NetworkService {
 	public SessionMngrResponse sendGetNewSMResponse(String hostUrl, String uri, 
 			 										List<NameValuePair> urlParameters, int attempt) 
 			throws IOException, NoSuchAlgorithmException;
+	
+	public SessionMngrResponse sendPostBodySMResponse (String hostUrl, String uri, 
+										Object postBody, String contentType, int attempt) 
+			throws IOException, NoSuchAlgorithmException;
+	
+	
 
 
 }

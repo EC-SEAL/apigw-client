@@ -16,10 +16,10 @@ See README file for the full disclaimer information and LICENSE file for full li
 package eu.seal.apigw.cl.rest_api;
 
 
-public class APIGWException extends Exception{
+public class APIGWException extends ApiException {
     private int code;
     public APIGWException (int code, String msg) {
-        super(msg);
+        super(code, msg);
         this.code = code;
     }
 }

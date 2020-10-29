@@ -47,7 +47,7 @@ public class ClModuleIDGenerateGetServiceImp implements ClModuleIDGenerateGetSer
 
 	
 	@Override
-	public ModuleTrigger clModuleIDGenerateGet (String sessionID, String moduleID) throws Exception {
+	public ModuleTrigger clModuleIDGenerateGet (String sessionID, String moduleID) throws APIGWException, Exception {
 		
 		log.info("moduleID: " + moduleID);
 			
@@ -156,6 +156,10 @@ public class ClModuleIDGenerateGetServiceImp implements ClModuleIDGenerateGetSer
 		}
 			
 			
+		}
+		catch (APIGWException e) {
+			log.error("APIGWException: ", e);
+			throw e;
 		}
 		catch (Exception e) {
 			log.error("Exception: ", e);

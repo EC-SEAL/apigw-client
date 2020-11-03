@@ -58,6 +58,7 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 //		log.info("moduleID: " + moduleID);
 
 		MsMetadata theMs = null;
+		String theModuleID = null;
 		
 		//TODO: the usage of moduleID is removed (Paco's approval: email 20.4.2020). The interfaces.yml and UC7.02 to be updated
 		//
@@ -73,6 +74,11 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 				log.info("apigwLinkRequestList: " + objApigwLinkRequestList.toString());
 				DisplayableList apigwLinkRequestList = (new ObjectMapper()).readValue(objApigwLinkRequestList.toString(),DisplayableList.class);
 				if (apigwLinkRequestList.size() != 0) {
+					String thePayload = null;
+					
+					theModuleID = confMngrConnService.getEntityMetadata("LINKING", moduleID).getMicroservice().get(0); // The first one.
+					log.info("theModuleID: " + theModuleID);
+					thePayload = smConn.generateToken (sessionID, theModuleID);
 				
 					// Search for the Ms related to the requestId
 					String myMs = null;
@@ -96,7 +102,7 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 						}				  	  
 					}
 					
-					String thePayload = null;
+					
 					PublishedApiType thePublishedApi = null;
 					//For fulfilling theAccess (see bellow)
 					if (myMs != null) {
@@ -119,7 +125,7 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 							}
 							log.info("thePublishedApi: " + (thePublishedApi != null ? thePublishedApi.getApiCall() : thePublishedApi));	
 							
-							thePayload = smConn.generateToken (sessionID, myMs);
+							//thePayload = smConn.generateToken (sessionID, myMs);
 						}
 					}
 	

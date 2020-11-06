@@ -2,6 +2,7 @@ package eu.seal.apigw.cl.domain;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -133,7 +134,19 @@ public class DataSet   {
 
 
   public String getIssuerId() {
-    return issuerId;
+	  String theIssuerId = null;
+	  
+	  for (AttributeType attr: this.attributes) {
+		  if ((attr.getFriendlyName() != null) && 
+			 (attr.getFriendlyName().contains (issuerId))){
+			  
+			  theIssuerId = attr.getValues().get(0);
+			  break;
+		  }
+	  }
+	  
+	  return (theIssuerId != null ? theIssuerId : issuerId);
+    
   }
 
   public void setIssuerId(String issuerId) {
@@ -153,7 +166,19 @@ public class DataSet   {
 
 
   public String getSubjectId() {
-    return subjectId;
+	  String theSubjectId = null;
+	  
+	  for (AttributeType attr: this.attributes) {
+		  if ((attr.getFriendlyName() != null) && 
+			 (attr.getFriendlyName().contains (subjectId))){
+			  
+			  theSubjectId = attr.getValues().get(0);
+			  break;
+		  }
+	  }
+	  
+	  return (theSubjectId != null ? theSubjectId : subjectId);
+    
   }
 
   public void setSubjectId(String subjectId) {
@@ -312,8 +337,8 @@ public class DataSet   {
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    categories: ").append(toIndentedString(categories)).append("\n");
-    sb.append("    issuerId: ").append(toIndentedString(issuerId)).append("\n");
-    sb.append("    subjectId: ").append(toIndentedString(subjectId)).append("\n");
+    sb.append("    issuerId: ").append(toIndentedString(getIssuerId())).append("\n");
+    sb.append("    subjectId: ").append(toIndentedString(getSubjectId())).append("\n");
     sb.append("    loa: ").append(toIndentedString(loa)).append("\n");
     sb.append("    issued: ").append(toIndentedString(issued)).append("\n");
     sb.append("    expiration: ").append(toIndentedString(expiration)).append("\n");

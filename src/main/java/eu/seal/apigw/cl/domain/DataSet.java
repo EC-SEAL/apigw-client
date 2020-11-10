@@ -134,20 +134,24 @@ public class DataSet   {
 
 
   public String getIssuerId() {
-	  String theIssuerId = null;
-	  
-	  for (AttributeType attr: this.attributes) {
-		  if ((attr.getFriendlyName() != null) && 
-			 (attr.getFriendlyName().contains (issuerId))){
-			  
-			  theIssuerId = attr.getValues().get(0);
-			  break;
-		  }
+	    return issuerId;
 	  }
-	  
-	  return (theIssuerId != null ? theIssuerId : issuerId);
-    
-  }
+  
+//  public String getIssuerIdLnk() {
+//	  String theIssuerId = null;
+//	  
+//	  for (AttributeType attr: this.attributes) {
+//		  if ((attr.getFriendlyName() != null) && 
+//			 (attr.getFriendlyName().contains (issuerId))){
+//			  
+//			  theIssuerId = attr.getValues().get(0);
+//			  break;
+//		  }
+//	  }
+//	  
+//	  return (theIssuerId != null ? theIssuerId : issuerId);
+//    
+//  }
 
   public void setIssuerId(String issuerId) {
     this.issuerId = issuerId;
@@ -164,22 +168,25 @@ public class DataSet   {
   **/
   @ApiModelProperty(value = "Name of the attribute that is the ID of the data owner, a kind of pointer to the attribute ID.")
 
-
   public String getSubjectId() {
-	  String theSubjectId = null;
-	  
-	  for (AttributeType attr: this.attributes) {
-		  if ((attr.getFriendlyName() != null) && 
-			 (attr.getFriendlyName().contains (subjectId))){
-			  
-			  theSubjectId = attr.getValues().get(0);
-			  break;
-		  }
+	    return subjectId;
 	  }
-	  
-	  return (theSubjectId != null ? theSubjectId : subjectId);
-    
-  }
+
+//  public String getSubjectIdLnk() {
+//	  String theSubjectId = null;
+//	  
+//	  for (AttributeType attr: this.attributes) {
+//		  if ((attr.getFriendlyName() != null) && 
+//			 (attr.getFriendlyName().contains (subjectId))){
+//			  
+//			  theSubjectId = attr.getValues().get(0);
+//			  break;
+//		  }
+//	  }
+//	  
+//	  return (theSubjectId != null ? theSubjectId : subjectId);
+//    
+//  }
 
   public void setSubjectId(String subjectId) {
     this.subjectId = subjectId;
@@ -337,8 +344,10 @@ public class DataSet   {
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    categories: ").append(toIndentedString(categories)).append("\n");
-    sb.append("    issuerId: ").append(toIndentedString(getIssuerId())).append("\n");
-    sb.append("    subjectId: ").append(toIndentedString(getSubjectId())).append("\n");
+//    sb.append("    issuerId: ").append(toIndentedString(getIssuerId())).append("\n");
+//    sb.append("    subjectId: ").append(toIndentedString(getSubjectId())).append("\n");
+    sb.append("    issuerId: ").append(toIndentedString(issuerId)).append("\n");
+    sb.append("    subjectId: ").append(toIndentedString(subjectId)).append("\n");
     sb.append("    loa: ").append(toIndentedString(loa)).append("\n");
     sb.append("    issued: ").append(toIndentedString(issued)).append("\n");
     sb.append("    expiration: ").append(toIndentedString(expiration)).append("\n");

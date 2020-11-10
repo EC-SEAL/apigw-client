@@ -17,10 +17,13 @@ package eu.seal.apigw.cl.rest_api.services.identlnk;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+
+import javax.validation.Valid;
 
 import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
@@ -33,6 +36,7 @@ import com.google.gson.Gson;
 
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
+import eu.seal.apigw.cl.domain.AttributeType;
 import eu.seal.apigw.cl.domain.DataSet;
 import eu.seal.apigw.cl.domain.DataStoreObject;
 import eu.seal.apigw.cl.domain.DisplayableList;
@@ -139,16 +143,19 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						
 						DataSet datasetA = new DataSet();
 						DataSet datasetB = new DataSet();
-						if (datasetA0.getSubjectId().compareTo(datasetB0.getSubjectId()) < 0) {
+						if (getSubjectIdLnk(datasetA0.getAttributes(), datasetA0.getSubjectId()).
+								compareTo(getSubjectIdLnk(datasetB0.getAttributes(), datasetB0.getSubjectId() )) < 0) {
 							datasetA = datasetA0;
 							datasetB = datasetB0;
 						}
-						else if (datasetA0.getSubjectId().compareTo(datasetB0.getSubjectId()) > 0) {
+						else if (getSubjectIdLnk(datasetA0.getAttributes(), datasetA0.getSubjectId()).
+								compareTo(getSubjectIdLnk(datasetB0.getAttributes(), datasetB0.getSubjectId() )) > 0) {
 							datasetA = datasetB0;
 							datasetB = datasetA0;
 						}
 						else //equals
-							if (datasetA0.getIssuerId().compareTo(datasetB0.getIssuerId()) <= 0) {
+							if (getIssuerIdLnk(datasetA0.getAttributes(), datasetA0.getIssuerId()).
+									compareTo(getIssuerIdLnk(datasetB0.getAttributes(), datasetB0.getIssuerId() )) <= 0) {
 								datasetA = datasetA0;
 								datasetB = datasetB0;
 							}
@@ -164,10 +171,10 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 						myLinkRequest.setId("urn:mace:project-seal.eu:link:" + 
 								URLEncoder.encode(theModuleID, StandardCharsets.UTF_8.toString()) + ":" + // TO ASK
 								//"LLoA" + ":" +
-								URLEncoder.encode(datasetA.getSubjectId(), StandardCharsets.UTF_8.toString()) + ":" + 
-								URLEncoder.encode(datasetA.getIssuerId(), StandardCharsets.UTF_8.toString())  + ":" +  
-								URLEncoder.encode(datasetB.getSubjectId(), StandardCharsets.UTF_8.toString()) + ":" + 
-								URLEncoder.encode(datasetB.getIssuerId(), StandardCharsets.UTF_8.toString()));
+								URLEncoder.encode(getSubjectIdLnk(datasetA.getAttributes(), datasetA.getSubjectId()), StandardCharsets.UTF_8.toString()) + ":" + 
+								URLEncoder.encode(getIssuerIdLnk(datasetA.getAttributes(), datasetA.getIssuerId()), StandardCharsets.UTF_8.toString())  + ":" +  
+								URLEncoder.encode(getSubjectIdLnk(datasetB.getAttributes(), datasetB.getSubjectId()), StandardCharsets.UTF_8.toString()) + ":" + 
+								URLEncoder.encode(getIssuerIdLnk(datasetB.getAttributes(), datasetB.getIssuerId()), StandardCharsets.UTF_8.toString()));
 						
 						myLinkRequest.setDatasetA(datasetA);					
 						myLinkRequest.setDatasetB(datasetB);
@@ -244,6 +251,38 @@ public class ClModuleIDRequestPostServiceImp implements ClModuleIDRequestPostSer
 			log.error("Exception: ", e);
 			throw new Exception (e);
 		}
+	}
+	
+  private String getSubjectIdLnk(List<AttributeType> attributes, String subjectId) {
+	  String theSubjectId = null;
+	  
+	  for (AttributeType attr: attributes) {
+		  if ((attr.getFriendlyName() != null) && 
+			 (attr.getFriendlyName().contains (subjectId))){
+			  
+			  theSubjectId = attr.getValues().get(0);
+			  break;
+		  }
+	  }
+	  
+	  return (theSubjectId != null ? theSubjectId : subjectId);
+  
+  }
+  
+	private String getIssuerIdLnk(List<AttributeType> attributes, String issuerId) {
+	  String theIssuerId = null;
+	  
+	  for (AttributeType attr: attributes) {
+		  if ((attr.getFriendlyName() != null) && 
+			 (attr.getFriendlyName().contains (issuerId))){
+			  
+			  theIssuerId = attr.getValues().get(0);
+			  break;
+		  }
+	  }
+	  
+	  return (theIssuerId != null ? theIssuerId : issuerId);
+	
 	}
 	
 

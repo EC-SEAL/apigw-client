@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.seal.apigw.cl.domain.DataSet;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.rest_api.services.callback.ClCallbackGetService;
+import eu.seal.apigw.cl.rest_api.services.identsource.ClModuleIDLoadPostService;
 import eu.seal.apigw.cl.rest_api.services.identsource.ClModuleIDRetrieveGetService;
 import eu.seal.apigw.cl.configuration.Constants;
 import io.swagger.annotations.*;
@@ -54,15 +55,21 @@ public class IdentSourceApiController implements IdentSourceApi {
     }
 
 
+    @Autowired
+	private ClModuleIDLoadPostService clModuleIDLoadPostService;
+    
     public ResponseEntity<ModuleTrigger> clIdentSourceModuleIDLoadPost(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID,@ApiParam(value = "The data set to add" ,required=true )  @Valid @RequestBody DataSet dataset) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ModuleTrigger>(objectMapper.readValue("{  \"access\" : {    \"address\" : \"address\",    \"binding\" : \"HTTP-POST-REDIRECT\",    \"bodyContent\" : \"bodyContent\",    \"contentType\" : \"contentType\"  },  \"payload\" : \"{}\",  \"status\" : {    \"mainCode\" : \"mainCode\",    \"secondaryCode\" : \"secondaryCode\",    \"message\" : \"message\"  }}", ModuleTrigger.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ModuleTrigger>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            ModuleTrigger idLoaded = new ModuleTrigger();
+            	
+                try {
+                	idLoaded = clModuleIDLoadPostService.clModuleIDLoadPost(sessionID, moduleID, dataset);
+                    return new ResponseEntity<ModuleTrigger>(idLoaded, HttpStatus.OK);
+                } catch (Exception e) {
+                	log.error(Constants.ERROR_ACCESSING_MODULE, e);
+                    return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_FOUND);
+                }
         }
 
         return new ResponseEntity<ModuleTrigger>(HttpStatus.NOT_IMPLEMENTED);

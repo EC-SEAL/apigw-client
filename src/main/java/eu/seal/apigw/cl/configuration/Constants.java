@@ -23,7 +23,7 @@ public class Constants {
 	public final static String COLLECTION_NOT_FOUND= "Collection not found"; 	// cl/list
 	public final static String ERROR_RETURNING = "Error returning to client"; 	// cl/callback
 	
-	// 404 in auth, identsource/retrieve, identmngr/list, persistence/load&store controllers, derivation, linking, issuing
+	// 404 in auth, identsource/retrieve&load, identmngr/list, persistence/load&store controllers, derivation, linking, issuing
 	public final static String ERROR_ACCESSING_MODULE= "Error accessing module";
 	
 	// 404 in session controllers
@@ -48,6 +48,11 @@ public class Constants {
 	public final static String ID_RETRIEVED_CODE = "id_retrieved_code";
 	public final static String NO_ID_RETRIEVED = "No identity retrieved";
 	public final static String NO_ID_RETRIEVED_CODE = "no_id_retrieved_code";
+	
+	public final static String ID_LOADED_MSG = "Identity just loaded";
+	public final static String ID_LOADED_CODE = "id_loaded_code";
+	public final static String NO_ID_LOADED = "No identity loaded";
+	public final static String NO_ID_LOADED_CODE = "no_id_loaded_code";
 	
 	public final static String ID_DERIVED_MSG = "Identity just derived";
 	public final static String ID_DERIVED_CODE = "id_derived_code";

@@ -57,8 +57,7 @@ public class ClModuleIDLoadPostServiceImp implements ClModuleIDLoadPostService{
 		
 		log.info("moduleID: " + moduleID);
 			
-		// UC1.04
-		// UC3.02
+		// UC3.01
 		
 		try {
 			String theModuleID = null;
@@ -79,9 +78,10 @@ public class ClModuleIDLoadPostServiceImp implements ClModuleIDLoadPostService{
 					break;
 					
 				case "emrtd":					
-					// Update sessionData: apRequest??, apMetadata??, dataStore.
+					// Update sessionData: emrtdDataset.
 					
-					//TODO: dataStore updated with the dataSet
+					ObjectMapper objMapper0 = new ObjectMapper();
+					smConn.updateVariable(sessionID, "emrtdDataset", objMapper0.writeValueAsString(dataset));
 					
 					/*
 					AttributeSet myApRequest = new AttributeSet();

@@ -15,6 +15,7 @@ See README file for the full disclaimer information and LICENSE file for full li
 package eu.seal.apigw.cl.rest_api.services.identsource;
 
 
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
@@ -78,10 +80,17 @@ public class ClModuleIDLoadPostServiceImp implements ClModuleIDLoadPostService{
 					break;
 					
 				case "emrtd":					
-					// Update sessionData: emrtdDataset.
+					// Update sessionData: emrtdDataset -> string #B64  $ref: '#/definitions/dataSet'
 					
-					ObjectMapper objMapper0 = new ObjectMapper();
-					smConn.updateVariable(sessionID, "emrtdDataset", objMapper0.writeValueAsString(dataset));
+					//ObjectMapper objMapper0 = new ObjectMapper();
+					//smConn.updateVariable(sessionID, "emrtdDataset", objMapper0.writeValueAsString(dataset));
+					
+					Gson gson = new Gson();
+        			String jsonMyDataset = gson.toJson(dataset);
+        			log.info("Before encoding jsonMyDataset: "+ jsonMyDataset);     			
+        			String encodedDataset = Base64.getEncoder().encodeToString(jsonMyDataset.getBytes());
+					
+        			smConn.updateVariable(sessionID, "emrtdDataset", encodedDataset);
 					
 					/*
 					AttributeSet myApRequest = new AttributeSet();

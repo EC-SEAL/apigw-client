@@ -20,7 +20,7 @@ jobs:
         elif [ $TRAVIS_BRANCH == "master" ]; then
             export CONTAINER_TAG=latest;
         elif [ $TRAVIS_BRANCH == "interface" ]; then
-            export CONTAINER_TAG=test;
+            export CONTAINER_TAG=testUMA;
         fi
       script:
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"

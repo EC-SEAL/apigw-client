@@ -96,7 +96,7 @@ public class ClModuleIDRetrieveGetServiceImp implements ClModuleIDRetrieveGetSer
 						}
 					}
 					
-					theBinding = BindingEnum.GET_REDIRECT;
+					theBinding = BindingEnum.POST_REDIRECT;
 
 					break;
 					

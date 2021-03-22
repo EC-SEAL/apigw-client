@@ -16,13 +16,48 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.seal.apigw.cl.domain.SessionMngrResponse;
 import eu.seal.apigw.cl.params_api.KeyStoreService;
-
+//
+//import java.io.IOException;
+//import java.io.UnsupportedEncodingException;
+//import java.net.URL;
+import java.net.URLDecoder;
+//import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+//import java.security.KeyStoreException;
+//import java.security.MessageDigest;
+//import java.security.NoSuchAlgorithmException;
+//import java.security.UnrecoverableKeyException;
+//import java.security.spec.InvalidKeySpecException;
+//import java.text.SimpleDateFormat;
+//import java.util.Arrays;
+//import java.util.Date;
+//import java.util.HashMap;
+//import java.util.List;
+//import java.util.Locale;
+//import java.util.Map;
+//import java.util.TimeZone;
+//import java.util.UUID;
+//
+//import org.apache.commons.codec.digest.DigestUtils;
+//import org.apache.commons.httpclient.NameValuePair;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.http.HttpEntity;
+//import org.springframework.http.HttpHeaders;
+//import org.springframework.http.HttpMethod;
+//import org.springframework.http.MediaType;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.stereotype.Service;
+//import org.springframework.util.LinkedMultiValueMap;
+//import org.springframework.util.MultiValueMap;
+//import org.springframework.util.StringUtils;
+//import org.springframework.web.client.RestClientException;
+//import org.springframework.web.client.RestTemplate;
+//import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -37,7 +72,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
@@ -109,7 +143,7 @@ public class NetworkServiceImpl implements NetworkService
             requestHeaders.add("x-request-id", requestId);
             URL url = new URL(builder.buildAndExpand(map).toUriString());
 
-            requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", url.getPath(), null, "application/json", requestId));
+            requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", url.getPath(), null, /*"application/x-www-form-urlencoded"*/ "application/json", requestId));
 
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
             LOG.error("could not generate signature!!");
@@ -119,7 +153,8 @@ public class NetworkServiceImpl implements NetworkService
         HttpEntity entity = new HttpEntity(requestHeaders);
         try {
             ResponseEntity<String> response = restTemplate.exchange(
-                    builder.buildAndExpand(map).toUriString(), HttpMethod.GET, entity, String.class);
+                    builder.buildAndExpand(map).toUriString(),
+            		HttpMethod.GET, entity, String.class);
             
             if (response.getBody() == null && attempt < numAttempts) {
             	LOG.error("ATTEMPT #" + attempt);
@@ -140,11 +175,12 @@ public class NetworkServiceImpl implements NetworkService
         return null;
 	}
     
-    // The following sendGet is only with query parameters.
 	@Override
-	public String sendGet(String hostUrl, String uri, List<NameValuePair> urlParameters, int attempt)
-			throws IOException, NoSuchAlgorithmException 
+	public String sendNewGetURIParams(String hostUrl, String uri, List<NameValuePair> urlParameters,
+												 int attempt) throws IOException, NoSuchAlgorithmException 
 	{
+		//LOG.info ("sendGetSMResponse");
+		
 		Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
         formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -171,11 +207,65 @@ public class NetworkServiceImpl implements NetworkService
             URL url = new URL(builder.toUriString());
 
             //requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", url.getPath() + "?" + url.getQuery(), null, "application/x-www-form-urlencoded", requestId));
+        
+            String getURL = StringUtils.isEmpty(url.getQuery())?url.getPath():url.getPath() + "?" + url.getQuery();           
+            requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", getURL, null, "application/x-www-form-urlencoded", requestId));
+        
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
+            LOG.error("could not generate signature!!");
+            LOG.error(e.getMessage());
+        }
+        
+        //LOG.info ("Signature added.");
+
+        HttpEntity entity = new HttpEntity(requestHeaders);
+        try {
+        	LOG.info ("Before exchange: " + builder.toUriString()+ " *** " + entity);
+            ResponseEntity<String> response = restTemplate.exchange(
+                    builder.toUriString(), HttpMethod.GET, entity, String.class);
+            LOG.info ("After exchange: "  + response);
+            return response.getBody();
+        } catch (RestClientException e) {
+            if (attempt < numAttempts) {
+                return sendNewGetURIParams(hostUrl, uri,
+                        				 urlParameters, attempt + 1);
+            }
+        }
+        return null;
+	}
+	
+    @Override
+    public String sendGet(String hostUrl, String uri,
+            List<NameValuePair> urlParameters, int attempt) throws IOException, NoSuchAlgorithmException {
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String nowDate = formatter.format(date);
+        String requestId = UUID.randomUUID().toString();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(hostUrl + uri);
+        if (urlParameters != null) {
+            Map<String, String> map = new HashMap();
+            urlParameters.stream().forEach(nameVal -> {
+                map.put(nameVal.getName(), nameVal.getValue());
+                builder.queryParam(nameVal.getName(), nameVal.getValue());
+            });
+        }
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders requestHeaders = new HttpHeaders();
+        String host = hostUrl.replace("http://", "").replace("https://", "");
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
+        try {
+            requestHeaders.add("host", host);
+            requestHeaders.add("original-date", nowDate);
+            requestHeaders.add("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)));
+            requestHeaders.add("x-request-id", requestId);
+            URL url = new URL(builder.toUriString());
 
             String getURL = StringUtils.isEmpty(url.getQuery())?url.getPath():url.getPath() + "?" + url.getQuery();
             
             requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", getURL, null, "application/x-www-form-urlencoded", requestId));
-            
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
             LOG.error("could not generate signature!!");
             LOG.error(e.getMessage());
@@ -185,25 +275,84 @@ public class NetworkServiceImpl implements NetworkService
         try {
             ResponseEntity<String> response = restTemplate.exchange(
                     builder.toUriString(), HttpMethod.GET, entity, String.class);
-            
-            if (response.getBody() == null && attempt < 2) {
-            	LOG.error("A SECOND trial!");
-            
-            	return sendGet(hostUrl, uri,
-                        urlParameters, attempt + 1);
-            }
-            
             return response.getBody();
         } catch (RestClientException e) {
-        	LOG.error("Exception: A SECOND trial!");
-            LOG.error(e.getMessage());
-            if (attempt < 2) {
+        	LOG.error(e.getMessage());
+            if (attempt < numAttempts) {
                 return sendGet(hostUrl, uri,
                         urlParameters, attempt + 1);
             }
         }
         return null;
-	}
+
+    }
+
+
+//    // The following sendGet is only with query parameters.
+//	@Override
+//	public String sendGet(String hostUrl, String uri, List<NameValuePair> urlParameters, int attempt)
+//			throws IOException, NoSuchAlgorithmException 
+//	{
+//		Date date = new Date();
+//        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM YYYY HH:mm:ss z", Locale.US);
+//        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+//        String nowDate = formatter.format(date);
+//        String requestId = UUID.randomUUID().toString();
+//        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(hostUrl + uri);
+//        if (urlParameters != null) {
+//            Map<String, String> map = new HashMap();
+//            urlParameters.stream().forEach(nameVal -> {
+//                map.put(nameVal.getName(), nameVal.getValue());
+//                builder.queryParam(nameVal.getName(), nameVal.getValue());
+//            });
+//        }
+//
+//        RestTemplate restTemplate = new RestTemplate();
+//        HttpHeaders requestHeaders = new HttpHeaders();
+//        String host = hostUrl.replace("http://", "").replace("https://", "");
+//        byte[] digest = MessageDigest.getInstance("SHA-256").digest("".getBytes());
+//        try {
+//            requestHeaders.add("host", host);
+//            requestHeaders.add("original-date", nowDate);
+//            requestHeaders.add("digest", "SHA-256=" + new String(org.tomitribe.auth.signatures.Base64.encodeBase64(digest)));
+//            requestHeaders.add("x-request-id", requestId);
+//            URL url = new URL(builder.toUriString());
+//
+//            //requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", url.getPath() + "?" + url.getQuery(), null, "application/x-www-form-urlencoded", requestId));
+//
+//            String getURL = StringUtils.isEmpty(url.getQuery())?url.getPath():url.getPath() + "?" + url.getQuery();
+//            
+//            requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", getURL, null, /*"application/x-www-form-urlencoded"*/ "application/json", requestId));
+//            
+//        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
+//            LOG.error("could not generate signature!!");
+//            LOG.error(e.getMessage());
+//        }
+//
+//        HttpEntity entity = new HttpEntity(requestHeaders);
+//        try {
+//            ResponseEntity<String> response = restTemplate.exchange(
+//                    builder.toUriString(), HttpMethod.GET, entity, String.class);
+//            
+//            if (response.getBody() == null && attempt < 2) {
+//            	LOG.error("A SECOND trial!");
+//            
+//            	return sendGet(hostUrl, uri,
+//                        urlParameters, attempt + 1);
+//            }
+//            
+//            return response.getBody();
+//        } catch (RestClientException e) {
+//        	LOG.error("Exception: A SECOND trial!");
+//            LOG.error(e.getMessage());
+//            if (attempt < 2) {
+//                return sendGet(hostUrl, uri,
+//                        urlParameters, attempt + 1);
+//            }
+//        }
+//        return null;
+//	}
+
 
 	@Override
 	public String sendPostForm(String hostUrl, String uri, List<NameValuePair> urlParameters, int attempt)

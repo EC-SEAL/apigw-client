@@ -290,16 +290,33 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
 			{
 					network = new NetworkServiceImpl(keyStoreService);
 			}
+			
 			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 			
-			urlParameters.add(new NameValuePair(getMicroservicesByApiClassPath[1], apiClasses));
-			String jsonResult = network.sendGetURIParams (cmUrl, 
-					getMicroservicesByApiClassPath[0] + "{" + getMicroservicesByApiClassPath[1] + "}", 
+			
+//			urlParameters.add(new NameValuePair(getMicroservicesByApiClassPath[1], apiClasses));
+//			String jsonResult = network.sendGetURIParams (cmUrl, 
+//					getMicroservicesByApiClassPath[0] + "{" + getMicroservicesByApiClassPath[1] + "}", 
+//					urlParameters, 1);
+			
+			
+//			String jsonResult = network.sendNewGetURIParams (cmUrl, 
+//					getMicroservicesByApiClassPath[0], urlParameters, 1);
+			
+// It seems to work too, with the urlParameters without adding anything:
+			List<NameValuePair> getParams = new ArrayList();
+			String jsonResult1 = network.sendGet(cmUrl, "/cm/metadata/microservices", getParams,1);
+			if (jsonResult1 != null) {
+				//log.info("jsonResult1: "+ jsonResult1);
+		        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		        result = mapper.readValue(jsonResult1, MsMetadataList.class);
+		        //log.info("Result: "+ result);
+			}
+			
+			String jsonResult = network.sendGet (cmUrl, 
+					getMicroservicesByApiClassPath[0] + apiClasses, 
 					urlParameters, 1);
 			
-	//		String jsonResult = network.sendGet (cmUrl, 
-	//				getMicroservicesByApiClassPath[0] + apiClasses, 
-	//				urlParameters, 1);
 			
 			if (jsonResult != null) {
 				//log.info("jsonResult: "+ jsonResult);

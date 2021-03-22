@@ -49,7 +49,7 @@ public interface IdentSourceApi {
     @RequestMapping(value = "/cl/ident/source/{moduleID}/load",
         produces = { "application/json" }, 
         consumes = { "application/json" },
-        method = RequestMethod.POST)
+        method = {RequestMethod.POST, RequestMethod.GET})
     ResponseEntity<ModuleTrigger> clIdentSourceModuleIDLoadPost(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID,@ApiParam(value = "The data set to add" ,required=true )  @Valid @RequestBody DataSet dataset);
 
 

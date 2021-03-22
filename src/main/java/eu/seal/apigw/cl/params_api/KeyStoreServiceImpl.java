@@ -13,6 +13,32 @@ See README file for the full disclaimer information and LICENSE file for full li
 
 package eu.seal.apigw.cl.params_api;
 
+//import java.io.File;
+//import java.io.FileInputStream;
+//import java.io.FileNotFoundException;
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.io.UnsupportedEncodingException;
+//import java.security.Key;
+//import java.security.KeyStore;
+//import java.security.KeyStoreException;
+//import java.security.NoSuchAlgorithmException;
+//import java.security.UnrecoverableKeyException;
+//import java.security.cert.Certificate;
+//import java.security.cert.CertificateException;
+//import javax.crypto.spec.SecretKeySpec;
+//
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Service;
+//
+////import com.nimbusds.jose.JWSAlgorithm;
+//
+//import io.jsonwebtoken.SignatureAlgorithm;
+////import org.apache.commons.codec.digest.DigestUtils;
+
+import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,20 +46,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
+//import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+//import java.security.interfaces.RSAPublicKey;
+//import java.security.spec.InvalidKeySpecException;
+//import java.security.spec.X509EncodedKeySpec;
+//import java.util.Base64;
 import javax.crypto.spec.SecretKeySpec;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.nimbusds.jose.JWSAlgorithm;
 
 
 /**
@@ -69,7 +96,7 @@ public class KeyStoreServiceImpl implements KeyStoreService {
         httpSigKeyAlias = this.paramServ.getParam("HTTPSIG_CERT_ALIAS");
         //jweKeyAlias = this.paramServ.getParam("JWE_CERT_ALIAS");
         
-        httpSigAttempts = this.paramServ.getParam("HTTPSIG_ATTEMPTS") == null ? "2": this.paramServ.getParam("HTTPSIG_ATTEMPTS");
+        httpSigAttempts = this.paramServ.getParam("HTTPSIG_ATTEMPTS") == null ? "10": this.paramServ.getParam("HTTPSIG_ATTEMPTS");
         
         LOG.info ("certPath: " + certPath);
 //        LOG.info ("jwtKeyAlias: " + jwtKeyAlias);
@@ -164,12 +191,20 @@ public class KeyStoreServiceImpl implements KeyStoreService {
         this.paramServ = paramServ;
     }
 
+//    @Override
+//    public JWSAlgorithm getAlgorithm() {
+//        if (!org.springframework.util.StringUtils.isEmpty(paramServ.getParam("ASYNC_SIGNATURE")) && Boolean.parseBoolean(paramServ.getParam("ASYNC_SIGNATURE"))) {
+//            return JWSAlgorithm.RS256;
+//        }
+//        return JWSAlgorithm.HS256;
+//    }
+    
     @Override
-    public JWSAlgorithm getAlgorithm() {
+    public SignatureAlgorithm getAlgorithm() {
         if (!org.springframework.util.StringUtils.isEmpty(paramServ.getParam("ASYNC_SIGNATURE")) && Boolean.parseBoolean(paramServ.getParam("ASYNC_SIGNATURE"))) {
-            return JWSAlgorithm.RS256;
+            return SignatureAlgorithm.RS256;
         }
-        return JWSAlgorithm.HS256;
+        return SignatureAlgorithm.HS256;
     }
 
 }

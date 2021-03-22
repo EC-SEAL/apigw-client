@@ -19,7 +19,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 
-import com.nimbusds.jose.JWSAlgorithm;
+//import com.nimbusds.jose.JWSAlgorithm;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 /**
  *
@@ -32,6 +33,7 @@ public interface KeyStoreService {
     //public Key getJWTSigningKey() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException,UnsupportedEncodingException;   
     //public Key getJWTPublicKey() throws KeyStoreException, UnsupportedEncodingException;
     public Key getHttpSigPublicKey() throws KeyStoreException, UnsupportedEncodingException;
-    public JWSAlgorithm getAlgorithm();
+    //public JWSAlgorithm getAlgorithm();
+    public SignatureAlgorithm getAlgorithm();
     public int getNumAttempts();
 }

@@ -265,7 +265,9 @@ public class NetworkServiceImpl implements NetworkService
 
             String getURL = StringUtils.isEmpty(url.getQuery())?url.getPath():url.getPath() + "?" + url.getQuery();
             
+            LOG.info("Before signing request headers", requestHeaders.toString());
             requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", getURL, null, "application/x-www-form-urlencoded", requestId));
+            LOG.info("After signing request headers", requestHeaders.toString());
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
             LOG.error("could not generate signature!!");
             LOG.error(e.getMessage());

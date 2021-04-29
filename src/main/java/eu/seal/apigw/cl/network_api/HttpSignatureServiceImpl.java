@@ -66,7 +66,7 @@ public class HttpSignatureServiceImpl implements HttpSignatureService {
     public String generateSignature(String hostUrl, String method, String uri, Object postParams, String contentType, String requestId)
             throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, UnsupportedEncodingException, IOException {
     	
-    	//log.info("Generate Signature ...");
+    	log.info("Generate Signature ...");
     	
         final Map<String, String> signatureHeaders = new HashMap<>();
         signatureHeaders.put("host", hostUrl);

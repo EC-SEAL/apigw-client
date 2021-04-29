@@ -90,7 +90,8 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 		// The receiver will be different: Persistence, Identity, IDderivation, ...
 		// ******************************
 		
-     
+        System.out.println("hostURL: " + hostURL);
+        log.info("Before invoking CM service... ");
 		//TODO
         //EntityMetadata myLGW = this.confMngrService.getConfiguration("LGW"); // APIGWCL or reading from an environment variable. TOASK
 		EntityMetadata myLGW = null;
@@ -103,7 +104,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 		}
         
         //TODO: to comment them after testing
-        System.out.println("hostURL: " + hostURL);
+        //System.out.println("hostURL: " + hostURL);
         System.out.println("sender: "+ sender);
         System.out.println("receiver wont be constant");
         

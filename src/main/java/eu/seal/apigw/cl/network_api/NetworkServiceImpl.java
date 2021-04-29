@@ -265,9 +265,17 @@ public class NetworkServiceImpl implements NetworkService
 
             String getURL = StringUtils.isEmpty(url.getQuery())?url.getPath():url.getPath() + "?" + url.getQuery();
             
-            LOG.info("Before signing request headers", requestHeaders.toString());
+            LOG.info("Before signing request headers:", requestHeaders.toString());
+            requestHeaders.toSingleValueMap().entrySet().forEach(e -> {
+            	LOG.info(e.getKey() + ":-->" + e.getValue());
+            });
+            
             requestHeaders.add("authorization", sigServ.generateSignature(host, "GET", getURL, null, "application/x-www-form-urlencoded", requestId));
-            LOG.info("After signing request headers", requestHeaders.toString());
+            
+            LOG.info("After signing request headers:", requestHeaders.toString());
+            requestHeaders.toSingleValueMap().entrySet().forEach(e -> {
+            	LOG.info(e.getKey() + ":-->" + e.getValue());
+            });
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
             LOG.error("could not generate signature!!");
             LOG.error(e.getMessage());
@@ -281,6 +289,7 @@ public class NetworkServiceImpl implements NetworkService
         } catch (RestClientException e) {
         	LOG.error(e.getMessage());
             if (attempt < numAttempts) {
+            	LOG.info("request failed will retry");
                 return sendGet(hostUrl, uri,
                         urlParameters, attempt + 1);
             }

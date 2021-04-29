@@ -110,7 +110,7 @@ public class KeyStoreServiceImpl implements KeyStoreService {
         	File jwtCertFile = new File(certPath);
             InputStream certIS = new FileInputStream(jwtCertFile);
             keystore.load(certIS, storePass.toCharArray());
-            //LOG.info ("keystore: loaded");
+            LOG.info ("keystore: loaded");
         } else {
             //init an empty keystore otherwise an exception is thrown
             keystore.load(null, null);

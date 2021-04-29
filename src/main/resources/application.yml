@@ -33,6 +33,7 @@ server:
   #signing-secret: ${SIGNING_SECRET}
   ssl:
     enabled: true
+    key-store-type: pkcs12
     key-store: ${SSL_KEYSTORE_PATH}
     key-store-password: ${SSL_STORE_PASS}
     key-password: ${SSL_KEY_PASS}

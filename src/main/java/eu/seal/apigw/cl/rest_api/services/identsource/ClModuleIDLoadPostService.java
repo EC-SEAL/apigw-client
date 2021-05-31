@@ -14,11 +14,11 @@ See README file for the full disclaimer information and LICENSE file for full li
 */
 package eu.seal.apigw.cl.rest_api.services.identsource;
 
-import eu.seal.apigw.cl.domain.DataSet;
+import eu.seal.apigw.cl.domain.SignedDataSet;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 
 public interface ClModuleIDLoadPostService {
 	
-	ModuleTrigger clModuleIDLoadPost (String sessionID, String moduleID, DataSet dataset) throws Exception;
+	ModuleTrigger clModuleIDLoadPost (String sessionID, String moduleID, /*DataSet*/ SignedDataSet dataset) throws Exception;
 
 }

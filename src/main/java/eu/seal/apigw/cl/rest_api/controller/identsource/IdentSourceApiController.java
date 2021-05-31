@@ -18,7 +18,7 @@ package eu.seal.apigw.cl.rest_api.controller.identsource;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eu.seal.apigw.cl.domain.DataSet;
+import eu.seal.apigw.cl.domain.SignedDataSet;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.rest_api.services.callback.ClCallbackGetService;
 import eu.seal.apigw.cl.rest_api.services.identsource.ClModuleIDLoadPostService;
@@ -58,7 +58,7 @@ public class IdentSourceApiController implements IdentSourceApi {
     @Autowired
 	private ClModuleIDLoadPostService clModuleIDLoadPostService;
     
-    public ResponseEntity<ModuleTrigger> clIdentSourceModuleIDLoadPost(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID,@ApiParam(value = "The data set to add" ,required=true )  @Valid @RequestBody DataSet dataset) {
+    public ResponseEntity<ModuleTrigger> clIdentSourceModuleIDLoadPost(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID,@ApiParam(value = "The data set to add" ,required=true )  @Valid @RequestBody /*DataSet*/ SignedDataSet dataset) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             ModuleTrigger idLoaded = new ModuleTrigger();

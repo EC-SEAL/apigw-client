@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import eu.seal.apigw.cl.domain.DataSet;
+import eu.seal.apigw.cl.domain.SignedDataSet;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 
 import javax.validation.Valid;
@@ -50,7 +50,7 @@ public interface IdentSourceApi {
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = {RequestMethod.POST, RequestMethod.GET})
-    ResponseEntity<ModuleTrigger> clIdentSourceModuleIDLoadPost(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID,@ApiParam(value = "The data set to add" ,required=true )  @Valid @RequestBody DataSet dataset);
+    ResponseEntity<ModuleTrigger> clIdentSourceModuleIDLoadPost(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "sessionID", required = true) String sessionID,@ApiParam(value = "",required=true) @PathVariable("moduleID") String moduleID,@ApiParam(value = "The data set to add" ,required=true )  @Valid @RequestBody /*DataSet*/ SignedDataSet dataset);
 
 
 }

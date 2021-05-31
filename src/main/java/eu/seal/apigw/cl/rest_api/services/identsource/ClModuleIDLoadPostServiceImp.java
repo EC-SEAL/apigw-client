@@ -31,7 +31,7 @@ import com.google.gson.Gson;
 import eu.seal.apigw.cl.cm_api.ConfMngrConnService;
 import eu.seal.apigw.cl.configuration.Constants;
 import eu.seal.apigw.cl.domain.AttributeSet;
-import eu.seal.apigw.cl.domain.DataSet;
+import eu.seal.apigw.cl.domain.SignedDataSet;
 import eu.seal.apigw.cl.domain.EntityMetadata;
 import eu.seal.apigw.cl.domain.ModuleTrigger;
 import eu.seal.apigw.cl.domain.ModuleTriggerAccess;
@@ -55,7 +55,7 @@ public class ClModuleIDLoadPostServiceImp implements ClModuleIDLoadPostService{
 
 	
 	@Override
-	public ModuleTrigger clModuleIDLoadPost (String sessionID, String moduleID, DataSet dataset) throws Exception {
+	public ModuleTrigger clModuleIDLoadPost (String sessionID, String moduleID, /*DataSet*/ SignedDataSet dataset) throws Exception {
 		
 		log.info("moduleID: " + moduleID);
 			
@@ -82,54 +82,19 @@ public class ClModuleIDLoadPostServiceImp implements ClModuleIDLoadPostService{
 				case "emrtd":					
 					// Update sessionData: emrtdDataset -> string #B64  $ref: '#/definitions/dataSet'
 					
-					//ObjectMapper objMapper0 = new ObjectMapper();
-					//smConn.updateVariable(sessionID, "emrtdDataset", objMapper0.writeValueAsString(dataset));
-					
+					/* No more, the dataSet is encoded already
+					 * 
 					Gson gson = new Gson();
         			String jsonMyDataset = gson.toJson(dataset);
         			log.info("Before encoding jsonMyDataset: "+ jsonMyDataset);     			
         			String encodedDataset = Base64.getEncoder().encodeToString(jsonMyDataset.getBytes());
 					
         			smConn.updateVariable(sessionID, "emrtdDataset", encodedDataset);
+        			*/
 					
-					/*
-					AttributeSet myApRequest = new AttributeSet();
-					myApRequest.setId( "AP_" + UUID.randomUUID().toString());
-					myApRequest.setType(AttributeSet.TypeEnum.REQUEST);
-					myApRequest.setIssuer(confMngrConnService.getMicroservicesByApiClass("CL").get(0).getMsId()); // The unique client
-					myApRequest.setRecipient(confMngrConnService.getEntityMetadata("ATTRSOURCE", moduleID).getMicroservice().get(0)); // the first one
-					myApRequest.setAttributes(null);
-					
-					ObjectMapper objMapper = new ObjectMapper();
-					smConn.updateVariable(sessionID, "apRequest", objMapper.writeValueAsString(myApRequest));
-					
-					EntityMetadata myApMetadata = new EntityMetadata();
-					myApMetadata.setEntityId("AP_" + UUID.randomUUID().toString());
-					
-					EntityMetadata auxApMetadata = confMngrConnService.getEntityMetadataSet(moduleID.toUpperCase()).getMsEntities (myApRequest.getRecipient()).get(0);
-					
-					//log.info("auxApMetadata: " + auxApMetadata.toString());
-					
-					myApMetadata.setLocation(auxApMetadata.getLocation());
-					myApMetadata.setDefaultDisplayName(auxApMetadata.getDefaultDisplayName());
-					myApMetadata.setDisplayNames(auxApMetadata.getDisplayNames());
-					myApMetadata.setClaims(auxApMetadata.getClaims());
-					myApMetadata.setEncryptResponses(auxApMetadata.isEncryptResponses());
-					myApMetadata.setEndpoints(auxApMetadata.getEndpoints());
-					myApMetadata.setLogo(auxApMetadata.getLogo());
-					myApMetadata.setMicroservice(auxApMetadata.getMicroservice());
-					myApMetadata.setOtherData(auxApMetadata.getOtherData());
-					myApMetadata.setProtocol(auxApMetadata.getProtocol());
-					myApMetadata.setSecurityKeys(auxApMetadata.getSecurityKeys());
-					myApMetadata.setSignResponses(auxApMetadata.isSignResponses());
-					myApMetadata.setSupportedEncryptionAlg(auxApMetadata.getSupportedEncryptionAlg());
-					myApMetadata.setSupportedSigningAlg(auxApMetadata.getSupportedSigningAlg());
-					
-					log.info ("myApMetadata: " + myApMetadata.toString());
-					
-					ObjectMapper objMapper1 = new ObjectMapper();
-					smConn.updateVariable(sessionID, "apMetadata", objMapper1.writeValueAsString(myApMetadata));
-					*/
+        			ObjectMapper objMapper0 = new ObjectMapper();
+					smConn.updateVariable(sessionID, "emrtdDataset", objMapper0.writeValueAsString(dataset));			
+
 					
 					// To generate token: issuer CL (got from the msMetadataList ConfMngr); obtaining the receiver:			
 					theModuleID = confMngrConnService.getEntityMetadata("ATTRSOURCE", moduleID).getMicroservice().get(0);	// The first one.

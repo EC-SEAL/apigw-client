@@ -20,5 +20,5 @@ RUN sh -c 'touch /seal-apigwcl.jar'
 ENV JAVA_OPTS=""
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /seal-apigwcl.jar" ]
 
-EXPOSE 8053
+EXPOSE 8054
 

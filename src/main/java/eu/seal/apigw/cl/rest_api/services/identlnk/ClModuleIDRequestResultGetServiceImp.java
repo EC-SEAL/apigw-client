@@ -81,30 +81,31 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 					log.info("theModuleID: " + theModuleID);
 					thePayload = smConn.generateToken (sessionID, theModuleID);
 				
-					// Search for the Ms related to the requestId
+					// Search for the Ms related to the requestId. Not needed, just retrieved above:
 					String myMs = null;
-					NameValuePair ms = null;
-					Iterator<Object> msIterator = apigwLinkRequestList.iterator();
-					while (msIterator.hasNext()) {
-						//ms = (NameValuePair) msIterator.next();	
-						ms = (new ObjectMapper()).readValue(msIterator.next().toString(),NameValuePair.class); //no quotes at all
-						if (ms.getName().equals(requestId)) {
-							myMs = ms.getValue();
-							break; 
-						}
-						
-						
-						/*
-						JsonObject myJSONms = new JsonParser().parse(msIterator.next().toString()).getAsJsonObject();						
-						log.info("myJSONms: " + myJSONms.toString());
-						
-						if (myJSONms.get("name").toString().equals("\"" + requestId + "\"")) {
-							myMs = myJSONms.get("value").toString();
-							myMs = myMs.replaceAll("^\"|\"$", ""); // Without quotes
-							break;
-						}
-						*/				  	  
-					}
+					myMs = theModuleID; 
+//					NameValuePair ms = null;
+//					Iterator<Object> msIterator = apigwLinkRequestList.iterator();
+//					while (msIterator.hasNext()) {
+//						ms = (NameValuePair) msIterator.next();	
+//						//ms = (new ObjectMapper()).readValue(msIterator.next().toString(),NameValuePair.class); //no quotes at all
+//						if (ms.getName().equals(requestId)) {
+//							myMs = ms.getValue();
+//							break; 
+//						}
+//						
+//						
+//						/*
+//						JsonObject myJSONms = new JsonParser().parse(msIterator.next().toString()).getAsJsonObject();						
+//						log.info("myJSONms: " + myJSONms.toString());
+//						
+//						if (myJSONms.get("name").toString().equals("\"" + requestId + "\"")) {
+//							myMs = myJSONms.get("value").toString();
+//							myMs = myMs.replaceAll("^\"|\"$", ""); // Without quotes
+//							break;
+//						}
+//						*/				  	  
+//					}
 					
 					
 					PublishedApiType thePublishedApi = null;

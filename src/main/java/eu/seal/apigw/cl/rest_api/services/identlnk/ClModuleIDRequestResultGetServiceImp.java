@@ -18,6 +18,7 @@ package eu.seal.apigw.cl.rest_api.services.identlnk;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.httpclient.NameValuePair;
 //import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,16 +83,18 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 				
 					// Search for the Ms related to the requestId
 					String myMs = null;
-					//NameValuePair ms = null;
+					NameValuePair ms = null;
 					Iterator<Object> msIterator = apigwLinkRequestList.iterator();
 					while (msIterator.hasNext()) {
 						//ms = (NameValuePair) msIterator.next();	
-						//ms = (new ObjectMapper()).readValue(msIterator.next().toString(),NameValuePair.class); //no quotes at all
-//						if (ms.getName().equals(requestId)) {
-//							myMs = ms.getValue();
-//							break; 
-//						}
+						ms = (new ObjectMapper()).readValue(msIterator.next().toString(),NameValuePair.class); //no quotes at all
+						if (ms.getName().equals(requestId)) {
+							myMs = ms.getValue();
+							break; 
+						}
 						
+						
+						/*
 						JsonObject myJSONms = new JsonParser().parse(msIterator.next().toString()).getAsJsonObject();						
 						log.info("myJSONms: " + myJSONms.toString());
 						
@@ -99,7 +102,8 @@ public class ClModuleIDRequestResultGetServiceImp implements ClModuleIDRequestRe
 							myMs = myJSONms.get("value").toString();
 							myMs = myMs.replaceAll("^\"|\"$", ""); // Without quotes
 							break;
-						}				  	  
+						}
+						*/				  	  
 					}
 					
 					

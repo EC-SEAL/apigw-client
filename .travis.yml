@@ -20,7 +20,7 @@ jobs:
         elif [ $TRAVIS_BRANCH == "master" ]; then
             export CONTAINER_TAG=latest;
         elif [ $TRAVIS_BRANCH == "interface" ]; then
-            export CONTAINER_TAG=emrtd;
+            export CONTAINER_TAG=autoLink;
         fi
       script:
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
